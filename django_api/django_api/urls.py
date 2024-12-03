@@ -1,3 +1,9 @@
+from kits import views
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from oauth2_provider import urls as oauth2_urls
+
 """
 URL configuration for django_api project.
 
@@ -14,10 +20,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
-from django.contrib import admin
-from django.urls import path
+router = DefaultRouter()
+router.register(r"kits", views.KitViewSet, basename="kit")
+router.register(r"questions", views.QuestionViewSet, basename="question")
+router.register(r"answers", views.AnswerViewSet, basename="answer")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", views.api_root),
+    path("", include(router.urls)),
+    path('oauth/', include(oauth2_urls)),
 ]
