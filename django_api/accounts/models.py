@@ -1,10 +1,19 @@
-from ast import Tuple
+import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, Group, GroupManager
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
 from django.utils import timezone
+
+
+class Organization(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.TextField("name")
+    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class CustomUserManager(BaseUserManager):
@@ -38,6 +47,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField("email address", unique=True)
     first_name = models.CharField("first name", max_length=30, blank=True)
     last_name = models.CharField("last name", max_length=30, blank=True)
@@ -45,6 +55,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField("active", default=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     is_staff = models.BooleanField("is staff", default=True)
+    organizations = models.ManyToManyField(
+        Organization,
+        blank=False,
+        related_name="members"
+    )
 
     objects = CustomUserManager()
 

@@ -1,4 +1,5 @@
-from kits import views
+from kits import views as kit_views
+from accounts import views as account_views
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -23,12 +24,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 router = DefaultRouter()
-router.register(r"kits", views.KitViewSet, basename="kit")
-router.register(r"questions", views.QuestionViewSet, basename="question")
-router.register(r"answers", views.AnswerViewSet, basename="answer")
+# kits
+router.register(r"kits", kit_views.KitViewSet, basename="kit")
+router.register(r"questions", kit_views.QuestionViewSet, basename="question")
+router.register(r"answers", kit_views.AnswerViewSet, basename="answer")
+
+# accounts
+router.register(r"users", account_views.CustomUserViewSet, basename="user")
+router.register(
+    r"organizations", account_views.OrganizationViewSet, basename="organization"
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("oauth/", include(oauth2_urls)),
-    path("", include(router.urls)),
+    path("api/v1/", include(router.urls)),
 ]

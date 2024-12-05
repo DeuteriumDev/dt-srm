@@ -1,4 +1,3 @@
-from multiprocessing import context
 from kits.models import Kit, Question, Answer
 from kits.serializers import KitSerializer, QuestionSerializer, AnswerSerializer
 from rest_access_policy import AccessPolicy
