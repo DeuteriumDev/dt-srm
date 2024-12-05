@@ -16,11 +16,12 @@ clean:
 	@rm -rf ./**/migrations
 .PHONY: clean
 
+# - see [.env](./.env) for admin pass
 seed: clean
+	@$(DJANGO) makemigrations accounts
 	@$(DJANGO) makemigrations kits
 	@$(DJANGO) migrate
-	# see .env for admin pass
-	@$(DJANGO) createsuperuser --no-input --username admin --email admin@admin.ca
+	@$(DJANGO) createsuperuser --no-input --email admin@admin.ca
 	@$(DJANGO) createapplication --client-id $(CLIENT_ID) --client-secret $(CLIENT_SECRET) --algorithm HS256 --name remix_frontend confidential password
 .PHONY: seed
 

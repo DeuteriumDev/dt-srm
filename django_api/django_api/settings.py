@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "kits",
     "oauth2_provider",
     "corsheaders",
+    "accounts",
 ]
 
 MIDDLEWARE = [
@@ -151,3 +152,5 @@ OAUTH2_PROVIDER = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 LOGIN_URL = "/admin/login/"
+
+AUTH_USER_MODEL = "accounts.CustomUser"

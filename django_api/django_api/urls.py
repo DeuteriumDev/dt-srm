@@ -31,6 +31,4 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("oauth/", include(oauth2_urls)),
     path("", include(router.urls)),
-    # path("", views.api_root),
-    # path(r"^invitations/", include(invitation_backend().get_urls())),
 ]
