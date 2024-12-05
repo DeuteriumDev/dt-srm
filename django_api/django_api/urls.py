@@ -4,6 +4,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from oauth2_provider import urls as oauth2_urls
 
+# from organizations.backends import invitation_backend
+
 """
 URL configuration for django_api project.
 
@@ -27,7 +29,8 @@ router.register(r"answers", views.AnswerViewSet, basename="answer")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.api_root),
+    path("oauth/", include(oauth2_urls)),
     path("", include(router.urls)),
-    path('oauth/', include(oauth2_urls)),
+    # path("", views.api_root),
+    # path(r"^invitations/", include(invitation_backend().get_urls())),
 ]

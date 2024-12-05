@@ -3,7 +3,7 @@ from kits.models import Kit, Question, Answer
 from drf_dynamic_fields import DynamicFieldsMixin
 
 
-class KitSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+class KitSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Kit
         fields = [
@@ -12,11 +12,10 @@ class KitSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
             "created",
             "updated",
             "start",
-            "url",
         ]
 
 
-class QuestionSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+class QuestionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
@@ -28,12 +27,11 @@ class QuestionSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSeriali
             "created",
             "updated",
             "next",
-            "url",
         ]
         depth = 1
 
 
-class AnswerSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerializer):
+class AnswerSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = [
@@ -43,5 +41,4 @@ class AnswerSerializer(DynamicFieldsMixin, serializers.HyperlinkedModelSerialize
             "image",
             "created",
             "updated",
-            "url",
         ]

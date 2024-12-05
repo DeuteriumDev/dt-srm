@@ -1,8 +1,6 @@
 import uuid
 from django.db import models
 
-# Create your models here.
-
 
 class Kit(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -22,7 +20,7 @@ class Question(models.Model):
     title = models.TextField(default="")
     description = models.TextField(null=True, blank=True, default="")
     image = models.URLField(null=True, blank=True)
-    answers = models.ManyToManyField(null=True, blank=True, to="Answer")
+    answers = models.ManyToManyField(blank=True, to="Answer")
     created = models.DateTimeField(null=False, auto_now_add=True)
     updated = models.DateTimeField(null=False, auto_now=True)
     next = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)

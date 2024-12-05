@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "kits",
-    "guardian",
     "oauth2_provider",
     "corsheaders",
 ]
@@ -139,7 +138,6 @@ REST_FRAMEWORK = {
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # this is default
-    "guardian.backends.ObjectPermissionBackend",
 )
 
 OAUTH2_PROVIDER = {
