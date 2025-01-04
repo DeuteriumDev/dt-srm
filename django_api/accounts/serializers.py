@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from accounts.models import Organization, CustomUser
-from drf_dynamic_fields import DynamicFieldsMixin
 
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -11,7 +10,9 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         # Don't pass the 'fields' arg up to the superclass
-        fields = kwargs.pop("fields", None)
+        fields = None
+        if kwargs.get("fields") is not None:
+            fields = kwargs.pop("fields", None)
 
         # Instantiate the superclass normally
         super().__init__(*args, **kwargs)
@@ -24,33 +25,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
 
-class CustomUserSerializer(DynamicFieldsModelSerializer):
-    class Meta:
-        model = CustomUser
-        depth = 1
-        fields = [
-            "id",
-            "email",
-            "avatar",
-            "organizations",
-            "first_name",
-            "last_name",
-            "is_active",
-        ]
-
-
 class OrganizationSerializer(DynamicFieldsModelSerializer):
-    members = CustomUserSerializer(
-        many=True,
-        read_only=True,
-        fields=[
-            "id",
-            "email",
-            "avatar",
-            "is_active",
-        ],
-    )
-
     class Meta:
         model = Organization
         fields = [
@@ -58,4 +33,23 @@ class OrganizationSerializer(DynamicFieldsModelSerializer):
             "name",
             "avatar",
             "members",
+            "root_folder",
+            "created",
+            "updated",
         ]
+        depth = 1
+
+
+class CustomUserSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "id",
+            "email",
+            "avatar",
+            "first_name",
+            "last_name",
+            "is_active",
+            "groups",
+        ]
+        depth = 1

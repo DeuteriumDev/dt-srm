@@ -1,9 +1,28 @@
 from rest_framework import serializers
-from kits.models import Kit, Question, Answer
-from drf_dynamic_fields import DynamicFieldsMixin
+from accounts.serializers import OrganizationSerializer
+from accounts.models import Organization
+from kits.models import Kit, Question, Answer, Folder
 
 
-class KitSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class FolderSerializer(serializers.ModelSerializer):
+    # organization = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Folder
+        fields = [
+            "id",
+            "name",
+            "created",
+            "updated",
+            "parent",
+            # "custom_permission"
+        ]
+        ordering = ["created"]
+
+
+class KitSerializer(serializers.ModelSerializer):
+    # organization = serializers.SerializerMethodField()
+
     class Meta:
         model = Kit
         fields = [
@@ -12,10 +31,23 @@ class KitSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             "created",
             "updated",
             "start",
+            # "organization",
+            # "parent_folder",
         ]
+        depth = 2
+
+    # def get_organization(self, obj):
+    #     if obj.parent_folder is not None:
+    #         parent_folder = FolderSerializer(obj.parent_folder).data
+    #         return OrganizationSerializer(
+    #             Organization.objects.get(pk=parent_folder["organization"]["id"]),
+    #             fields=["id", "name"],
+    #         ).data
+
+    #     return None
 
 
-class QuestionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
@@ -31,7 +63,7 @@ class QuestionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         depth = 1
 
 
-class AnswerSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = [
@@ -41,4 +73,5 @@ class AnswerSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
             "image",
             "created",
             "updated",
+            "index",
         ]

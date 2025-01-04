@@ -1,16 +1,42 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, Group, GroupManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
+
+class CustomGroup(models.Model):
+    name = models.TextField("name", blank=False, null=False)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        related_name="children_groups",
+        null=True,
+        blank=True,
+        default=None,
+    )
+    inherit_permissions = False
+    hidden = models.BooleanField(default=False, null=False)
+
+    @property
+    def children(self):
+        return self.children_groups
+
+    def __str__(self):
+        return f"{self.name}"
 
 
 class Organization(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.TextField("name")
+    name = models.TextField("name", blank=False, null=False)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
+    children = models.ForeignKey(
+        CustomGroup, null=True, blank=False, on_delete=models.SET_NULL
+    )
+    parent = None
+    inherit_permissions = False
 
     def __str__(self):
         return f"{self.name}"
@@ -55,10 +81,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField("active", default=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     is_staff = models.BooleanField("is staff", default=True)
-    organizations = models.ManyToManyField(
-        Organization,
+    groups = models.ManyToManyField(
+        CustomGroup,
         blank=False,
-        related_name="members"
+        related_name="members",
     )
 
     objects = CustomUserManager()
@@ -69,6 +95,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "user"
         verbose_name_plural = "users"
+        ordering = ["email"]
 
     def get_full_name(self):
         """
@@ -88,3 +115,32 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         Sends an email to this User.
         """
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class CustomPermissions(models.Model):
+    # map multiple content types onto [content_object]
+    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+    object_id = models.UUIDField()
+    content_object = GenericForeignKey("content_type", "object_id")
+
+    group = models.ForeignKey(
+        CustomGroup,
+        null=False,
+        blank=False,
+        on_delete=models.DO_NOTHING,
+        related_name="custom_permission",
+    )
+    can_create = models.BooleanField(default=True, blank=False, null=False)
+    can_read = models.BooleanField(default=True, blank=False, null=False)
+    can_update = models.BooleanField(default=True, blank=False, null=False)
+    can_delete = models.BooleanField(default=False, blank=False, null=False)
+    created = models.DateTimeField(null=False, auto_now_add=True)
+    updated = models.DateTimeField(null=False, auto_now=True)
+
+    def __str__(self):
+        return f"'group-{self.group}' -- '{self.content_type}-{self.content_object}' [{self.can_create},{self.can_read},{self.can_update},{self.can_delete}]"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]

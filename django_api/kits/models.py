@@ -1,41 +1,115 @@
 import uuid
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
+from accounts.models import CustomPermissions
 
 
-class Kit(models.Model):
+class DocumentModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.TextField(default="")
     created = models.DateTimeField(null=False, auto_now_add=True)
     updated = models.DateTimeField(null=False, auto_now=True)
+    custom_permissions = GenericRelation(CustomPermissions)
+    inherit_permissions = models.BooleanField(default=True, null=False, blank=False)
+    children_property_name = "children"
+
+    class Meta:
+        abstract = True
+        ordering = ["created"]
+
+    @property
+    def parent(self):
+        raise Exception("Parent [parent]: Must override this property")
+
+    @property
+    def children(self):
+        raise Exception("Parent [children]: Must override this property")
+
+
+class Folder(DocumentModel):
+    name = models.TextField(blank=False, null=False)
+    description = models.TextField(null=True, blank=True, default="")
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        default=None,
+        blank=True,
+        related_name="children_folders",
+    )
+
+    children_property_name = "children_folders"
+
+    def __str__(self):
+        return f"Folder: {self.name}"
+
+
+class Kit(DocumentModel):
+    title = models.TextField(blank=False, null=False)
     start = models.ForeignKey(
-        to="Question", on_delete=models.CASCADE, null=True, blank=True
+        to="Question",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="kit",
+    )
+    parent = models.ForeignKey(
+        Folder,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="children",
     )
 
     def __str__(self):
         return f"Kit: {self.title}"
 
 
-class Question(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+class Question(DocumentModel):
     title = models.TextField(default="")
     description = models.TextField(null=True, blank=True, default="")
     image = models.URLField(null=True, blank=True)
-    answers = models.ManyToManyField(blank=True, to="Answer")
-    created = models.DateTimeField(null=False, auto_now_add=True)
-    updated = models.DateTimeField(null=False, auto_now=True)
-    next = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE)
+    answers = models.ManyToManyField(
+        blank=True,
+        to="Answer",
+        related_name="question",
+    )
+    next = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="previous",
+    )
+    inherit_permissions = True
+    custom_permissions = None
+    
+    @property
+    def children(self):
+        return self.answers
+
+    @property
+    def parent(self):
+        if self.kit is not None:
+            return self.kit
+        return self.previous
 
     def __str__(self):
         return f"Question: {self.title}"
 
 
 class Answer(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.TextField(default="")
-    description = models.TextField(null=True, blank=True, default="")
+    title = models.TextField(blank=False, null=False)
+    description = models.TextField(default="")
     image = models.URLField(null=True, blank=True)
-    created = models.DateTimeField(null=False, auto_now_add=True)
-    updated = models.DateTimeField(null=False, auto_now=True)
+    index = models.PositiveIntegerField(default=0)
+    inherit_permissions = True
+    custom_permissions = None
+
+    @property
+    def parent(self):
+        return self.question
+
+    children = None
 
     def __str__(self):
         return f"Answer: {self.title}"

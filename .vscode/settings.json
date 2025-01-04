@@ -1,4 +1,11 @@
 {
   "black.enable": true,
-  "python.analysis.autoImportCompletions": true
+  "python.analysis.autoImportCompletions": true,
+  "cSpell.words": [
+    "corsheaders",
+    "createapplication",
+    "createsuperuser",
+    "makemigrations",
+    "viewsets"
+  ]
 }

@@ -7,12 +7,12 @@ from rest_framework import viewsets
 
 class GenericAccessPolicy(AccessPolicy):
     statements = [
-        {"action": "*", "principal": "*", "effect": "allow"},
+        {
+            "action": "*",
+            "principal": "authenticated",
+            "effect": "allow",
+        },
     ]
-
-    @classmethod
-    def scope_queryset(cls, request, queryset):
-        return queryset
 
 
 class OrganizationViewSet(AccessViewSetMixin, viewsets.ModelViewSet):

@@ -28,6 +28,7 @@ router = DefaultRouter()
 router.register(r"kits", kit_views.KitViewSet, basename="kit")
 router.register(r"questions", kit_views.QuestionViewSet, basename="question")
 router.register(r"answers", kit_views.AnswerViewSet, basename="answer")
+router.register(r"folders", kit_views.FolderViewSet, basename="folder")
 
 # accounts
 router.register(r"users", account_views.CustomUserViewSet, basename="user")

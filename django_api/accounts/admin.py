@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, Organization
+from .models import CustomUser, Organization, CustomGroup, CustomPermissions
 
 
 class CustomUserAdmin(UserAdmin):
@@ -15,13 +16,21 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "password", "password_2", "organizations"),
+                "fields": ("email", "password", "password_2"),
             },
         ),
     )
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name", "organizations")}),
+        (
+            "Personal info",
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                )
+            },
+        ),
         (
             "Permissions",
             {
@@ -29,8 +38,8 @@ class CustomUserAdmin(UserAdmin):
                     "is_active",
                     "is_staff",
                     "is_superuser",
-                    "groups",
                     "user_permissions",
+                    "groups",
                 ),
             },
         ),
@@ -54,3 +63,6 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Organization)
+admin.site.unregister(Group)
+admin.site.register(CustomGroup)
+admin.site.register(CustomPermissions)
