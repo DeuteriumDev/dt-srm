@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from accounts.models import CustomPermissions
+from itertools import chain
+from operator import attrgetter
 
 
 class DocumentModel(models.Model):
@@ -10,7 +12,6 @@ class DocumentModel(models.Model):
     updated = models.DateTimeField(null=False, auto_now=True)
     custom_permissions = GenericRelation(CustomPermissions)
     inherit_permissions = models.BooleanField(default=True, null=False, blank=False)
-    children_property_name = "children"
 
     class Meta:
         abstract = True
@@ -37,7 +38,23 @@ class Folder(DocumentModel):
         related_name="children_folders",
     )
 
-    children_property_name = "children_folders"
+    @property
+    def children(self):
+        print("get children")
+        print(self.name)
+        print(self.children_folders.count())
+        print(self.children_kits.count())
+        return sorted(
+            chain(self.children_folders.all(), self.children_kits.all()),
+            key=attrgetter("created"),
+        )
+
+    # @children.setter
+    # def set_children(self, children):
+    #     print("set children")
+    #     print(self.name)
+    #     print(children)
+    #     self.children = children
 
     def __str__(self):
         return f"Folder: {self.name}"
@@ -57,8 +74,18 @@ class Kit(DocumentModel):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name="children",
+        related_name="children_kits",
     )
+
+    @property
+    def children(self):
+        if self.start is not None:
+            return [self.start.all()]
+        return []
+
+    # @children.setter
+    # def set_children(self, children):
+    #     self.children = children
 
     def __str__(self):
         return f"Kit: {self.title}"
@@ -80,9 +107,7 @@ class Question(DocumentModel):
         on_delete=models.CASCADE,
         related_name="previous",
     )
-    inherit_permissions = True
-    custom_permissions = None
-    
+
     @property
     def children(self):
         return self.answers
@@ -102,8 +127,6 @@ class Answer(models.Model):
     description = models.TextField(default="")
     image = models.URLField(null=True, blank=True)
     index = models.PositiveIntegerField(default=0)
-    inherit_permissions = True
-    custom_permissions = None
 
     @property
     def parent(self):

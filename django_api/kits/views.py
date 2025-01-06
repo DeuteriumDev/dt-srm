@@ -109,12 +109,21 @@ class DocumentAccessPolicy(AccessPolicy):
         child_docs = set()
 
         def set_children(children):
-            """Recursively build an un-ordered set of all the documents, including children"""
+            """
+            Recursively build an un-ordered set of all the documents,
+            including children
+            """
             for c in children:
                 child_docs.add(c)
-                managers = getattr(c, c.children_property_name)
-                if managers.count() > 0:
-                    set_children(list(managers.all()))
+                print(type(c.children))
+                if c is not None:
+                    # instead of repeating the checks inside the `if`
+                    # statements we nest the if statements
+                    if isinstance(c.children, list):
+                        if len(c.children) > 0:
+                            set_children(c.children)
+                    elif c.children.count() > 0:
+                        set_children(list(c.children.all()))
 
         set_children([p.content_object for p in user_permissions])
 
