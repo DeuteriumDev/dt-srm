@@ -7,5 +7,6 @@
     "createsuperuser",
     "makemigrations",
     "viewsets"
-  ]
+  ],
+  "python.defaultInterpreterPath": "${workspaceFolder}/django_api/.venv/bin/python"
 }
