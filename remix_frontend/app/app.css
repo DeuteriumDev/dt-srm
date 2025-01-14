@@ -9,4 +9,6 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+
+  font-family: 'Fira Sans', sans-serif;
 }
