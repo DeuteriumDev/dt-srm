@@ -8,7 +8,7 @@ import {
   Link,
 } from 'react-router';
 import '@fontsource/fira-sans';
-import { Home, FileText, Lock, Users, Component } from 'lucide-react';
+import { Home, FileText, Component } from 'lucide-react';
 
 import { Nav } from '~/components/Nav';
 import Toaster from '~/components/Toaster';
@@ -35,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="flex h-full max-h-screen flex-col gap-2">
               <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                 <Link to="/" className="flex items-center gap-2 font-semibold">
-                  {/* <Component className="size-6" /> */}
+                  <Component className="size-6" />
                   <span className="">Graph Table</span>
                 </Link>
               </div>
