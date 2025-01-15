@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "accounts",
     "oauth2_provider",
     "corsheaders",
+    "drf_spectacular",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -135,6 +137,8 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -154,3 +158,12 @@ CORS_ORIGIN_ALLOW_ALL = True
 LOGIN_URL = "/admin/login/"
 
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Graph Table API",
+    "DESCRIPTION": "invoice tables unleashed",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}

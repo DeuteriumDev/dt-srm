@@ -8,6 +8,12 @@ export function meta(_args: Route.MetaArgs) {
   ];
 }
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const favoriteFolders = await getUserFavoriteFolders(request);
+
+  return favoriteFolders
+}
+
 export default function Home() {
   return (
     <div>

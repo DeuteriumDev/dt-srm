@@ -1,77 +1,30 @@
 from rest_framework import serializers
-from accounts.serializers import OrganizationSerializer
-from accounts.models import Organization
 from kits.models import Kit, Question, Answer, Folder
+from drf_dynamic_fields import DynamicFieldsMixin
 
 
-class FolderSerializer(serializers.ModelSerializer):
-    # organization = serializers.SerializerMethodField()
-
+class FolderSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Folder
-        fields = [
-            "id",
-            "name",
-            "created",
-            "updated",
-            "parent",
-            # "custom_permission"
-        ]
+        fields = "__all__"
         ordering = ["created"]
 
 
 class KitSerializer(serializers.ModelSerializer):
-    # organization = serializers.SerializerMethodField()
-
     class Meta:
         model = Kit
-        fields = [
-            "id",
-            "title",
-            "created",
-            "updated",
-            "start",
-            # "organization",
-            # "parent_folder",
-        ]
+        fields = "__all__"
         depth = 2
-
-    # def get_organization(self, obj):
-    #     if obj.parent_folder is not None:
-    #         parent_folder = FolderSerializer(obj.parent_folder).data
-    #         return OrganizationSerializer(
-    #             Organization.objects.get(pk=parent_folder["organization"]["id"]),
-    #             fields=["id", "name"],
-    #         ).data
-
-    #     return None
 
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = [
-            "id",
-            "title",
-            "description",
-            "image",
-            "answers",
-            "created",
-            "updated",
-            "next",
-        ]
+        fields = "__all__"
         depth = 1
 
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = [
-            "id",
-            "title",
-            "description",
-            "image",
-            "created",
-            "updated",
-            "index",
-        ]
+        fields = "__all__"

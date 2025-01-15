@@ -32,6 +32,6 @@ dev:
 	@$(DJANGO) runserver
 .PHONY: dev
 
-aa:
-	@echo $(CLIENT_ID)
-.PHONy: aa
+api-schema:
+	@$(DJANGO) spectacular --color --file schema.yml
+.PHONy: api-schema

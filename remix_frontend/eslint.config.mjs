@@ -7,14 +7,22 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 const config = tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.recommended,
-  // tseslint.config({
-  //   settings: {
-  //     parser: '@typescript-eslint/parser',
-  //   },
-  // }),
+  tseslint.config({
+    settings: {
+      parser: '@typescript-eslint/parser',
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'warn', // or "error"
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  }),
   eslintConfigPrettier,
 );
-
-console.log(config);
 
 export default config;

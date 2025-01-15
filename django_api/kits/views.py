@@ -144,6 +144,7 @@ class DocumentAccessPolicy(AccessPolicy):
 
 class DocumentViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
     access_policy = DocumentAccessPolicy
+    filterset_fields = "__all__"
 
     def get_queryset(self):
         return self.access_policy.scope_queryset(self.request, self.queryset)

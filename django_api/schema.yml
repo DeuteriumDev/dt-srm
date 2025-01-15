@@ -1,0 +1,1572 @@
+openapi: 3.0.3
+info:
+  title: Graph Table API
+  version: 1.0.0
+  description: invoice tables unleashed
+paths:
+  /api/v1/answers/:
+    get:
+      operationId: answers_list
+      parameters:
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: image
+        schema:
+          type: string
+      - in: query
+        name: index
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: title
+        schema:
+          type: string
+      tags:
+      - answers
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAnswerList'
+          description: ''
+    post:
+      operationId: answers_create
+      tags:
+      - answers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Answer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Answer'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+          description: ''
+  /api/v1/answers/{id}/:
+    get:
+      operationId: answers_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
+      tags:
+      - answers
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+          description: ''
+    put:
+      operationId: answers_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
+      tags:
+      - answers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Answer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Answer'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+          description: ''
+    patch:
+      operationId: answers_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
+      tags:
+      - answers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAnswer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAnswer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAnswer'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+          description: ''
+    delete:
+      operationId: answers_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
+      tags:
+      - answers
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/folders/:
+    get:
+      operationId: folders_list
+      parameters:
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: favorite
+        schema:
+          type: boolean
+      - in: query
+        name: id
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: inherit_permissions
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: updated
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - folders
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFolderList'
+          description: ''
+    post:
+      operationId: folders_create
+      tags:
+      - folders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Folder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Folder'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          description: ''
+  /api/v1/folders/{id}/:
+    get:
+      operationId: folders_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
+      tags:
+      - folders
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          description: ''
+    put:
+      operationId: folders_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
+      tags:
+      - folders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Folder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Folder'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          description: ''
+    patch:
+      operationId: folders_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
+      tags:
+      - folders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFolder'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFolder'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFolder'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder'
+          description: ''
+    delete:
+      operationId: folders_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
+      tags:
+      - folders
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/kits/:
+    get:
+      operationId: kits_list
+      parameters:
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: id
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: inherit_permissions
+        schema:
+          type: boolean
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: start
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: updated
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - kits
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedKitList'
+          description: ''
+    post:
+      operationId: kits_create
+      tags:
+      - kits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Kit'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+  /api/v1/kits/{id}/:
+    get:
+      operationId: kits_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
+      tags:
+      - kits
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+    put:
+      operationId: kits_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
+      tags:
+      - kits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Kit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Kit'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+    patch:
+      operationId: kits_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
+      tags:
+      - kits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedKit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedKit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedKit'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Kit'
+          description: ''
+    delete:
+      operationId: kits_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
+      tags:
+      - kits
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/organizations/:
+    get:
+      operationId: organizations_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - organizations
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrganizationList'
+          description: ''
+    post:
+      operationId: organizations_create
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+  /api/v1/organizations/{id}/:
+    get:
+      operationId: organizations_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
+      tags:
+      - organizations
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    put:
+      operationId: organizations_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Organization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Organization'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    patch:
+      operationId: organizations_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
+      tags:
+      - organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganization'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganization'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrganization'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+          description: ''
+    delete:
+      operationId: organizations_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
+      tags:
+      - organizations
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/questions/:
+    get:
+      operationId: questions_list
+      parameters:
+      - in: query
+        name: answers
+        schema:
+          type: array
+          items:
+            type: integer
+        explode: true
+        style: form
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: image
+        schema:
+          type: string
+      - in: query
+        name: inherit_permissions
+        schema:
+          type: boolean
+      - in: query
+        name: next
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: updated
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - questions
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuestionList'
+          description: ''
+    post:
+      operationId: questions_create
+      tags:
+      - questions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Question'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Question'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Question'
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+  /api/v1/questions/{id}/:
+    get:
+      operationId: questions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
+      tags:
+      - questions
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    put:
+      operationId: questions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
+      tags:
+      - questions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Question'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Question'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Question'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    patch:
+      operationId: questions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
+      tags:
+      - questions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestion'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    delete:
+      operationId: questions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
+      tags:
+      - questions
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/:
+    get:
+      operationId: users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - users
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCustomUserList'
+          description: ''
+    post:
+      operationId: users_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+  /api/v1/users/{id}/:
+    get:
+      operationId: users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - users
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    put:
+      operationId: users_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomUser'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    patch:
+      operationId: users_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCustomUser'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
+    delete:
+      operationId: users_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
+      tags:
+      - users
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    Answer:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        index:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+      required:
+      - id
+      - title
+    CustomUser:
+      type: object
+      description: |-
+        A ModelSerializer that takes an additional `fields` argument that
+        controls which fields should be displayed.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        first_name:
+          type: string
+          maxLength: 30
+        last_name:
+          type: string
+          maxLength: 30
+        is_active:
+          type: boolean
+          title: Active
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - email
+      - groups
+      - id
+    Folder:
+      type: object
+      description: |-
+        A serializer mixin that takes an additional `fields` argument that controls
+        which fields should be displayed.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        favorite:
+          type: boolean
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+      required:
+      - created
+      - id
+      - name
+      - updated
+    Kit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        title:
+          type: string
+        start:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        parent:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - created
+      - id
+      - parent
+      - start
+      - title
+      - updated
+    Nested:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        next:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - answers
+      - created
+      - id
+      - next
+      - updated
+    Organization:
+      type: object
+      description: |-
+        A ModelSerializer that takes an additional `fields` argument that
+        controls which fields should be displayed.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        children:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - children
+      - id
+      - name
+    PaginatedAnswerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+    PaginatedCustomUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomUser'
+    PaginatedFolderList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Folder'
+    PaginatedKitList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Kit'
+    PaginatedOrganizationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organization'
+    PaginatedQuestionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    PatchedAnswer:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        index:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+    PatchedCustomUser:
+      type: object
+      description: |-
+        A ModelSerializer that takes an additional `fields` argument that
+        controls which fields should be displayed.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        first_name:
+          type: string
+          maxLength: 30
+        last_name:
+          type: string
+          maxLength: 30
+        is_active:
+          type: boolean
+          title: Active
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+    PatchedFolder:
+      type: object
+      description: |-
+        A serializer mixin that takes an additional `fields` argument that controls
+        which fields should be displayed.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        favorite:
+          type: boolean
+        parent:
+          type: string
+          format: uuid
+          nullable: true
+    PatchedKit:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        title:
+          type: string
+        start:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        parent:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+    PatchedOrganization:
+      type: object
+      description: |-
+        A ModelSerializer that takes an additional `fields` argument that
+        controls which fields should be displayed.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+          nullable: true
+        children:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+    PatchedQuestion:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        next:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        next:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - answers
+      - created
+      - id
+      - next
+      - updated
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows: {}
