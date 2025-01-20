@@ -10,5 +10,5 @@ dev:
 .PHONY: dev
 
 api-lib:
-	npx @hey-api/openapi-ts -c @hey-api/client-fetch  -i ../django_api/schema.yml -o app/libs/django-rest
+	npx @hey-api/openapi-ts
 .PHONY: api-lib

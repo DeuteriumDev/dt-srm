@@ -1,5 +1,5 @@
 import Button from '~/components/Button';
-import type { Route } from './+types/dashboard';
+import type { Route } from '../_auth.dashboard/+types/route';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -8,17 +8,11 @@ export function meta(_args: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  const favoriteFolders = await getUserFavoriteFolders(request);
-
-  return favoriteFolders
-}
-
 export default function Home() {
   return (
     <div>
       dashboard
-      <Button onClick={console.log}>test</Button>
+      <Button onClick={console.log}>test2</Button>
     </div>
   );
 }
