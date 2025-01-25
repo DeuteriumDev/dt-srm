@@ -857,3 +857,16 @@ export type UsersUpdateResponses = {
 };
 
 export type UsersUpdateResponse = UsersUpdateResponses[keyof UsersUpdateResponses];
+
+export type UsersMeRetrieveData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/users/me/';
+};
+
+export type UsersMeRetrieveResponses = {
+    200: CustomUser;
+};
+
+export type UsersMeRetrieveResponse = UsersMeRetrieveResponses[keyof UsersMeRetrieveResponses];

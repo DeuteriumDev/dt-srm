@@ -40,8 +40,13 @@ export async function action({ request }: Route.ActionArgs) {
         username: body.get('username'),
         password: body.get('password'),
       });
-    await login(result);
-    return redirect('/dashboard');
+
+    const redirectParam = new URL(request.url).searchParams.get('redirect');
+    return await login({
+      ...result,
+      request,
+      redirectTo: redirectParam || '/dashboard',
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       const errorData = error.issues.reduce(
