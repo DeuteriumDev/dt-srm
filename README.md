@@ -55,7 +55,7 @@ Make sure to commit any changes as the lib / schema isn't generated during build
 
 ### Access Control
 
-The access control uses ReBAC  as it's guiding principle to organize permissions and access to the various documents (ie: individual models, ie: a folder, a kit, a question, etc). The schema is as follows:
+The access control uses ReBAC as it's guiding principle to organize permissions and access to the various documents (ie: individual models, ie: a folder, a kit, a question, etc). The schema is as follows:
 
 ```
 user ==> group <==> permission --> document ("inherit_permissions_from_parent" --> document)
@@ -68,4 +68,8 @@ a user belongs to a group(s), which has a permission(s) for a document.
 
 Permissions are defined by `can_create`, `can_read`, `can_update`, and `can_delete` (ie: CRUD, and they're named as such to avoid namespace issues with default django) access and can be any combination imaginable.
 
-A user can belong to many groups and a group can have many permissions, but each permission points to a single document with the exception of documents that allow `inherit_permissions_from_parent`. Those documents don't need a direct permission, but will inherit whatever permissions are present on it's parent (recursively if multiple levels are present).
+A user can belong to many groups and a group can have many permissions, but each permission points to a single document with the exception of documents that allow `inherit_permissions_from_parent`.
+
+Those documents don't need a direct permission, but will inherit whatever permissions are present on it's parent (recursively if multiple levels are present). A document can have many children, but only one parent.
+
+See the abstract model [DocumentModel](./django_api/kits/models.py) for implementation details.
