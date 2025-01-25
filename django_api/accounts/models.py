@@ -35,8 +35,6 @@ class Organization(models.Model):
     children = models.ForeignKey(
         CustomGroup, null=True, blank=False, on_delete=models.SET_NULL
     )
-    parent = None
-    inherit_permissions = False
 
     def __str__(self):
         return f"{self.name}"

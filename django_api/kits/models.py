@@ -37,6 +37,7 @@ class Folder(DocumentModel):
         blank=True,
         related_name="children_folders",
     )
+    favorite = models.BooleanField(default=False)
 
     @property
     def children(self):
@@ -48,13 +49,6 @@ class Folder(DocumentModel):
             chain(self.children_folders.all(), self.children_kits.all()),
             key=attrgetter("created"),
         )
-
-    # @children.setter
-    # def set_children(self, children):
-    #     print("set children")
-    #     print(self.name)
-    #     print(children)
-    #     self.children = children
 
     def __str__(self):
         return f"Folder: {self.name}"
@@ -82,10 +76,6 @@ class Kit(DocumentModel):
         if self.start is not None:
             return [self.start.all()]
         return []
-
-    # @children.setter
-    # def set_children(self, children):
-    #     self.children = children
 
     def __str__(self):
         return f"Kit: {self.title}"

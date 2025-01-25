@@ -310,10 +310,3 @@ steampipe-plugin-keycloak.plugin
 # Supabase
 **/supabase/.branches
 **/supabase/.temp
-
-
-########################
-## Deuterium
-########################
-_*
-

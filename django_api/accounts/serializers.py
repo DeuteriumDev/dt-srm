@@ -32,10 +32,7 @@ class OrganizationSerializer(DynamicFieldsModelSerializer):
             "id",
             "name",
             "avatar",
-            "members",
-            "root_folder",
-            "created",
-            "updated",
+            "children",
         ]
         depth = 1
 
