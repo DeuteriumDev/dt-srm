@@ -3,13 +3,20 @@ import assert from 'assert';
 
 import * as apiRest from '../../codegen/django-rest';
 import session from './session.server';
-import { redirect } from 'react-router';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { redirect, type Cookie } from 'react-router';
 
 apiRest.client.setConfig({
   baseUrl: process.env.BASE_URL,
 });
 
-function resolveUrl(from: string, to: string) {
+/**
+ * Convert current url to new url preserving other options, eg 'localhost:123/here' -> 'localhost:123/now'
+ * @param from - full url to start from
+ * @param to - partial url to end at
+ * @returns finalUrl {string}
+ */
+const resolveUrl = (from: string, to: string) => {
   const resolvedUrl = new URL(to, new URL(from, 'resolve://'));
   if (resolvedUrl.protocol === 'resolve:') {
     // `from` is a relative URL.
@@ -17,7 +24,7 @@ function resolveUrl(from: string, to: string) {
     return pathname + search + hash;
   }
   return resolvedUrl.toString();
-}
+};
 
 interface OAuthTokenSuccess {
   access_token: string;
@@ -60,7 +67,7 @@ interface LoginArgs {
 /**
  * Authenticate user and redirect to given url
  *
- * @param credentials {LoginArgs}
+ * @param {LoginArgs} credentials
  * @throws {OAuthError}
  */
 export const login = async ({
@@ -112,6 +119,54 @@ export const login = async ({
 
     console.log(error);
     throw new Error('Login method failed');
+  }
+};
+
+/**
+ * Refresh current session, but doesn't commit new values
+ * 
+ * @param {{request}} args -  args object containing the Remix request object
+ * @returns {Cookie} updatedSession
+ * @throws {OAuthError}
+ */
+export const refresh = async ({ request }: { request: Request }) => {
+  assert(process.env.BASE_URL, '[BASE_URL] env var required');
+  assert(process.env.OAUTH_PATH, '[OAUTH_PATH] env var required');
+  assert(process.env.CLIENT_ID, '[CLIENT_ID] env var required');
+  assert(process.env.CLIENT_SECRET, '[CLIENT_SECRET] env var required');
+
+  try {
+    const oldSession = await session.getSession(request);
+    const refreshToken = oldSession.get('refresh_token') || '';
+
+    const req = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: process.env.CLIENT_ID,
+        client_secret: process.env.CLIENT_SECRET,
+        refresh_token: refreshToken,
+      }),
+    };
+    const url = resolveUrl(process.env.BASE_URL, process.env.OAUTH_PATH);
+    const resp = await fetch(url, req);
+    const data = (await resp.json()) as OAuth;
+    console.log('refreshData', { data, refreshToken, req, url });
+    if (OAuthError.isOauthError(data)) throw new OAuthError(data);
+
+    oldSession.set('access_token', data.access_token);
+    oldSession.set('refresh_token', data.refresh_token);
+    oldSession.set('expires_in', data.expires_in);
+
+    return oldSession;
+  } catch (error) {
+    if (error instanceof OAuthError) throw error;
+
+    console.log(error);
+    throw new Error('Refresh method failed');
   }
 };
 

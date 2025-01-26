@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-x*z$@+__8yqky%tx$!o3&3v!noe^av6cuxl-*-9fwazypfzo&1"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_ENV", "DEVELOPMENT") != "PRODUCTION"
 
 ALLOWED_HOSTS = []
 
@@ -138,7 +139,7 @@ REST_FRAMEWORK = {
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -150,8 +151,13 @@ OAUTH2_PROVIDER = {
     "SCOPES": {
         "read": "Read scope",
         "write": "Write scope",
-    }
+    },
+    # 72 hrs
+    "ACCESS_TOKEN_EXPIRE_SECONDS": int(
+        os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", "259200")
+    ),
 }
+
 
 CORS_ORIGIN_ALLOW_ALL = True
 
