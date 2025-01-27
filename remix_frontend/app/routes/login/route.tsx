@@ -1,9 +1,9 @@
 import { z, ZodError } from 'zod';
-import { redirect, useFetcher, data } from 'react-router';
+import { useFetcher, data } from 'react-router';
 
-import Button from '~/components/Button';
+import { Button } from '~/components/button';
 import { login, OAuthError } from '~/libs/api.server';
-import Input from '~/components/Input';
+import { Input } from '~/components/input';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/dialog';
-import Label from '~/components/label';
+import { Label } from '~/components/label';
 
 import type { Route } from './+types/route';
 import _ from 'lodash';

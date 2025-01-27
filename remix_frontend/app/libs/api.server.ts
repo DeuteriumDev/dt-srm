@@ -124,7 +124,7 @@ export const login = async ({
 
 /**
  * Refresh current session, but doesn't commit new values
- * 
+ *
  * @param {{request}} args -  args object containing the Remix request object
  * @returns {Cookie} updatedSession
  * @throws {OAuthError}

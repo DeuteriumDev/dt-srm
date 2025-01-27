@@ -7,7 +7,7 @@ import {
   ScrollRestoration,
 } from 'react-router';
 import '@fontsource/fira-sans';
-import Toaster from '~/components/Toaster';
+import { Toaster } from '~/components/toaster';
 
 import type { Route } from './+types/root';
 import stylesheet from './app.css?url';

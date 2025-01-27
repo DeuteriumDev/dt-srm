@@ -1,6 +1,6 @@
 import { data, redirect } from 'react-router';
 
-import Button from '~/components/Button';
+import { Button } from '~/components/button';
 import api, { refresh } from '~/libs/api.server';
 import session from '~/libs/session.server';
 
