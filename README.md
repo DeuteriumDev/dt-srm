@@ -1,6 +1,6 @@
 # GraphTable
 
-This is graph table (the name needs work). It's a CMS / ERP for low volume, high complexity sales teams that needs customizable BPM workflows for their product(s). The goal is to streamline and simplify sales process' into something (no-code) programmable and fault tolerant.
+This is graph table (the name needs work). It's a DMS / ERP for low volume, high complexity sales teams that needs customizable BPM workflows for their product(s). The goal is to streamline and simplify sales process' into something (no-code) programmable and fault tolerant.
 
 ## Infrastructure
 
