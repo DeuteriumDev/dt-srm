@@ -1,10 +1,15 @@
-import { Link, Outlet } from 'react-router';
+import { data, Link, Outlet } from 'react-router';
 import { Home, FileText, Component } from 'lucide-react';
 
-import { Nav } from '~/components/Nav';
+import { SidebarProvider, SidebarTrigger } from '~/components/sidebar';
 import type { Route } from '../_auth/+types/route';
 
-export default function Layout(_args: Route.ComponentProps) {
+export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+  return data({ path: new URL(request.url).pathname });
+}
+
+export default function Layout({ loaderData }: Route.ComponentProps) {
+  console.log({ loaderData });
   return (
     <>
       <div className="bg-muted/40 hidden border-r md:block">
@@ -15,22 +20,6 @@ export default function Layout(_args: Route.ComponentProps) {
               <span className="">Graph Table</span>
             </Link>
           </div>
-          <Nav
-            links={[
-              {
-                title: 'Dashboard',
-                icon: Home,
-                variant: 'default',
-                href: '/dashboard',
-              },
-              {
-                title: 'Documents',
-                icon: FileText,
-                variant: 'default',
-                href: '/documents',
-              },
-            ]}
-          />
         </div>
       </div>
       <div className="flex flex-col">

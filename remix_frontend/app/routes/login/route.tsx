@@ -10,8 +10,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '~/components/Dialog';
-import Label from '~/components/Label';
+} from '~/components/dialog';
+import Label from '~/components/label';
 
 import type { Route } from './+types/route';
 import _ from 'lodash';

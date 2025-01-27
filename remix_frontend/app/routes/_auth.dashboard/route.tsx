@@ -1,8 +1,16 @@
-import { data, redirect } from 'react-router';
+import { data, Link, redirect } from 'react-router';
+import { Folder } from 'lucide-react';
 
-import Button from '~/components/Button';
+import { Button } from '~/components/button';
 import api, { refresh } from '~/libs/api.server';
 import session from '~/libs/session.server';
+import {
+  Card,
+  CardHeader,
+  CardDescription,
+  CardFooter,
+  CardTitle,
+} from '~/components/card';
 
 import type { Route } from '../_auth.dashboard/+types/route';
 
@@ -50,11 +58,28 @@ export default function Dashboard(props: Route.ComponentProps) {
       <Button onClick={console.log}>
         {loaderData?.usersMeRetrieve?.email}
       </Button>
-      <ul>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {loaderData.foldersList?.results.map((folder) => (
-          <li key={folder.id}>{folder.name}</li>
+          <Card key={folder.id}>
+            <CardHeader className="pt-6">
+              <CardTitle className="flex items-center gap-2">
+                <Folder />
+                <Link className="underline" to={`/folders/${folder.id}`}>
+                  {folder.name}
+                </Link>
+              </CardTitle>
+              {folder.description && (
+                <CardDescription>{folder.description}</CardDescription>
+              )}
+            </CardHeader>
+            <CardFooter>
+              <div className="italic">
+                Updated: {new Date(folder.updated).toLocaleString()}
+              </div>
+            </CardFooter>
+          </Card>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
