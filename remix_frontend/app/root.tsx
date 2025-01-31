@@ -25,8 +25,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+      <body className="min-h-svh bg-background font-sans antialiased">
+        <div className="relative flex min-h-svh flex-col bg-background">
           {children}
         </div>
         <Toaster />

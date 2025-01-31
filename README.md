@@ -37,7 +37,7 @@ TODO: add seeding script to `manage.py`
 
 Run `make dev` to start the frontend server.
 
-Goto [http://localhost:5173/](http://localhost:5173/) and login with either your user, or the admin user.
+Goto [http://localhost:4000/](http://localhost:4000/) and login with either your user, or the admin user.
 
 ### Schema
 

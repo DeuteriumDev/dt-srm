@@ -1,8 +1,8 @@
 import { z, ZodError } from 'zod';
 import { useFetcher, data } from 'react-router';
+import _ from 'lodash';
 
 import { Button } from '~/components/button';
-import { login, OAuthError } from '~/libs/api.server';
 import { Input } from '~/components/input';
 import {
   Dialog,
@@ -12,9 +12,9 @@ import {
   DialogTitle,
 } from '~/components/dialog';
 import { Label } from '~/components/label';
+import sessionManager from '~/libs/session.server';
 
 import type { Route } from './+types/route';
-import _ from 'lodash';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -42,7 +42,7 @@ export async function action({ request }: Route.ActionArgs) {
       });
 
     const redirectParam = new URL(request.url).searchParams.get('redirect');
-    return await login({
+    return await sessionManager.login({
       ...result,
       request,
       redirectTo: redirectParam || '/dashboard',
@@ -58,7 +58,7 @@ export async function action({ request }: Route.ActionArgs) {
       );
       return data(errorData, { status: 400 });
     }
-    if (error instanceof OAuthError) {
+    if (error instanceof sessionManager.OAuthError) {
       return data({ form: error.message }, { status: 400 });
     }
     throw error;
@@ -67,7 +67,6 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Login() {
   const fetcher = useFetcher();
-  console.log(fetcher);
 
   const _displayError = (error: 'username' | 'password' | 'form') => {
     return (

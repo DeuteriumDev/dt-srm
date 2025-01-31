@@ -1,9 +1,8 @@
-import { data, Link, redirect } from 'react-router';
+import { data, Link } from 'react-router';
 import { Folder } from 'lucide-react';
 
-import { Button } from '~/components/button';
-import api, { refresh } from '~/libs/api.server';
-import session from '~/libs/session.server';
+import api from '~/libs/api.server';
+import sessionManager from '~/libs/session.server';
 import {
   Card,
   CardHeader,
@@ -22,16 +21,7 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export async function loader(args: Route.LoaderArgs) {
-  let cookie = await session.getSession(args.request);
-  if (!cookie.has('access_token')) throw redirect(`/login?redirect=/dashboard`);
-  if (session.expiresAt <= new Date()) {
-    cookie = await refresh({ request: args.request });
-  }
-  const me = await api.usersMeRetrieve({
-    headers: {
-      Authorization: `Bearer ${cookie.get('access_token')}`,
-    },
-  });
+  const cookie = await sessionManager.getCookie(args.request);
   const folders = await api.foldersList({
     query: {
       favorite: true,
@@ -40,31 +30,27 @@ export async function loader(args: Route.LoaderArgs) {
       Authorization: `Bearer ${cookie.get('access_token')}`,
     },
   });
-  return data(
-    { usersMeRetrieve: me.data, foldersList: folders.data },
-    {
-      headers: {
-        'Set-Cookie': await session.commitSession(cookie),
-      },
-    },
-  );
+
+  // console.log({ folders, sessionManager, now: new Date() });
+  return data({
+    foldersList: folders.data,
+  });
 }
 
 export default function Dashboard(props: Route.ComponentProps) {
   const { loaderData } = props;
   return (
-    <div>
-      dashboard
-      <Button onClick={console.log}>
-        {loaderData?.usersMeRetrieve?.email}
-      </Button>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         {loaderData.foldersList?.results.map((folder) => (
           <Card key={folder.id}>
             <CardHeader className="pt-6">
               <CardTitle className="flex items-center gap-2">
                 <Folder />
-                <Link className="underline" to={`/folders/${folder.id}`}>
+                <Link
+                  className="underline"
+                  to={`/documents/folders/${folder.id}`}
+                >
                   {folder.name}
                 </Link>
               </CardTitle>

@@ -20,6 +20,7 @@ const config = tseslint.config(
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      'no-console': 'warn',
     },
   }),
   eslintConfigPrettier,
