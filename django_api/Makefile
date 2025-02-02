@@ -19,6 +19,8 @@ migrations:
 
 # - see [.env](./.env) for admin pass
 seed: migrations
+	@$(DJANGO) createsuperuser --no-input --email admin@admin.ca
+	@$(DJANGO) createapplication --client-id $(CLIENT_ID) --client-secret $(CLIENT_SECRET) --algorithm HS256 --name remix_frontend confidential password
 	@$(DJANGO) seed
 .PHONY: seed
 
