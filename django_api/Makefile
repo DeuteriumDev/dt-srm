@@ -11,11 +11,6 @@ install:
 .PHONY: install
 
 
-clean:
-	@rm -f db.sqlite3
-	@rm -rf ./**/migrations
-.PHONY: clean
-
 migrations:
 	@$(DJANGO) makemigrations accounts
 	@$(DJANGO) makemigrations kits
@@ -23,9 +18,8 @@ migrations:
 .PHONY: migrations
 
 # - see [.env](./.env) for admin pass
-seed: clean migrations
-	@$(DJANGO) createsuperuser --no-input --email admin@admin.ca
-	@$(DJANGO) createapplication --client-id $(CLIENT_ID) --client-secret $(CLIENT_SECRET) --algorithm HS256 --name remix_frontend confidential password
+seed: migrations
+	@$(DJANGO) seed
 .PHONY: seed
 
 dev:
@@ -35,3 +29,11 @@ dev:
 api-schema:
 	@$(DJANGO) spectacular --color --file schema.yml
 .PHONy: api-schema
+
+shell:
+	@$(DJANGO) shell
+.PHONY: shell
+
+db:
+	@docker compose -f ./docker-compose.yml --env-file .env up
+.PHONY: db

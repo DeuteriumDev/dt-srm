@@ -84,8 +84,12 @@ WSGI_APPLICATION = "django_api.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("POSTGRES_DB", "postgres"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+        "PORT": os.getenv("POSTGRES_PORT", "54322"),
     }
 }
 
@@ -152,9 +156,9 @@ OAUTH2_PROVIDER = {
         "read": "Read scope",
         "write": "Write scope",
     },
-    # 72 hrs
+    # 8 days
     "ACCESS_TOKEN_EXPIRE_SECONDS": int(
-        os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", "259200")
+        os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", "691200")
     ),
 }
 

@@ -18,7 +18,6 @@ class CustomGroup(models.Model):
         blank=True,
         default=None,
     )
-    inherit_permissions = False
     hidden = models.BooleanField(default=False, null=False)
 
     @property
@@ -32,7 +31,7 @@ class CustomGroup(models.Model):
 class Organization(models.Model):
     name = models.TextField("name", blank=False, null=False)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
-    children = models.ForeignKey(
+    root = models.ForeignKey(
         CustomGroup, null=True, blank=False, on_delete=models.SET_NULL
     )
 
