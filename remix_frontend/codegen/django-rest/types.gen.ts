@@ -42,7 +42,7 @@ export type Kit = {
     readonly created: string;
     readonly updated: string;
     inherit_permissions?: boolean;
-    title: string;
+    name: string;
     start: Nested;
     parent: Nested;
 };
@@ -67,7 +67,7 @@ export type Organization = {
     readonly id: number;
     name: string;
     avatar?: string | null;
-    children: Nested;
+    root: Nested;
 };
 
 export type PaginatedAnswerList = {
@@ -154,7 +154,7 @@ export type PatchedKit = {
     readonly created?: string;
     readonly updated?: string;
     inherit_permissions?: boolean;
-    title?: string;
+    name?: string;
     start?: Nested;
     parent?: Nested;
 };
@@ -167,7 +167,7 @@ export type PatchedOrganization = {
     readonly id?: number;
     name?: string;
     avatar?: string | null;
-    children?: Nested;
+    root?: Nested;
 };
 
 export type PatchedQuestion = {
@@ -304,6 +304,25 @@ export type AnswersUpdateResponses = {
 
 export type AnswersUpdateResponse = AnswersUpdateResponses[keyof AnswersUpdateResponses];
 
+export type DocumentsListData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * A page number within the paginated result set.
+         */
+        page?: number;
+    };
+    url: '/api/v1/documents/';
+};
+
+export type DocumentsListResponses = {
+    /**
+     * No response body
+     */
+    200: unknown;
+};
+
 export type FoldersListData = {
     body?: never;
     path?: never;
@@ -425,13 +444,13 @@ export type KitsListData = {
         created?: string;
         id?: string;
         inherit_permissions?: boolean;
+        name?: string;
         /**
          * A page number within the paginated result set.
          */
         page?: number;
         parent?: string;
         start?: string;
-        title?: string;
         updated?: string;
     };
     url: '/api/v1/kits/';
