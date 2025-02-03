@@ -28,3 +28,13 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = "__all__"
+
+
+class DocumentSerializer(serializers.Serializer):
+    id = serializers.UUIDField
+    name = serializers.CharField
+    updated = serializers.DateTimeField
+    created = serializers.DateTimeField
+
+    def to_representation(self, instance):
+        return instance

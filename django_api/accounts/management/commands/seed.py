@@ -27,7 +27,7 @@ class Command(BaseCommand):
         question = Question.objects.create(title="question 1")
         question.answers.add(answer)
         question.save()
-        Kit.objects.create(title="test kit 1", parent=folder, start=question).save()
+        Kit.objects.create(name="test kit 1", parent=folder, start=question).save()
 
         CustomPermissions.objects.create(
             content_type=ContentType.objects.get_for_model(Folder),

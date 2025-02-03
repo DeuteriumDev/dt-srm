@@ -28,12 +28,7 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 class OrganizationSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Organization
-        fields = [
-            "id",
-            "name",
-            "avatar",
-            "children",
-        ]
+        fields = "__all__"
         depth = 1
 
 

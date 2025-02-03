@@ -7,12 +7,13 @@ from kits.serializers import (
     QuestionSerializer,
     AnswerSerializer,
     FolderSerializer,
+    DocumentSerializer,
 )
-from rest_access_policy import AccessPolicy
-from rest_access_policy import AccessViewSetMixin
-from rest_framework import viewsets
+from rest_access_policy import AccessPolicy, AccessViewSetMixin
+from rest_framework import viewsets, mixins
 from django.db import models
 from typing import Dict
+from django.db.models.expressions import RawSQL
 
 
 def get_user_permissions(
@@ -115,8 +116,7 @@ class DocumentAccessPolicy(AccessPolicy):
             """
             for c in children:
                 child_docs.add(c)
-                print(type(c.children))
-                if c is not None:
+                if c is not None and c.children is not None:
                     # instead of repeating the checks inside the `if`
                     # statements we nest the if statements
                     if isinstance(c.children, list):
@@ -142,7 +142,7 @@ class DocumentAccessPolicy(AccessPolicy):
         return get_permission(request, view)["can_delete"]
 
 
-class DocumentViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
+class AbstractDocumentViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
     access_policy = DocumentAccessPolicy
     filterset_fields = "__all__"
 
@@ -150,21 +150,42 @@ class DocumentViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
         return self.access_policy.scope_queryset(self.request, self.queryset)
 
 
-class FolderViewSet(DocumentViewSet):
+class FolderViewSet(AbstractDocumentViewSet):
     queryset = Folder.objects.all()
     serializer_class = FolderSerializer
 
 
-class KitViewSet(DocumentViewSet):
+class KitViewSet(AbstractDocumentViewSet):
     queryset = Kit.objects.all()
     serializer_class = KitSerializer
 
 
-class QuestionViewSet(DocumentViewSet):
+class QuestionViewSet(AbstractDocumentViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
 
-class AnswerViewSet(DocumentViewSet):
+class AnswerViewSet(AbstractDocumentViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
+
+
+class DocumentsViewSet(
+    AccessViewSetMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+):
+    access_policy = DocumentAccessPolicy
+    filterset_fields = "__all__"
+    serializer_class = DocumentSerializer
+
+    def get_queryset(self):
+        fields = ("id", "name", "created", "updated", "doc_type")
+
+        folders = self.access_policy.scope_queryset(
+            self.request, Folder.objects.all()
+        ).values(*fields, doc_type=RawSQL("select 'folder'", ()))
+
+        kits = self.access_policy.scope_queryset(
+            self.request, Kit.objects.all()
+        ).values(*fields, doc_type=RawSQL("select 'kit'", ()))
+
+        return folders.union(kits).order_by("updated", "created")

@@ -41,10 +41,6 @@ class Folder(DocumentModel):
 
     @property
     def children(self):
-        print("get children")
-        print(self.name)
-        print(self.children_folders.count())
-        print(self.children_kits.count())
         return sorted(
             chain(self.children_folders.all(), self.children_kits.all()),
             key=attrgetter("created"),
@@ -55,7 +51,7 @@ class Folder(DocumentModel):
 
 
 class Kit(DocumentModel):
-    title = models.TextField(blank=False, null=False)
+    name = models.TextField(blank=False, null=False)
     start = models.ForeignKey(
         to="Question",
         on_delete=models.CASCADE,
@@ -74,7 +70,7 @@ class Kit(DocumentModel):
     @property
     def children(self):
         if self.start is not None:
-            return [self.start.all()]
+            return [self.start]
         return []
 
     def __str__(self):
