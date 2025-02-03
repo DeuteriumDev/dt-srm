@@ -8,1035 +8,1052 @@ paths:
     get:
       operationId: answers_list
       parameters:
-        - in: query
-          name: description
-          schema:
-            type: string
-        - in: query
-          name: image
-          schema:
-            type: string
-        - in: query
-          name: index
-          schema:
-            type: integer
-        - name: page
-          required: false
-          in: query
-          description: A page number within the paginated result set.
-          schema:
-            type: integer
-        - in: query
-          name: title
-          schema:
-            type: string
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: image
+        schema:
+          type: string
+      - in: query
+        name: index
+        schema:
+          type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: title
+        schema:
+          type: string
       tags:
-        - answers
+      - answers
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedAnswerList"
-          description: ""
+                $ref: '#/components/schemas/PaginatedAnswerList'
+          description: ''
     post:
       operationId: answers_create
       tags:
-        - answers
+      - answers
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Answer"
+              $ref: '#/components/schemas/Answer'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Answer"
+              $ref: '#/components/schemas/Answer'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Answer"
+              $ref: '#/components/schemas/Answer'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Answer"
-          description: ""
+                $ref: '#/components/schemas/Answer'
+          description: ''
   /api/v1/answers/{id}/:
     get:
       operationId: answers_retrieve
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this answer.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
       tags:
-        - answers
+      - answers
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Answer"
-          description: ""
+                $ref: '#/components/schemas/Answer'
+          description: ''
     put:
       operationId: answers_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this answer.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
       tags:
-        - answers
+      - answers
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Answer"
+              $ref: '#/components/schemas/Answer'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Answer"
+              $ref: '#/components/schemas/Answer'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Answer"
+              $ref: '#/components/schemas/Answer'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Answer"
-          description: ""
+                $ref: '#/components/schemas/Answer'
+          description: ''
     patch:
       operationId: answers_partial_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this answer.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
       tags:
-        - answers
+      - answers
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedAnswer"
+              $ref: '#/components/schemas/PatchedAnswer'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedAnswer"
+              $ref: '#/components/schemas/PatchedAnswer'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedAnswer"
+              $ref: '#/components/schemas/PatchedAnswer'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Answer"
-          description: ""
+                $ref: '#/components/schemas/Answer'
+          description: ''
     delete:
       operationId: answers_destroy
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this answer.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this answer.
+        required: true
       tags:
-        - answers
+      - answers
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "204":
+        '204':
+          description: No response body
+  /api/v1/documents/:
+    get:
+      operationId: documents_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - documents
+      security:
+      - {}
+      responses:
+        '200':
           description: No response body
   /api/v1/folders/:
     get:
       operationId: folders_list
       parameters:
-        - in: query
-          name: created
-          schema:
-            type: string
-            format: date-time
-        - in: query
-          name: description
-          schema:
-            type: string
-        - in: query
-          name: favorite
-          schema:
-            type: boolean
-        - in: query
-          name: id
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: inherit_permissions
-          schema:
-            type: boolean
-        - in: query
-          name: name
-          schema:
-            type: string
-        - name: page
-          required: false
-          in: query
-          description: A page number within the paginated result set.
-          schema:
-            type: integer
-        - in: query
-          name: parent
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: updated
-          schema:
-            type: string
-            format: date-time
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: favorite
+        schema:
+          type: boolean
+      - in: query
+        name: id
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: inherit_permissions
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: updated
+        schema:
+          type: string
+          format: date-time
       tags:
-        - folders
+      - folders
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedFolderList"
-          description: ""
+                $ref: '#/components/schemas/PaginatedFolderList'
+          description: ''
     post:
       operationId: folders_create
       tags:
-        - folders
+      - folders
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Folder"
+              $ref: '#/components/schemas/Folder'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Folder"
+              $ref: '#/components/schemas/Folder'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Folder"
+              $ref: '#/components/schemas/Folder'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Folder"
-          description: ""
+                $ref: '#/components/schemas/Folder'
+          description: ''
   /api/v1/folders/{id}/:
     get:
       operationId: folders_retrieve
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this folder.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
       tags:
-        - folders
+      - folders
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Folder"
-          description: ""
+                $ref: '#/components/schemas/Folder'
+          description: ''
     put:
       operationId: folders_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this folder.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
       tags:
-        - folders
+      - folders
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Folder"
+              $ref: '#/components/schemas/Folder'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Folder"
+              $ref: '#/components/schemas/Folder'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Folder"
+              $ref: '#/components/schemas/Folder'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Folder"
-          description: ""
+                $ref: '#/components/schemas/Folder'
+          description: ''
     patch:
       operationId: folders_partial_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this folder.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
       tags:
-        - folders
+      - folders
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedFolder"
+              $ref: '#/components/schemas/PatchedFolder'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedFolder"
+              $ref: '#/components/schemas/PatchedFolder'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedFolder"
+              $ref: '#/components/schemas/PatchedFolder'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Folder"
-          description: ""
+                $ref: '#/components/schemas/Folder'
+          description: ''
     delete:
       operationId: folders_destroy
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this folder.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this folder.
+        required: true
       tags:
-        - folders
+      - folders
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "204":
+        '204':
           description: No response body
   /api/v1/kits/:
     get:
       operationId: kits_list
       parameters:
-        - in: query
-          name: created
-          schema:
-            type: string
-            format: date-time
-        - in: query
-          name: id
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: inherit_permissions
-          schema:
-            type: boolean
-        - name: page
-          required: false
-          in: query
-          description: A page number within the paginated result set.
-          schema:
-            type: integer
-        - in: query
-          name: parent
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: start
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: title
-          schema:
-            type: string
-        - in: query
-          name: updated
-          schema:
-            type: string
-            format: date-time
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: id
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: inherit_permissions
+        schema:
+          type: boolean
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: parent
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: start
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: updated
+        schema:
+          type: string
+          format: date-time
       tags:
-        - kits
+      - kits
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedKitList"
-          description: ""
+                $ref: '#/components/schemas/PaginatedKitList'
+          description: ''
     post:
       operationId: kits_create
       tags:
-        - kits
+      - kits
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Kit"
+              $ref: '#/components/schemas/Kit'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Kit"
+              $ref: '#/components/schemas/Kit'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Kit"
+              $ref: '#/components/schemas/Kit'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Kit"
-          description: ""
+                $ref: '#/components/schemas/Kit'
+          description: ''
   /api/v1/kits/{id}/:
     get:
       operationId: kits_retrieve
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this kit.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
       tags:
-        - kits
+      - kits
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Kit"
-          description: ""
+                $ref: '#/components/schemas/Kit'
+          description: ''
     put:
       operationId: kits_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this kit.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
       tags:
-        - kits
+      - kits
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Kit"
+              $ref: '#/components/schemas/Kit'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Kit"
+              $ref: '#/components/schemas/Kit'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Kit"
+              $ref: '#/components/schemas/Kit'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Kit"
-          description: ""
+                $ref: '#/components/schemas/Kit'
+          description: ''
     patch:
       operationId: kits_partial_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this kit.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
       tags:
-        - kits
+      - kits
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedKit"
+              $ref: '#/components/schemas/PatchedKit'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedKit"
+              $ref: '#/components/schemas/PatchedKit'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedKit"
+              $ref: '#/components/schemas/PatchedKit'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Kit"
-          description: ""
+                $ref: '#/components/schemas/Kit'
+          description: ''
     delete:
       operationId: kits_destroy
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this kit.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this kit.
+        required: true
       tags:
-        - kits
+      - kits
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "204":
+        '204':
           description: No response body
   /api/v1/organizations/:
     get:
       operationId: organizations_list
       parameters:
-        - name: page
-          required: false
-          in: query
-          description: A page number within the paginated result set.
-          schema:
-            type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
-        - organizations
+      - organizations
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedOrganizationList"
-          description: ""
+                $ref: '#/components/schemas/PaginatedOrganizationList'
+          description: ''
     post:
       operationId: organizations_create
       tags:
-        - organizations
+      - organizations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Organization"
+              $ref: '#/components/schemas/Organization'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Organization"
+              $ref: '#/components/schemas/Organization'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Organization"
+              $ref: '#/components/schemas/Organization'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
-          description: ""
+                $ref: '#/components/schemas/Organization'
+          description: ''
   /api/v1/organizations/{id}/:
     get:
       operationId: organizations_retrieve
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this organization.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
       tags:
-        - organizations
+      - organizations
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
-          description: ""
+                $ref: '#/components/schemas/Organization'
+          description: ''
     put:
       operationId: organizations_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this organization.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
       tags:
-        - organizations
+      - organizations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Organization"
+              $ref: '#/components/schemas/Organization'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Organization"
+              $ref: '#/components/schemas/Organization'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Organization"
+              $ref: '#/components/schemas/Organization'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
-          description: ""
+                $ref: '#/components/schemas/Organization'
+          description: ''
     patch:
       operationId: organizations_partial_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this organization.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
       tags:
-        - organizations
+      - organizations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedOrganization"
+              $ref: '#/components/schemas/PatchedOrganization'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedOrganization"
+              $ref: '#/components/schemas/PatchedOrganization'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedOrganization"
+              $ref: '#/components/schemas/PatchedOrganization'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
-          description: ""
+                $ref: '#/components/schemas/Organization'
+          description: ''
     delete:
       operationId: organizations_destroy
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          description: A unique integer value identifying this organization.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this organization.
+        required: true
       tags:
-        - organizations
+      - organizations
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "204":
+        '204':
           description: No response body
   /api/v1/questions/:
     get:
       operationId: questions_list
       parameters:
-        - in: query
-          name: answers
-          schema:
-            type: array
-            items:
-              type: integer
-          explode: true
-          style: form
-        - in: query
-          name: created
-          schema:
-            type: string
-            format: date-time
-        - in: query
-          name: description
-          schema:
-            type: string
-        - in: query
-          name: id
-          schema:
-            type: string
-            format: uuid
-        - in: query
-          name: image
-          schema:
-            type: string
-        - in: query
-          name: inherit_permissions
-          schema:
-            type: boolean
-        - in: query
-          name: next
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          required: false
-          in: query
-          description: A page number within the paginated result set.
-          schema:
+      - in: query
+        name: answers
+        schema:
+          type: array
+          items:
             type: integer
-        - in: query
-          name: title
-          schema:
-            type: string
-        - in: query
-          name: updated
-          schema:
-            type: string
-            format: date-time
+        explode: true
+        style: form
+      - in: query
+        name: created
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: description
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: image
+        schema:
+          type: string
+      - in: query
+        name: inherit_permissions
+        schema:
+          type: boolean
+      - in: query
+        name: next
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: query
+        name: title
+        schema:
+          type: string
+      - in: query
+        name: updated
+        schema:
+          type: string
+          format: date-time
       tags:
-        - questions
+      - questions
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedQuestionList"
-          description: ""
+                $ref: '#/components/schemas/PaginatedQuestionList'
+          description: ''
     post:
       operationId: questions_create
       tags:
-        - questions
+      - questions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Question"
+              $ref: '#/components/schemas/Question'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Question"
+              $ref: '#/components/schemas/Question'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Question"
+              $ref: '#/components/schemas/Question'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Question"
-          description: ""
+                $ref: '#/components/schemas/Question'
+          description: ''
   /api/v1/questions/{id}/:
     get:
       operationId: questions_retrieve
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this question.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
       tags:
-        - questions
+      - questions
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Question"
-          description: ""
+                $ref: '#/components/schemas/Question'
+          description: ''
     put:
       operationId: questions_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this question.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
       tags:
-        - questions
+      - questions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Question"
+              $ref: '#/components/schemas/Question'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/Question"
+              $ref: '#/components/schemas/Question'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/Question"
+              $ref: '#/components/schemas/Question'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Question"
-          description: ""
+                $ref: '#/components/schemas/Question'
+          description: ''
     patch:
       operationId: questions_partial_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this question.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
       tags:
-        - questions
+      - questions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedQuestion"
+              $ref: '#/components/schemas/PatchedQuestion'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedQuestion"
+              $ref: '#/components/schemas/PatchedQuestion'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedQuestion"
+              $ref: '#/components/schemas/PatchedQuestion'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Question"
-          description: ""
+                $ref: '#/components/schemas/Question'
+          description: ''
     delete:
       operationId: questions_destroy
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this question.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this question.
+        required: true
       tags:
-        - questions
+      - questions
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "204":
+        '204':
           description: No response body
   /api/v1/users/:
     get:
       operationId: users_list
       parameters:
-        - name: page
-          required: false
-          in: query
-          description: A page number within the paginated result set.
-          schema:
-            type: integer
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
       tags:
-        - users
+      - users
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedCustomUserList"
-          description: ""
+                $ref: '#/components/schemas/PaginatedCustomUserList'
+          description: ''
     post:
       operationId: users_create
       tags:
-        - users
+      - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CustomUser"
+              $ref: '#/components/schemas/CustomUser'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/CustomUser"
+              $ref: '#/components/schemas/CustomUser'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/CustomUser"
+              $ref: '#/components/schemas/CustomUser'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "201":
+        '201':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomUser"
-          description: ""
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
   /api/v1/users/{id}/:
     get:
       operationId: users_retrieve
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this user.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
       tags:
-        - users
+      - users
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomUser"
-          description: ""
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
     put:
       operationId: users_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this user.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
       tags:
-        - users
+      - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CustomUser"
+              $ref: '#/components/schemas/CustomUser'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/CustomUser"
+              $ref: '#/components/schemas/CustomUser'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/CustomUser"
+              $ref: '#/components/schemas/CustomUser'
         required: true
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomUser"
-          description: ""
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
     patch:
       operationId: users_partial_update
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this user.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
       tags:
-        - users
+      - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PatchedCustomUser"
+              $ref: '#/components/schemas/PatchedCustomUser'
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/PatchedCustomUser"
+              $ref: '#/components/schemas/PatchedCustomUser'
           multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PatchedCustomUser"
+              $ref: '#/components/schemas/PatchedCustomUser'
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomUser"
-          description: ""
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
     delete:
       operationId: users_destroy
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-            format: uuid
-          description: A UUID string identifying this user.
-          required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this user.
+        required: true
       tags:
-        - users
+      - users
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "204":
+        '204':
           description: No response body
   /api/v1/users/me/:
     get:
       operationId: users_me_retrieve
       tags:
-        - users
+      - users
       security:
-        - bearerAuth: []
+      - {}
       responses:
-        "200":
+        '200':
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomUser"
-          description: ""
+                $ref: '#/components/schemas/CustomUser'
+          description: ''
 components:
   schemas:
     Answer:
@@ -1056,12 +1073,11 @@ components:
           maxLength: 200
         index:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
       required:
-        - id
-        - title
+      - id
+      - title
     CustomUser:
       type: object
       description: |-
@@ -1093,12 +1109,12 @@ components:
         groups:
           type: array
           items:
-            $ref: "#/components/schemas/Nested"
+            $ref: '#/components/schemas/Nested'
           readOnly: true
       required:
-        - email
-        - groups
-        - id
+      - email
+      - groups
+      - id
     Folder:
       type: object
       description: |-
@@ -1131,10 +1147,10 @@ components:
           format: uuid
           nullable: true
       required:
-        - created
-        - id
-        - name
-        - updated
+      - created
+      - id
+      - name
+      - updated
     Kit:
       type: object
       properties:
@@ -1152,23 +1168,23 @@ components:
           readOnly: true
         inherit_permissions:
           type: boolean
-        title:
+        name:
           type: string
         start:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
         parent:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
       required:
-        - created
-        - id
-        - parent
-        - start
-        - title
-        - updated
+      - created
+      - id
+      - name
+      - parent
+      - start
+      - updated
     Nested:
       type: object
       properties:
@@ -1198,19 +1214,19 @@ components:
           maxLength: 200
         next:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
         answers:
           type: array
           items:
-            $ref: "#/components/schemas/Nested"
+            $ref: '#/components/schemas/Nested'
           readOnly: true
       required:
-        - answers
-        - created
-        - id
-        - next
-        - updated
+      - answers
+      - created
+      - id
+      - next
+      - updated
     Organization:
       type: object
       description: |-
@@ -1226,19 +1242,19 @@ components:
           type: string
           format: uri
           nullable: true
-        children:
+        root:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
       required:
-        - children
-        - id
-        - name
+      - id
+      - name
+      - root
     PaginatedAnswerList:
       type: object
       required:
-        - count
-        - results
+      - count
+      - results
       properties:
         count:
           type: integer
@@ -1256,12 +1272,12 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Answer"
+            $ref: '#/components/schemas/Answer'
     PaginatedCustomUserList:
       type: object
       required:
-        - count
-        - results
+      - count
+      - results
       properties:
         count:
           type: integer
@@ -1279,12 +1295,12 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/CustomUser"
+            $ref: '#/components/schemas/CustomUser'
     PaginatedFolderList:
       type: object
       required:
-        - count
-        - results
+      - count
+      - results
       properties:
         count:
           type: integer
@@ -1302,12 +1318,12 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Folder"
+            $ref: '#/components/schemas/Folder'
     PaginatedKitList:
       type: object
       required:
-        - count
-        - results
+      - count
+      - results
       properties:
         count:
           type: integer
@@ -1325,12 +1341,12 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Kit"
+            $ref: '#/components/schemas/Kit'
     PaginatedOrganizationList:
       type: object
       required:
-        - count
-        - results
+      - count
+      - results
       properties:
         count:
           type: integer
@@ -1348,12 +1364,12 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Organization"
+            $ref: '#/components/schemas/Organization'
     PaginatedQuestionList:
       type: object
       required:
-        - count
-        - results
+      - count
+      - results
       properties:
         count:
           type: integer
@@ -1371,7 +1387,7 @@ components:
         results:
           type: array
           items:
-            $ref: "#/components/schemas/Question"
+            $ref: '#/components/schemas/Question'
     PatchedAnswer:
       type: object
       properties:
@@ -1389,9 +1405,8 @@ components:
           maxLength: 200
         index:
           type: integer
-          maximum: 9223372036854775807
+          maximum: 2147483647
           minimum: 0
-          format: int64
     PatchedCustomUser:
       type: object
       description: |-
@@ -1423,7 +1438,7 @@ components:
         groups:
           type: array
           items:
-            $ref: "#/components/schemas/Nested"
+            $ref: '#/components/schemas/Nested'
           readOnly: true
     PatchedFolder:
       type: object
@@ -1473,15 +1488,15 @@ components:
           readOnly: true
         inherit_permissions:
           type: boolean
-        title:
+        name:
           type: string
         start:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
         parent:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
     PatchedOrganization:
       type: object
@@ -1498,9 +1513,9 @@ components:
           type: string
           format: uri
           nullable: true
-        children:
+        root:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
     PatchedQuestion:
       type: object
@@ -1531,12 +1546,12 @@ components:
           maxLength: 200
         next:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
         answers:
           type: array
           items:
-            $ref: "#/components/schemas/Nested"
+            $ref: '#/components/schemas/Nested'
           readOnly: true
     Question:
       type: object
@@ -1567,24 +1582,20 @@ components:
           maxLength: 200
         next:
           allOf:
-            - $ref: "#/components/schemas/Nested"
+          - $ref: '#/components/schemas/Nested'
           readOnly: true
         answers:
           type: array
           items:
-            $ref: "#/components/schemas/Nested"
+            $ref: '#/components/schemas/Nested'
           readOnly: true
       required:
-        - answers
-        - created
-        - id
-        - next
-        - updated
+      - answers
+      - created
+      - id
+      - next
+      - updated
   securitySchemes:
-    # oauth2:
-    #   type: oauth2
-    #   flows: {}
-    bearerAuth: # arbitrary name for the security scheme
-      type: http
-      scheme: bearer
-      bearerFormat: JWT # optional, arbitrary value for documentation
+    oauth2:
+      type: oauth2
+      flows: {}

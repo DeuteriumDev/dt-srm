@@ -36,6 +36,6 @@ shell:
 	@$(DJANGO) shell
 .PHONY: shell
 
-db:
+db: seed
 	@docker compose -f ./docker-compose.yml --env-file .env up
 .PHONY: db
