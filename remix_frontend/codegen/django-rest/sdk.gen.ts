@@ -61,6 +61,12 @@ export const answersUpdate = <ThrowOnError extends boolean = false>(options: Opt
 
 export const documentsList = <ThrowOnError extends boolean = false>(options?: Options<DocumentsListData, ThrowOnError>) => {
     return (options?.client ?? client).get<unknown, unknown, ThrowOnError>({
+        querySerializer: {
+            array: {
+                explode: false,
+                style: 'form'
+            }
+        },
         url: '/api/v1/documents/',
         ...options
     });

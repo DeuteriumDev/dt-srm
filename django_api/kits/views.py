@@ -1,7 +1,7 @@
 from functools import reduce
 from django.http import HttpRequest
 from accounts.models import CustomPermissions
-from kits.models import Kit, Question, Answer, Folder
+from kits.models import Kit, Question, Answer, Folder, Document
 from kits.serializers import (
     KitSerializer,
     QuestionSerializer,
@@ -10,10 +10,11 @@ from kits.serializers import (
     DocumentSerializer,
 )
 from rest_access_policy import AccessPolicy, AccessViewSetMixin
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, filters
 from django.db import models
 from typing import Dict
 from django.db.models.expressions import RawSQL
+from django_filters import rest_framework as django_filters
 
 
 def get_user_permissions(
@@ -174,8 +175,21 @@ class DocumentsViewSet(
     AccessViewSetMixin, mixins.ListModelMixin, viewsets.GenericViewSet
 ):
     access_policy = DocumentAccessPolicy
-    filterset_fields = "__all__"
     serializer_class = DocumentSerializer
+    # fake queryset to add schema detection for codegen
+    queryset = Document.objects.all()
+
+    filterset_fields = {
+        "id": ["exact"],
+        "name": ["exact", "contains"],
+        "created": ["exact", "gte", "lte"],
+        "updated": ["exact", "gte", "lte"],
+        "doc_type": ["in"],
+    }
+    filter_backends = (
+        django_filters.DjangoFilterBackend,
+        filters.OrderingFilter,
+    )
 
     def get_queryset(self):
         fields = ("id", "name", "created", "updated", "doc_type")

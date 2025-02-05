@@ -8,6 +8,13 @@ export type Answer = {
     index?: number;
 };
 
+export type AnswerRequest = {
+    title: string;
+    description?: string;
+    image?: string | null;
+    index?: number;
+};
+
 /**
  * A ModelSerializer that takes an additional `fields` argument that
  * controls which fields should be displayed.
@@ -20,6 +27,18 @@ export type CustomUser = {
     last_name?: string;
     is_active?: boolean;
     readonly groups: Array<Nested>;
+};
+
+/**
+ * A ModelSerializer that takes an additional `fields` argument that
+ * controls which fields should be displayed.
+ */
+export type CustomUserRequest = {
+    email: string;
+    avatar?: (Blob | File) | null;
+    first_name?: string;
+    last_name?: string;
+    is_active?: boolean;
 };
 
 /**
@@ -37,6 +56,18 @@ export type Folder = {
     parent?: string | null;
 };
 
+/**
+ * A serializer mixin that takes an additional `fields` argument that controls
+ * which fields should be displayed.
+ */
+export type FolderRequest = {
+    inherit_permissions?: boolean;
+    name: string;
+    description?: string | null;
+    favorite?: boolean;
+    parent?: string | null;
+};
+
 export type Kit = {
     readonly id: string;
     readonly created: string;
@@ -45,6 +76,11 @@ export type Kit = {
     name: string;
     start: Nested;
     parent: Nested;
+};
+
+export type KitRequest = {
+    inherit_permissions?: boolean;
+    name: string;
 };
 
 export type Nested = {
@@ -59,6 +95,13 @@ export type Nested = {
     readonly answers: Array<Nested>;
 };
 
+export type NestedRequest = {
+    inherit_permissions?: boolean;
+    title?: string;
+    description?: string | null;
+    image?: string | null;
+};
+
 /**
  * A ModelSerializer that takes an additional `fields` argument that
  * controls which fields should be displayed.
@@ -68,6 +111,15 @@ export type Organization = {
     name: string;
     avatar?: string | null;
     root: Nested;
+};
+
+/**
+ * A ModelSerializer that takes an additional `fields` argument that
+ * controls which fields should be displayed.
+ */
+export type OrganizationRequest = {
+    name: string;
+    avatar?: (Blob | File) | null;
 };
 
 export type PaginatedAnswerList = {
@@ -112,8 +164,7 @@ export type PaginatedQuestionList = {
     results: Array<Question>;
 };
 
-export type PatchedAnswer = {
-    readonly id?: number;
+export type PatchedAnswerRequest = {
     title?: string;
     description?: string;
     image?: string | null;
@@ -124,24 +175,19 @@ export type PatchedAnswer = {
  * A ModelSerializer that takes an additional `fields` argument that
  * controls which fields should be displayed.
  */
-export type PatchedCustomUser = {
-    readonly id?: string;
+export type PatchedCustomUserRequest = {
     email?: string;
-    avatar?: string | null;
+    avatar?: (Blob | File) | null;
     first_name?: string;
     last_name?: string;
     is_active?: boolean;
-    readonly groups?: Array<Nested>;
 };
 
 /**
  * A serializer mixin that takes an additional `fields` argument that controls
  * which fields should be displayed.
  */
-export type PatchedFolder = {
-    readonly id?: string;
-    readonly created?: string;
-    readonly updated?: string;
+export type PatchedFolderRequest = {
     inherit_permissions?: boolean;
     name?: string;
     description?: string | null;
@@ -149,37 +195,25 @@ export type PatchedFolder = {
     parent?: string | null;
 };
 
-export type PatchedKit = {
-    readonly id?: string;
-    readonly created?: string;
-    readonly updated?: string;
+export type PatchedKitRequest = {
     inherit_permissions?: boolean;
     name?: string;
-    start?: Nested;
-    parent?: Nested;
 };
 
 /**
  * A ModelSerializer that takes an additional `fields` argument that
  * controls which fields should be displayed.
  */
-export type PatchedOrganization = {
-    readonly id?: number;
+export type PatchedOrganizationRequest = {
     name?: string;
-    avatar?: string | null;
-    root?: Nested;
+    avatar?: (Blob | File) | null;
 };
 
-export type PatchedQuestion = {
-    readonly id?: string;
-    readonly created?: string;
-    readonly updated?: string;
+export type PatchedQuestionRequest = {
     inherit_permissions?: boolean;
     title?: string;
     description?: string | null;
     image?: string | null;
-    next?: Nested;
-    readonly answers?: Array<Nested>;
 };
 
 export type Question = {
@@ -192,6 +226,13 @@ export type Question = {
     image?: string | null;
     next: Nested;
     readonly answers: Array<Nested>;
+};
+
+export type QuestionRequest = {
+    inherit_permissions?: boolean;
+    title?: string;
+    description?: string | null;
+    image?: string | null;
 };
 
 export type AnswersListData = {
@@ -217,7 +258,7 @@ export type AnswersListResponses = {
 export type AnswersListResponse = AnswersListResponses[keyof AnswersListResponses];
 
 export type AnswersCreateData = {
-    body: Answer;
+    body: AnswerRequest;
     path?: never;
     query?: never;
     url: '/api/v1/answers/';
@@ -269,7 +310,7 @@ export type AnswersRetrieveResponses = {
 export type AnswersRetrieveResponse = AnswersRetrieveResponses[keyof AnswersRetrieveResponses];
 
 export type AnswersPartialUpdateData = {
-    body?: PatchedAnswer;
+    body?: PatchedAnswerRequest;
     path: {
         /**
          * A unique integer value identifying this answer.
@@ -287,7 +328,7 @@ export type AnswersPartialUpdateResponses = {
 export type AnswersPartialUpdateResponse = AnswersPartialUpdateResponses[keyof AnswersPartialUpdateResponses];
 
 export type AnswersUpdateData = {
-    body: Answer;
+    body: AnswerRequest;
     path: {
         /**
          * A unique integer value identifying this answer.
@@ -308,10 +349,27 @@ export type DocumentsListData = {
     body?: never;
     path?: never;
     query?: {
+        created?: string;
+        created__gte?: string;
+        created__lte?: string;
+        /**
+         * Multiple values may be separated by commas.
+         */
+        doc_type__in?: Array<string>;
+        id?: string;
+        name?: string;
+        name__contains?: string;
+        /**
+         * Which field to use when ordering the results.
+         */
+        ordering?: string;
         /**
          * A page number within the paginated result set.
          */
         page?: number;
+        updated?: string;
+        updated__gte?: string;
+        updated__lte?: string;
     };
     url: '/api/v1/documents/';
 };
@@ -350,7 +408,7 @@ export type FoldersListResponses = {
 export type FoldersListResponse = FoldersListResponses[keyof FoldersListResponses];
 
 export type FoldersCreateData = {
-    body: Folder;
+    body: FolderRequest;
     path?: never;
     query?: never;
     url: '/api/v1/folders/';
@@ -402,7 +460,7 @@ export type FoldersRetrieveResponses = {
 export type FoldersRetrieveResponse = FoldersRetrieveResponses[keyof FoldersRetrieveResponses];
 
 export type FoldersPartialUpdateData = {
-    body?: PatchedFolder;
+    body?: PatchedFolderRequest;
     path: {
         /**
          * A UUID string identifying this folder.
@@ -420,7 +478,7 @@ export type FoldersPartialUpdateResponses = {
 export type FoldersPartialUpdateResponse = FoldersPartialUpdateResponses[keyof FoldersPartialUpdateResponses];
 
 export type FoldersUpdateData = {
-    body: Folder;
+    body: FolderRequest;
     path: {
         /**
          * A UUID string identifying this folder.
@@ -463,7 +521,7 @@ export type KitsListResponses = {
 export type KitsListResponse = KitsListResponses[keyof KitsListResponses];
 
 export type KitsCreateData = {
-    body: Kit;
+    body: KitRequest;
     path?: never;
     query?: never;
     url: '/api/v1/kits/';
@@ -515,7 +573,7 @@ export type KitsRetrieveResponses = {
 export type KitsRetrieveResponse = KitsRetrieveResponses[keyof KitsRetrieveResponses];
 
 export type KitsPartialUpdateData = {
-    body?: PatchedKit;
+    body?: PatchedKitRequest;
     path: {
         /**
          * A UUID string identifying this kit.
@@ -533,7 +591,7 @@ export type KitsPartialUpdateResponses = {
 export type KitsPartialUpdateResponse = KitsPartialUpdateResponses[keyof KitsPartialUpdateResponses];
 
 export type KitsUpdateData = {
-    body: Kit;
+    body: KitRequest;
     path: {
         /**
          * A UUID string identifying this kit.
@@ -569,7 +627,7 @@ export type OrganizationsListResponses = {
 export type OrganizationsListResponse = OrganizationsListResponses[keyof OrganizationsListResponses];
 
 export type OrganizationsCreateData = {
-    body: Organization;
+    body: OrganizationRequest;
     path?: never;
     query?: never;
     url: '/api/v1/organizations/';
@@ -621,7 +679,7 @@ export type OrganizationsRetrieveResponses = {
 export type OrganizationsRetrieveResponse = OrganizationsRetrieveResponses[keyof OrganizationsRetrieveResponses];
 
 export type OrganizationsPartialUpdateData = {
-    body?: PatchedOrganization;
+    body?: PatchedOrganizationRequest;
     path: {
         /**
          * A unique integer value identifying this organization.
@@ -639,7 +697,7 @@ export type OrganizationsPartialUpdateResponses = {
 export type OrganizationsPartialUpdateResponse = OrganizationsPartialUpdateResponses[keyof OrganizationsPartialUpdateResponses];
 
 export type OrganizationsUpdateData = {
-    body: Organization;
+    body: OrganizationRequest;
     path: {
         /**
          * A unique integer value identifying this organization.
@@ -684,7 +742,7 @@ export type QuestionsListResponses = {
 export type QuestionsListResponse = QuestionsListResponses[keyof QuestionsListResponses];
 
 export type QuestionsCreateData = {
-    body?: Question;
+    body?: QuestionRequest;
     path?: never;
     query?: never;
     url: '/api/v1/questions/';
@@ -736,7 +794,7 @@ export type QuestionsRetrieveResponses = {
 export type QuestionsRetrieveResponse = QuestionsRetrieveResponses[keyof QuestionsRetrieveResponses];
 
 export type QuestionsPartialUpdateData = {
-    body?: PatchedQuestion;
+    body?: PatchedQuestionRequest;
     path: {
         /**
          * A UUID string identifying this question.
@@ -754,7 +812,7 @@ export type QuestionsPartialUpdateResponses = {
 export type QuestionsPartialUpdateResponse = QuestionsPartialUpdateResponses[keyof QuestionsPartialUpdateResponses];
 
 export type QuestionsUpdateData = {
-    body?: Question;
+    body?: QuestionRequest;
     path: {
         /**
          * A UUID string identifying this question.
@@ -790,7 +848,7 @@ export type UsersListResponses = {
 export type UsersListResponse = UsersListResponses[keyof UsersListResponses];
 
 export type UsersCreateData = {
-    body: CustomUser;
+    body: CustomUserRequest;
     path?: never;
     query?: never;
     url: '/api/v1/users/';
@@ -842,7 +900,7 @@ export type UsersRetrieveResponses = {
 export type UsersRetrieveResponse = UsersRetrieveResponses[keyof UsersRetrieveResponses];
 
 export type UsersPartialUpdateData = {
-    body?: PatchedCustomUser;
+    body?: PatchedCustomUserRequest;
     path: {
         /**
          * A UUID string identifying this user.
@@ -860,7 +918,7 @@ export type UsersPartialUpdateResponses = {
 export type UsersPartialUpdateResponse = UsersPartialUpdateResponses[keyof UsersPartialUpdateResponses];
 
 export type UsersUpdateData = {
-    body: CustomUser;
+    body: CustomUserRequest;
     path: {
         /**
          * A UUID string identifying this user.

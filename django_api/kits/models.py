@@ -15,7 +15,7 @@ class DocumentModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ["created"]
+        ordering = ["updated"]
 
     @property
     def parent(self):
@@ -122,3 +122,15 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"Answer: {self.title}"
+
+
+class Document(DocumentModel):
+    """
+    Fake model for adding query filtering to [documents view](./views.py) , do not use
+    """
+
+    name = models.TextField(blank=False, null=False)
+    doc_type = models.TextField(blank=False, null=False)
+
+    class Meta:
+        managed = False
