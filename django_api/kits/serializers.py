@@ -31,10 +31,8 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.Serializer):
-    id = serializers.UUIDField
-    name = serializers.CharField
-    updated = serializers.DateTimeField
-    created = serializers.DateTimeField
-
-    def to_representation(self, instance):
-        return instance
+    id = serializers.UUIDField()
+    name = serializers.CharField()
+    updated = serializers.DateTimeField()
+    created = serializers.DateTimeField()
+    doc_type = serializers.CharField()

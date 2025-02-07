@@ -29,7 +29,6 @@ router.register(r"kits", kit_views.KitViewSet, basename="kit")
 router.register(r"questions", kit_views.QuestionViewSet, basename="question")
 router.register(r"answers", kit_views.AnswerViewSet, basename="answer")
 router.register(r"folders", kit_views.FolderViewSet, basename="folder")
-router.register(r"documents", kit_views.DocumentsViewSet, basename="document")
 
 # accounts
 router.register(r"users", account_views.CustomUserViewSet, basename="user")
@@ -41,4 +40,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("oauth/", include(oauth2_urls)),
     path("api/v1/", include(router.urls)),
+    path("api/v1/documents/", kit_views.documents_list),
 ]

@@ -1,7 +1,7 @@
 from functools import reduce
 from django.http import HttpRequest
 from accounts.models import CustomPermissions
-from kits.models import Kit, Question, Answer, Folder, Document
+from kits.models import Kit, Question, Answer, Folder
 from kits.serializers import (
     KitSerializer,
     QuestionSerializer,
@@ -10,11 +10,10 @@ from kits.serializers import (
     DocumentSerializer,
 )
 from rest_access_policy import AccessPolicy, AccessViewSetMixin
-from rest_framework import viewsets, mixins, filters
+from rest_framework import viewsets, mixins, filters, views, pagination, decorators
 from django.db import models
 from typing import Dict
 from django.db.models.expressions import RawSQL
-from django_filters import rest_framework as django_filters
 
 
 def get_user_permissions(
@@ -171,35 +170,69 @@ class AnswerViewSet(AbstractDocumentViewSet):
     serializer_class = AnswerSerializer
 
 
-class DocumentsViewSet(
-    AccessViewSetMixin, mixins.ListModelMixin, viewsets.GenericViewSet
-):
-    access_policy = DocumentAccessPolicy
-    serializer_class = DocumentSerializer
-    # fake queryset to add schema detection for codegen
-    queryset = Document.objects.all()
+@decorators.api_view(["GET"])
+def documents_list(request: HttpRequest):
+    access_policy = DocumentAccessPolicy()
+    paginator = pagination.PageNumberPagination()
+    paginator.page_size = 10
 
-    filterset_fields = {
+    fields = ("id", "name", "created", "updated", "doc_type")
+    filters = {}
+    filter_fields = {
         "id": ["exact"],
         "name": ["exact", "contains"],
-        "created": ["exact", "gte", "lte"],
-        "updated": ["exact", "gte", "lte"],
-        "doc_type": ["in"],
+        "created": ["gte", "lte"],
+        "updated": ["gte", "lte"],
+        # "doc_type": ["in"],
     }
-    filter_backends = (
-        django_filters.DjangoFilterBackend,
-        filters.OrderingFilter,
-    )
 
-    def get_queryset(self):
-        fields = ("id", "name", "created", "updated", "doc_type")
+    # final result QS
+    docs = None
 
-        folders = self.access_policy.scope_queryset(
-            self.request, Folder.objects.all()
+    for key, val in request.query_params.items():
+        if key.find("__") > -1:
+            [field, filter] = key.split("__")
+            if field != "doc_type" and (
+                field in filter_fields.keys() and filter in filter_fields[field]
+            ):
+                filters[key] = val
+
+    # exclude folders if "doc_type" query param and not "in" the requested types
+    if request.query_params.get(
+        "doc_type__in"
+    ) is None or "folder" in request.query_params.get("doc_type__in").split(","):
+        folders = access_policy.scope_queryset(
+            request,
+            Folder.objects.all().filter(**filters),
         ).values(*fields, doc_type=RawSQL("select 'folder'", ()))
+        if docs is None:
+            docs = folders
+        else:
+            docs = docs.union(folders)
 
-        kits = self.access_policy.scope_queryset(
-            self.request, Kit.objects.all()
+    # exclude kits if "doc_type" query param and not "in" the requested types
+    if request.query_params.get(
+        "doc_type__in"
+    ) is None or "kit" in request.query_params.get("doc_type__in").split(","):
+        kits = access_policy.scope_queryset(
+            request,
+            Kit.objects.all().filter(**filters),
         ).values(*fields, doc_type=RawSQL("select 'kit'", ()))
+        if docs is None:
+            docs = kits
+        else:
+            docs = docs.union(kits)
 
-        return folders.union(kits).order_by("updated", "created")
+    ordering = request.query_params.get("ordering")
+    if ordering is not None:
+        docs = docs.order_by(*ordering.split(","))
+
+    return paginator.get_paginated_response(
+        DocumentSerializer(
+            paginator.paginate_queryset(
+                docs,
+                request,
+            ),
+            many=True,
+        ).data
+    )
