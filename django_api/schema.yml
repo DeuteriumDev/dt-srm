@@ -171,76 +171,69 @@ paths:
       operationId: documents_list
       parameters:
       - in: query
-        name: created
-        schema:
-          type: string
-          format: date-time
-      - in: query
         name: created__gte
         schema:
           type: string
-          format: date-time
       - in: query
         name: created__lte
         schema:
           type: string
-          format: date-time
       - in: query
         name: doc_type__in
         schema:
-          type: array
-          items:
-            type: string
-        description: Multiple values may be separated by commas.
-        explode: false
-        style: form
-      - in: query
-        name: id
-        schema:
           type: string
-          format: uuid
       - in: query
-        name: name
+        name: id__exact
         schema:
           type: string
       - in: query
         name: name__contains
         schema:
           type: string
-      - name: ordering
-        required: false
-        in: query
-        description: Which field to use when ordering the results.
+      - in: query
+        name: name__exact
         schema:
           type: string
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
+      - in: query
+        name: ordering
+        schema:
+          type: string
+          enum:
+          - -created
+          - -doc_type
+          - -id
+          - -name
+          - -updated
+          - created
+          - doc_type
+          - id
+          - name
+          - updated
+      - in: query
+        name: page
         schema:
           type: integer
-      - in: query
-        name: updated
-        schema:
-          type: string
-          format: date-time
       - in: query
         name: updated__gte
         schema:
           type: string
-          format: date-time
       - in: query
         name: updated__lte
         schema:
           type: string
-          format: date-time
       tags:
       - documents
       security:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+          description: ''
   /api/v1/folders/:
     get:
       operationId: folders_list
@@ -1220,6 +1213,28 @@ components:
           title: Active
       required:
       - email
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        updated:
+          type: string
+          format: date-time
+        created:
+          type: string
+          format: date-time
+        doc_type:
+          type: string
+      required:
+      - created
+      - doc_type
+      - id
+      - name
+      - updated
     Folder:
       type: object
       description: |-

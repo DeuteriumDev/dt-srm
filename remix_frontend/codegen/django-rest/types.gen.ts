@@ -41,6 +41,14 @@ export type CustomUserRequest = {
     is_active?: boolean;
 };
 
+export type Document = {
+    id: string;
+    name: string;
+    updated: string;
+    created: string;
+    doc_type: string;
+};
+
 /**
  * A serializer mixin that takes an additional `fields` argument that controls
  * which fields should be displayed.
@@ -349,25 +357,14 @@ export type DocumentsListData = {
     body?: never;
     path?: never;
     query?: {
-        created?: string;
         created__gte?: string;
         created__lte?: string;
-        /**
-         * Multiple values may be separated by commas.
-         */
-        doc_type__in?: Array<string>;
-        id?: string;
-        name?: string;
+        doc_type__in?: string;
+        id__exact?: string;
         name__contains?: string;
-        /**
-         * Which field to use when ordering the results.
-         */
-        ordering?: string;
-        /**
-         * A page number within the paginated result set.
-         */
+        name__exact?: string;
+        ordering?: '-created' | '-doc_type' | '-id' | '-name' | '-updated' | 'created' | 'doc_type' | 'id' | 'name' | 'updated';
         page?: number;
-        updated?: string;
         updated__gte?: string;
         updated__lte?: string;
     };
@@ -375,11 +372,10 @@ export type DocumentsListData = {
 };
 
 export type DocumentsListResponses = {
-    /**
-     * No response body
-     */
-    200: unknown;
+    200: Array<Document>;
 };
+
+export type DocumentsListResponse = DocumentsListResponses[keyof DocumentsListResponses];
 
 export type FoldersListData = {
     body?: never;

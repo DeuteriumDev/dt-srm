@@ -14,6 +14,7 @@ from rest_framework import viewsets, mixins, filters, views, pagination, decorat
 from django.db import models
 from typing import Dict
 from django.db.models.expressions import RawSQL
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 
 def get_user_permissions(
@@ -27,7 +28,6 @@ def get_document_permissions(
     request: HttpRequest,
 ) -> models.manager.BaseManager[CustomPermissions] | None:
     user_permissions = get_user_permissions(request)
-    print("doc permi:", model.id, user_permissions.filter(object_id=model.id))
     direct_permissions = user_permissions.filter(object_id=model.id)
 
     if direct_permissions.count() > 0:
@@ -170,21 +170,49 @@ class AnswerViewSet(AbstractDocumentViewSet):
     serializer_class = AnswerSerializer
 
 
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+
+fields = ("id", "name", "created", "updated", "doc_type")
+filter_fields = {
+    "id": ["exact"],
+    "name": ["exact", "contains"],
+    "created": ["gte", "lte"],
+    "updated": ["gte", "lte"],
+    "doc_type": ["in"],
+}
+
+
+@extend_schema(
+    parameters=[
+        *flatten(
+            [
+                [
+                    # all params are strings since @hey-api doesn't "type"
+                    # dates on the client-module
+                    OpenApiParameter(name=f"{n}__{o}", required=False, type=str)
+                    for o in filter_fields.get(n)
+                ]
+                for n in filter_fields.keys()
+            ]
+        ),
+        OpenApiParameter(name="page", required=False, type=int),
+        OpenApiParameter(
+            name="ordering",
+            required=False,
+            enum=flatten([(i, f"-{i}") for i in fields]),
+        ),
+    ],
+    responses={200: DocumentSerializer(many=True)},
+)
 @decorators.api_view(["GET"])
 def documents_list(request: HttpRequest):
     access_policy = DocumentAccessPolicy()
     paginator = pagination.PageNumberPagination()
     paginator.page_size = 10
 
-    fields = ("id", "name", "created", "updated", "doc_type")
     filters = {}
-    filter_fields = {
-        "id": ["exact"],
-        "name": ["exact", "contains"],
-        "created": ["gte", "lte"],
-        "updated": ["gte", "lte"],
-        # "doc_type": ["in"],
-    }
 
     # final result QS
     docs = None
