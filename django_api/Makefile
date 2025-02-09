@@ -36,6 +36,16 @@ shell:
 	@$(DJANGO) shell
 .PHONY: shell
 
-db: seed
+services:
 	@docker compose -f ./docker-compose.yml --env-file .env up
-.PHONY: db
+.PHONY: services
+
+
+scheduler:
+	@poetry run celery -A django_api beat -l INFO  --scheduler django_celery_beat.schedulers:DatabaseScheduler
+.PHONY: scheduler
+
+
+worker:
+	@poetry run celery -A django_api worker -l INFO
+.PHONY: worker

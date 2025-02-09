@@ -9,9 +9,8 @@ services:
     ports:
       # external port : internal port
       - ${POSTGRES_PORT}:5432
-    # no volumes, we want a fresh db each time
-    # volumes:
-    #   - pgdata:/var/lib/postgresql/data
+    volumes:
+      - data_pg:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -19,8 +18,17 @@ services:
     networks:
       - postgres
 
-# volumes:
-#   pgdata:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - data_rabbitmq:/var/lib/rabbitmq/
+
+volumes:
+  data_pg:
+  data_rabbitmq:
 
 networks:
   postgres:
