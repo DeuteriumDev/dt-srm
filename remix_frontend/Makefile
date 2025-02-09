@@ -18,5 +18,6 @@ typecheck:
 .PHONY: typecheck
 
 format:
+	@yarn run eslint ./app --fix
 	@yarn run prettier ./app --write
 .PHONY: format

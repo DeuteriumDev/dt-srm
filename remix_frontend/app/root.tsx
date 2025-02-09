@@ -7,10 +7,10 @@ import {
   ScrollRestoration,
 } from 'react-router';
 import '@fontsource/fira-sans';
-import { Toaster } from '~/components/toaster';
 
-import type { Route } from './+types/root';
+import { type Route } from './+types/root';
 import stylesheet from './app.css?url';
+import { Toaster } from '~/components/toaster';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'stylesheet', href: stylesheet },

@@ -1,5 +1,9 @@
-const config = {
-  singleQuote: true,
-};
+import defaultConfig from '@epic-web/config/prettier';
 
-export default config;
+/** @type {import("prettier").Options} */
+export default {
+  ...defaultConfig,
+  // .. your overrides here...
+  useTabs: false,
+  semi: true,
+};
