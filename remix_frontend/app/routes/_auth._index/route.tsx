@@ -1,5 +1,5 @@
-import type { Route } from '../_auth._index/+types/route';
 import { redirect } from 'react-router';
+import { type Route } from '../_auth._index/+types/route';
 
 /**
  * Permanently redirect '<site_root>/' to '<site_root>/dashboard'

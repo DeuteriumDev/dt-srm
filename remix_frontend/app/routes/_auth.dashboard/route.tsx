@@ -1,17 +1,17 @@
-import { data, Link } from 'react-router';
 import { Folder } from 'lucide-react';
+import { data, Link } from 'react-router';
+import { type Route } from '../_auth.dashboard/+types/route';
 
-import api from '~/libs/api.server';
-import sessionManager from '~/libs/session.server';
 import {
   Card,
   CardHeader,
   CardDescription,
   CardFooter,
   CardTitle,
+  CardContent,
 } from '~/components/card';
-
-import type { Route } from '../_auth.dashboard/+types/route';
+import api from '~/libs/api.server';
+import sessionManager from '~/libs/session.server';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -49,7 +49,7 @@ export default function Dashboard(props: Route.ComponentProps) {
                 <Folder />
                 <Link
                   className="underline"
-                  to={`/documents/folders/${folder.id}`}
+                  to={`/documents?parent__exact=${folder.id}`}
                 >
                   {folder.name}
                 </Link>
@@ -58,11 +58,16 @@ export default function Dashboard(props: Route.ComponentProps) {
                 <CardDescription>{folder.description}</CardDescription>
               )}
             </CardHeader>
-            <CardFooter>
-              <div className="italic">
-                Updated: {new Date(folder.updated).toLocaleString()}
+            <CardContent>
+              <p className="text-lg">Items: {folder.children_count}</p>
+            </CardContent>
+            {/* <CardFooter>
+              <div className="text-sm italic">
+                {`Updated: ${new Intl.DateTimeFormat(navigator.language).format(
+                  new Date(folder.updated),
+                )}`}
               </div>
-            </CardFooter>
+            </CardFooter> */}
           </Card>
         ))}
       </div>

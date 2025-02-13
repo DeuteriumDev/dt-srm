@@ -1,9 +1,9 @@
-import { z, ZodError } from 'zod';
-import { useFetcher, data } from 'react-router';
 import _ from 'lodash';
+import { useFetcher, data } from 'react-router';
+import { z, ZodError } from 'zod';
 
+import { type Route } from '../login/+types/route';
 import { Button } from '~/components/button';
-import { Input } from '~/components/input';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/dialog';
+import { Input } from '~/components/input';
 import { Label } from '~/components/label';
+import { RequestHelper } from '~/libs/request';
 import sessionManager from '~/libs/session.server';
-
-import type { Route } from './+types/route';
+import { Loader2 } from 'lucide-react';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -41,11 +42,13 @@ export async function action({ request }: Route.ActionArgs) {
         password: body.get('password'),
       });
 
-    const redirectParam = new URL(request.url).searchParams.get('redirect');
+    const params = new RequestHelper(request).getSearchParams<{
+      redirect?: string;
+    }>();
     return await sessionManager.login({
       ...result,
       request,
-      redirectTo: redirectParam || '/dashboard',
+      redirectTo: params.redirect || '/dashboard',
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -72,7 +75,7 @@ export default function Login() {
     return (
       _.get(fetcher.data, error) && (
         <div className="col-span-4">
-          <p id="email-error" className=" text-sm text-red-600 ">
+          <p id="email-error" className="text-sm text-red-600">
             {_.get(fetcher.data, error)}
           </p>
         </div>
@@ -88,7 +91,7 @@ export default function Login() {
             <DialogTitle>Login</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4 content-center">
+            <div className="grid grid-cols-4 content-center items-center gap-4">
               {_displayError('form')}
             </div>
           </div>
@@ -103,6 +106,7 @@ export default function Login() {
                 type="text"
                 className="col-span-3"
                 placeholder="m@example.com"
+                disabled={['loading', 'submitting'].includes(fetcher.state)}
               />
             </div>
             {_displayError('username')}
@@ -115,12 +119,23 @@ export default function Login() {
                 type="password"
                 name="password"
                 className="col-span-3"
+                disabled={['loading', 'submitting'].includes(fetcher.state)}
               />
               {_displayError('password')}
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Login</Button>
+            <Button
+              type="submit"
+              disabled={['loading', 'submitting'].includes(fetcher.state)}
+            >
+              {['loading', 'submitting'].includes(fetcher.state) && (
+                <Loader2 className="animate-spin" />
+              )}
+              {['loading', 'submitting'].includes(fetcher.state) &&
+                'Please wait'}
+              {!['loading', 'submitting'].includes(fetcher.state) && 'Login'}
+            </Button>
           </DialogFooter>
         </fetcher.Form>
       </DialogContent>

@@ -1,11 +1,11 @@
 import assert from 'assert';
+import _ from 'lodash';
 import {
   createCookieSessionStorage,
   redirect,
   type Session,
   type SessionStorage,
 } from 'react-router';
-import _ from 'lodash';
 
 /**
  * Convert current url to new url preserving other options, eg 'localhost:123/here' -> 'localhost:123/now'
@@ -80,8 +80,9 @@ type SessionGeneric = typeof createCookieSessionStorage<
 
 type SessionHeaderFunction = () => ResponseInit | undefined;
 
-// 30 mins before session expires, trigger refresh
-const SESSION_TIMEOUT_OFFSET = 30 * 60;
+// 1/4 through session (aka 8 days), refresh token
+const SESSION_TIMEOUT_OFFSET =
+  parseInt(process.env.ACCESS_TOKEN_EXPIRE_SECONDS || '0') / 4;
 
 export class SessionManager {
   cookieSession: SessionStorage<SessionData, SessionFlashData>;
@@ -110,23 +111,62 @@ export class SessionManager {
     this.OAuthError = OAuthError;
   }
 
+  /**
+   * Tiny helper to parse cookie *directly* from request, rather than a
+   * request property
+   * @param {Request} request
+   * @returns {Session<SessionData, SessionFlashData>}
+   */
   private async getSession(request: Request) {
     return this.cookieSession.getSession(request.headers.get('Cookie'));
   }
 
+  /**
+   * Checks wether the current session is within the desired timespan to refresh
+   * without interrupting the user
+   * @param {Session<SessionData, SessionFlashData>} cookie - session auth cookie
+   * @returns {boolean}
+   */
   private shouldRefreshCookie(
     cookie: Session<SessionData, SessionFlashData>,
   ): boolean {
     const sessionTimeout = new Date(Date.parse(cookie.get('expires_at') || ''));
+
+    const sessionOffsetTimeout = new Date(sessionTimeout);
+    sessionOffsetTimeout.setSeconds(
+      sessionOffsetTimeout.getSeconds() - SESSION_TIMEOUT_OFFSET,
+    );
     const now = new Date();
-    now.setSeconds(now.getSeconds() - SESSION_TIMEOUT_OFFSET);
-    return sessionTimeout <= now;
+    console.log({
+      shouldRefresh: sessionTimeout >= now && sessionOffsetTimeout <= now,
+      sessionTimeout,
+      sessionOffsetTimeout,
+      now,
+    });
+    return sessionTimeout >= now && now >= sessionOffsetTimeout;
   }
 
+  /**
+   * Checks wether the current session has overrun the expiration, rather than
+   * just the "desired" timespan. If so, we'll need to interrupt the user.
+   * @param {Session<SessionData, SessionFlashData>} cookie - session auth cookie
+   * @returns {boolean}
+   */
+  private shouldResetCookie(
+    cookie: Session<SessionData, SessionFlashData>,
+  ): boolean {
+    const sessionTimeout = new Date(Date.parse(cookie.get('expires_at') || ''));
+    const now = new Date();
+    return sessionTimeout <= now;
+  }
   /**
    * Retrieve session cookie, and optionally refresh the token. Refreshes the
    * token *before* it expires because sub routes will use it, and I can't
    * manage the race condition when 2 threads try and fresh the same token.
+   *
+   * If past the refresh zone, throw a redirect because it's too late and any
+   * sub pages will throw OAuth errors.
+   *
    * When calling, make sure to use the {SessionHeaderFunction} in the response
    * data. EG:
    * ```
@@ -145,22 +185,35 @@ export class SessionManager {
    *
    * @param {Request} request - loader or action [request]
    * @returns {[SessionHeaderFunction, Session<SessionData, SessionFlashData>]}
+   * @throws {RequestRedirect}
    */
   public async getOrRefreshCookie(
     request: Request,
   ): Promise<[SessionHeaderFunction, Session<SessionData, SessionFlashData>]> {
     let cookie = await this.getSession(request);
-    if (!cookie.has('access_token'))
+    if (!cookie.has('access_token')) {
       throw redirect(`/login?redirect=/dashboard`);
-    if (this.shouldRefreshCookie(cookie)) {
+    } else if (this.shouldRefreshCookie(cookie)) {
       cookie = await this.refresh(request);
       const newCookie = await this.commitSession(cookie);
       return [() => ({ headers: { 'Set-Cookie': newCookie } }), cookie];
+    } else if (this.shouldResetCookie(cookie)) {
+      cookie = await this.refresh(request);
+      const newCookie = await this.commitSession(cookie);
+      throw redirect(request.url, { headers: { 'Set-Cookie': newCookie } });
     }
 
     return [() => undefined, cookie];
   }
 
+  /**
+   * Parses a Cookie header from a HTTP request and returns the associated
+   * Session. If there is no session associated with the cookie, this will
+   * return a new Session with no data.
+   * @param {Request} request
+   * @returns {Session<SessionData, SessionFlashData>}
+   * @throws {RequestRedirect}
+   */
   public async getCookie(request: Request) {
     const cookie = await this.getSession(request);
     if (!cookie.has('access_token'))
@@ -177,8 +230,8 @@ export class SessionManager {
    */
   private async refresh(request: Request) {
     console.log('refresh');
-    assert(process.env.BASE_URL, '[BASE_URL] env var required');
-    assert(process.env.OAUTH_PATH, '[OAUTH_PATH] env var required');
+    assert(process.env.OAUTH_URL, '[OAUTH_URL] env var required');
+    assert(process.env.OAUTH_TOKEN_PATH, '[OAUTH_TOKEN_PATH] env var required');
     assert(process.env.CLIENT_ID, '[CLIENT_ID] env var required');
     assert(process.env.CLIENT_SECRET, '[CLIENT_SECRET] env var required');
 
@@ -198,7 +251,10 @@ export class SessionManager {
           refresh_token: refreshToken,
         }),
       };
-      const url = resolveUrl(process.env.BASE_URL, process.env.OAUTH_PATH);
+      const url = resolveUrl(
+        process.env.OAUTH_URL,
+        process.env.OAUTH_TOKEN_PATH,
+      );
       const resp = await fetch(url, req);
       const data = (await resp.json()) as OAuth;
       if (OAuthError.isOauthError(data)) throw new OAuthError(data);
@@ -227,14 +283,14 @@ export class SessionManager {
    * @throws {OAuthError}
    */
   public async login({ username, password, request, redirectTo }: LoginArgs) {
-    assert(process.env.BASE_URL, '[BASE_URL] env var required');
-    assert(process.env.OAUTH_PATH, '[OAUTH_PATH] env var required');
+    assert(process.env.OAUTH_URL, '[OAUTH_URL] env var required');
+    assert(process.env.OAUTH_TOKEN_PATH, '[OAUTH_TOKEN_PATH] env var required');
     assert(process.env.CLIENT_ID, '[CLIENT_ID] env var required');
     assert(process.env.CLIENT_SECRET, '[CLIENT_SECRET] env var required');
 
     try {
       const resp = await fetch(
-        resolveUrl(process.env.BASE_URL, process.env.OAUTH_PATH),
+        resolveUrl(process.env.OAUTH_URL, process.env.OAUTH_TOKEN_PATH),
         {
           method: 'post',
           headers: {
@@ -274,16 +330,79 @@ export class SessionManager {
     }
   }
 
+  /**
+   * Logout the current user and redirect them to the login page
+   * @param {Request} request - router request object
+   * @returns {Promise}
+   */
+  public async logout(request: Request) {
+    assert(process.env.OAUTH_URL, '[OAUTH_URL] env var required');
+    assert(
+      process.env.OAUTH_REVOKE_PATH,
+      '[OAUTH_TOKEN_PATH] env var required',
+    );
+    assert(process.env.CLIENT_ID, '[CLIENT_ID] env var required');
+    assert(process.env.CLIENT_SECRET, '[CLIENT_SECRET] env var required');
+    const cookie = await this.getCookie(request);
+    const access_token = cookie.get('access_token');
+
+    try {
+      if (!access_token) throw new Error('Session without access token');
+
+      await fetch(
+        resolveUrl(process.env.OAUTH_URL, process.env.OAUTH_REVOKE_PATH),
+        {
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            token: access_token,
+            client_id: process.env.CLIENT_ID,
+            client_secret: process.env.CLIENT_SECRET,
+          }),
+        },
+      );
+    } catch (error) {
+      console.log({ error });
+    } finally {
+      throw redirect('/login', {
+        headers: {
+          'Set-Cookie': await this.destroySession(cookie),
+        },
+      });
+    }
+  }
+
+  /**
+   * Stores all data in the Session and returns the Set-Cookie header to be used in the HTTP response.
+   * @param {Parameters<ReturnType<SessionGeneric>['commitSession']>} args
+   * @returns {Promise<string>}
+   */
   private async commitSession(
     ...args: Parameters<ReturnType<SessionGeneric>['commitSession']>
   ) {
-    return this.cookieSession.commitSession(...args);
+    return await this.cookieSession.commitSession(...args);
   }
 
+  /**
+   * Deletes all data associated with the Session and returns the Set-Cookie header to be used in the HTTP response.
+   * @param {Parameters<ReturnType<SessionGeneric>['destroySession']>} args
+   * @returns {Promise<string>}
+   */
   public async destroySession(
     ...args: Parameters<ReturnType<SessionGeneric>['destroySession']>
   ) {
-    this.cookieSession.destroySession(...args);
+    return await this.cookieSession.destroySession(...args);
+  }
+
+  public revalidateSession(
+    request: Request,
+    error?: Record<'detail', string>,
+  ): void {
+    throw redirect(
+      `/login?redirect=${new URL(request.url).pathname}${error?.detail ? `&error=${error?.detail}` : ''}`,
+    );
   }
 }
 
