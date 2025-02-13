@@ -14,9 +14,10 @@ At both project roots copy the `.env.example` file and rename it to `.env`. You 
 
 > django_api
 
-Run `make seed` to add the superuser.
-
-Run `make dev` to start the local dev server.
+In separate tabs run:
+- `make services` to start the docker-compose services (postgres & rabbitMQ)
+- `make seed` to add the superuser & add a basic user setup
+- `make dev` to start the local dev server
 
 Once that's running log into the django admin panel at [http://localhost:8000/admin/](http://localhost:8000/admin/) with "admin /t <DJANGO_SUPERUSER_PASSWORD>".
 
@@ -27,11 +28,9 @@ You'll want to add (in this order)
 - a user
 - a group
 - add that user to the group
-- a folder
-- add a permission for the group to the folder
+- a folder, copying the new id to your copy buffer
+- add a permission for the group to the folder, using folder as the content type, and the saved id
 - an org, and use the group as the "root"
-
-TODO: add seeding script to `manage.py`
 
 > remix_frontend
 

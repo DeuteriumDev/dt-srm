@@ -41,27 +41,20 @@ export type CustomUserRequest = {
     is_active?: boolean;
 };
 
-export type Document = {
-    id: string;
-    name: string;
-    updated: string;
-    created: string;
-    doc_type: string;
-};
-
 /**
  * A serializer mixin that takes an additional `fields` argument that controls
  * which fields should be displayed.
  */
 export type Folder = {
     readonly id: string;
+    readonly children_count: string;
     readonly created: string;
     readonly updated: string;
     inherit_permissions?: boolean;
     name: string;
     description?: string | null;
     favorite?: boolean;
-    parent?: string | null;
+    parent: Nested;
 };
 
 /**
@@ -73,7 +66,6 @@ export type FolderRequest = {
     name: string;
     description?: string | null;
     favorite?: boolean;
-    parent?: string | null;
 };
 
 export type Kit = {
@@ -96,18 +88,17 @@ export type Nested = {
     readonly created: string;
     readonly updated: string;
     inherit_permissions?: boolean;
-    title?: string;
+    name: string;
     description?: string | null;
-    image?: string | null;
-    next: Nested;
-    readonly answers: Array<Nested>;
+    favorite?: boolean;
+    parent: Nested;
 };
 
 export type NestedRequest = {
     inherit_permissions?: boolean;
-    title?: string;
+    name: string;
     description?: string | null;
-    image?: string | null;
+    favorite?: boolean;
 };
 
 /**
@@ -132,43 +123,43 @@ export type OrganizationRequest = {
 
 export type PaginatedAnswerList = {
     count: number;
-    next?: string | null;
-    previous?: string | null;
+    next?: number | null;
+    previous?: number | null;
     results: Array<Answer>;
 };
 
 export type PaginatedCustomUserList = {
     count: number;
-    next?: string | null;
-    previous?: string | null;
+    next?: number | null;
+    previous?: number | null;
     results: Array<CustomUser>;
 };
 
 export type PaginatedFolderList = {
     count: number;
-    next?: string | null;
-    previous?: string | null;
+    next?: number | null;
+    previous?: number | null;
     results: Array<Folder>;
 };
 
 export type PaginatedKitList = {
     count: number;
-    next?: string | null;
-    previous?: string | null;
+    next?: number | null;
+    previous?: number | null;
     results: Array<Kit>;
 };
 
 export type PaginatedOrganizationList = {
     count: number;
-    next?: string | null;
-    previous?: string | null;
+    next?: number | null;
+    previous?: number | null;
     results: Array<Organization>;
 };
 
 export type PaginatedQuestionList = {
     count: number;
-    next?: string | null;
-    previous?: string | null;
+    next?: number | null;
+    previous?: number | null;
     results: Array<Question>;
 };
 
@@ -200,7 +191,6 @@ export type PatchedFolderRequest = {
     name?: string;
     description?: string | null;
     favorite?: boolean;
-    parent?: string | null;
 };
 
 export type PatchedKitRequest = {
@@ -254,6 +244,10 @@ export type AnswersListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        /**
+         * Number of results to return per page.
+         */
+        size?: number;
         title?: string;
     };
     url: '/api/v1/answers/';
@@ -363,8 +357,10 @@ export type DocumentsListData = {
         id__exact?: string;
         name__contains?: string;
         name__exact?: string;
-        ordering?: '-created' | '-doc_type' | '-id' | '-name' | '-updated' | 'created' | 'doc_type' | 'id' | 'name' | 'updated';
+        ordering?: '-created' | '-doc_type' | '-id' | '-name' | '-parent' | '-updated' | 'created' | 'doc_type' | 'id' | 'name' | 'parent' | 'updated';
         page?: number;
+        parent__exact?: string;
+        parent__isnull?: string;
         updated__gte?: string;
         updated__lte?: string;
     };
@@ -372,7 +368,24 @@ export type DocumentsListData = {
 };
 
 export type DocumentsListResponses = {
-    200: Array<Document>;
+    200: {
+        count: number;
+        next?: number | null;
+        previous?: number | null;
+        breadcrumbs: Array<unknown>;
+        results: Array<{
+            readonly id: string;
+            readonly name: string;
+            readonly created: string;
+            readonly updated: string;
+            readonly doc_type: string;
+            readonly tags: Array<string>;
+            parent: {
+                readonly id?: string;
+                readonly name?: string;
+            } | null;
+        }>;
+    };
 };
 
 export type DocumentsListResponse = DocumentsListResponses[keyof DocumentsListResponses];
@@ -392,6 +405,10 @@ export type FoldersListData = {
          */
         page?: number;
         parent?: string;
+        /**
+         * Number of results to return per page.
+         */
+        size?: number;
         updated?: string;
     };
     url: '/api/v1/folders/';
@@ -504,6 +521,10 @@ export type KitsListData = {
          */
         page?: number;
         parent?: string;
+        /**
+         * Number of results to return per page.
+         */
+        size?: number;
         start?: string;
         updated?: string;
     };
@@ -612,6 +633,10 @@ export type OrganizationsListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        /**
+         * Number of results to return per page.
+         */
+        size?: number;
     };
     url: '/api/v1/organizations/';
 };
@@ -725,6 +750,10 @@ export type QuestionsListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        /**
+         * Number of results to return per page.
+         */
+        size?: number;
         title?: string;
         updated?: string;
     };
@@ -833,6 +862,10 @@ export type UsersListData = {
          * A page number within the paginated result set.
          */
         page?: number;
+        /**
+         * Number of results to return per page.
+         */
+        size?: number;
     };
     url: '/api/v1/users/';
 };

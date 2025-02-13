@@ -9,9 +9,9 @@ dev:
 	@yarn dev
 .PHONY: dev
 
-api-lib:
+codegen:
 	@npx @hey-api/openapi-ts
-.PHONY: api-lib
+.PHONY: codegen
 
 typecheck:
 	@yarn run react-router typegen && yarn run tsc
