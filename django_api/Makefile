@@ -28,9 +28,9 @@ dev:
 	@$(DJANGO) runserver
 .PHONY: dev
 
-api-schema:
+schema:
 	@$(DJANGO) spectacular --color --file schema.yml
-.PHONy: api-schema
+.PHONy: schema
 
 shell:
 	@$(DJANGO) shell

@@ -26,6 +26,12 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - name: size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - in: query
         name: title
         schema:
@@ -168,7 +174,7 @@ paths:
           description: No response body
   /api/v1/documents/:
     get:
-      operationId: documents_list
+      operationId: DocumentsList
       parameters:
       - in: query
         name: created__gte
@@ -203,16 +209,26 @@ paths:
           - -doc_type
           - -id
           - -name
+          - -parent
           - -updated
           - created
           - doc_type
           - id
           - name
+          - parent
           - updated
       - in: query
         name: page
         schema:
           type: integer
+      - in: query
+        name: parent__exact
+        schema:
+          type: string
+      - in: query
+        name: parent__isnull
+        schema:
+          type: string
       - in: query
         name: updated__gte
         schema:
@@ -230,9 +246,81 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Document'
+                type: object
+                required:
+                - count
+                - results
+                - breadcrumbs
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: integer
+                    nullable: true
+                    example: 2
+                  previous:
+                    type: integer
+                    nullable: true
+                    example: 1
+                  breadcrumbs:
+                    type: array
+                    items:
+                      id:
+                        type: string
+                        format: uuid
+                        readOnly: true
+                      name:
+                        type: string
+                        readOnly: true
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          readOnly: true
+                        name:
+                          type: string
+                          readOnly: true
+                        created:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        updated:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        doc_type:
+                          type: string
+                          readOnly: true
+                        tags:
+                          type: array
+                          readOnly: true
+                          items:
+                            type: string
+                            readOnly: true
+                        parent:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: string
+                              format: uuid
+                              readOnly: true
+                            name:
+                              type: string
+                              readOnly: true
+                      required:
+                      - created
+                      - id
+                      - name
+                      - updated
+                      - doc_type
+                      - tags
+                      - parent
           description: ''
   /api/v1/folders/:
     get:
@@ -275,6 +363,12 @@ paths:
         schema:
           type: string
           format: uuid
+      - name: size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - in: query
         name: updated
         schema:
@@ -453,6 +547,12 @@ paths:
         schema:
           type: string
           format: uuid
+      - name: size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - in: query
         name: start
         schema:
@@ -611,6 +711,12 @@ paths:
         required: false
         in: query
         description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: size
+        required: false
+        in: query
+        description: Number of results to return per page.
         schema:
           type: integer
       tags:
@@ -794,6 +900,12 @@ paths:
         description: A page number within the paginated result set.
         schema:
           type: integer
+      - name: size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       - in: query
         name: title
         schema:
@@ -949,6 +1061,12 @@ paths:
         required: false
         in: query
         description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: size
+        required: false
+        in: query
+        description: Number of results to return per page.
         schema:
           type: integer
       tags:
@@ -1213,28 +1331,6 @@ components:
           title: Active
       required:
       - email
-    Document:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-        updated:
-          type: string
-          format: date-time
-        created:
-          type: string
-          format: date-time
-        doc_type:
-          type: string
-      required:
-      - created
-      - doc_type
-      - id
-      - name
-      - updated
     Folder:
       type: object
       description: |-
@@ -1244,6 +1340,9 @@ components:
         id:
           type: string
           format: uuid
+          readOnly: true
+        children_count:
+          type: string
           readOnly: true
         created:
           type: string
@@ -1263,13 +1362,15 @@ components:
         favorite:
           type: boolean
         parent:
-          type: string
-          format: uuid
-          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
       required:
+      - children_count
       - created
       - id
       - name
+      - parent
       - updated
     FolderRequest:
       type: object
@@ -1287,10 +1388,6 @@ components:
           nullable: true
         favorite:
           type: boolean
-        parent:
-          type: string
-          format: uuid
-          nullable: true
       required:
       - name
     Kit:
@@ -1354,47 +1451,38 @@ components:
           readOnly: true
         inherit_permissions:
           type: boolean
-        title:
+        name:
           type: string
         description:
           type: string
           nullable: true
-        image:
-          type: string
-          format: uri
-          nullable: true
-          maxLength: 200
-        next:
+        favorite:
+          type: boolean
+        parent:
           allOf:
           - $ref: '#/components/schemas/Nested'
           readOnly: true
-        answers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Nested'
-          readOnly: true
       required:
-      - answers
       - created
       - id
-      - next
+      - name
+      - parent
       - updated
     NestedRequest:
       type: object
       properties:
         inherit_permissions:
           type: boolean
-        title:
+        name:
           type: string
           minLength: 1
         description:
           type: string
           nullable: true
-        image:
-          type: string
-          format: uri
-          nullable: true
-          maxLength: 200
+        favorite:
+          type: boolean
+      required:
+      - name
     Organization:
       type: object
       description: |-
@@ -1443,15 +1531,13 @@ components:
           type: integer
           example: 123
         next:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: 2
         previous:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: 1
         results:
           type: array
           items:
@@ -1466,15 +1552,13 @@ components:
           type: integer
           example: 123
         next:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: 2
         previous:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: 1
         results:
           type: array
           items:
@@ -1489,15 +1573,13 @@ components:
           type: integer
           example: 123
         next:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: 2
         previous:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: 1
         results:
           type: array
           items:
@@ -1512,15 +1594,13 @@ components:
           type: integer
           example: 123
         next:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: 2
         previous:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: 1
         results:
           type: array
           items:
@@ -1535,15 +1615,13 @@ components:
           type: integer
           example: 123
         next:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: 2
         previous:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: 1
         results:
           type: array
           items:
@@ -1558,15 +1636,13 @@ components:
           type: integer
           example: 123
         next:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=4
+          example: 2
         previous:
-          type: string
+          type: integer
           nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?page=2
+          example: 1
         results:
           type: array
           items:
@@ -1630,10 +1706,6 @@ components:
           nullable: true
         favorite:
           type: boolean
-        parent:
-          type: string
-          format: uuid
-          nullable: true
     PatchedKitRequest:
       type: object
       properties:

@@ -1,3 +1,4 @@
+from time import sleep
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.contenttypes.models import ContentType
 from kits.models import Folder, Kit, Question, Answer
@@ -6,6 +7,16 @@ from accounts.models import CustomGroup, CustomUser, CustomPermissions, Organiza
 
 class Command(BaseCommand):
     help = "Seed db with basic user & docs"
+
+    def create_folder(self, folder_name, target_group, **kwargs):
+        folder = Folder.objects.create(name=folder_name, **kwargs)
+        folder.save()
+        CustomPermissions.objects.create(
+            content_type=ContentType.objects.get_for_model(Folder),
+            object_id=folder.id,
+            group=target_group,
+        ).save()
+        return folder
 
     def handle(self, *args, **kwargs):
         user = CustomUser.objects.create(
@@ -20,8 +31,36 @@ class Command(BaseCommand):
         group.members.add(user)
         group.save()
 
-        folder = Folder.objects.create(name="test folder 1", favorite=True)
-        folder.save()
+        # sleep such that the "created" ordering is the order of the workflow
+        self.create_folder(
+            "New Submissions",
+            group,
+            description="Invoices that have been submitted, but not reviewed, confirmed, or payed",
+            favorite=True,
+        )
+        sleep(0.1)
+        self.create_folder(
+            "Awaiting confirmation",
+            group,
+            description="Invoices awaiting payment, or confirmation of payment",
+            favorite=True,
+        )
+        sleep(0.1)
+        self.create_folder(
+            "Payed",
+            group,
+            description="Invoices that have been payed",
+            favorite=True,
+        )
+        self.create_folder(
+            "Published", group, description="Kits that are available for quoting"
+        )
+        folder = self.create_folder(
+            "Work in Progress",
+            group,
+            description="Kits that are still being worked on, and not available for quoting",
+        )
+
         answer = Answer.objects.create(title="answer 1")
         answer.save()
         question = Question.objects.create(title="question 1")

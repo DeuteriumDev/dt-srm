@@ -1,3 +1,4 @@
+from typing import Dict, List
 import uuid
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
@@ -40,7 +41,7 @@ class Folder(DocumentModel):
     favorite = models.BooleanField(default=False)
 
     @property
-    def children(self):
+    def children(self) -> List[Dict]:
         return sorted(
             chain(self.children_folders.all(), self.children_kits.all()),
             key=attrgetter("created"),
@@ -74,7 +75,7 @@ class Kit(DocumentModel):
         return []
 
     def __str__(self):
-        return f"Kit: {self.title}"
+        return f"Kit: {self.name}"
 
 
 class Question(DocumentModel):
