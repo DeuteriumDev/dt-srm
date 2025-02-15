@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class CustomGroup(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.TextField("name", blank=False, null=False)
     parent = models.ForeignKey(
         "self",

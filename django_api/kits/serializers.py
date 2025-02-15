@@ -1,24 +1,16 @@
+from pprint import pprint
 from rest_framework import serializers
+from accounts.serializers import CustomPermissionsSerializer
 from kits.models import Kit, Question, Answer, Folder
 from drf_dynamic_fields import DynamicFieldsMixin
-
-class FolderSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    children_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Folder
-        fields = "__all__"
-        ordering = ["created"]
-        depth = 2
-
-    def get_children_count(self, obj):
-        return len(obj.children)
+from documents.access_policies import get_document_permissions
 
 
 class KitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Kit
         fields = "__all__"
+        ordering = ["created"]
         depth = 2
 
 
@@ -26,6 +18,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = "__all__"
+        ordering = ["created"]
         depth = 1
 
 
@@ -33,19 +26,31 @@ class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = "__all__"
+        ordering = ["created"]
 
 
-class DocumentSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
-    name = serializers.CharField()
-    updated = serializers.DateTimeField()
-    created = serializers.DateTimeField()
-    doc_type = serializers.CharField()
-    tags = serializers.ListField(child=serializers.CharField())
-    parent = serializers.SerializerMethodField()
+class FolderSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
-    def get_parent(self, obj):
-        if obj["parent"] is None:
-            return None
-        folder = Folder.objects.get(pk=obj["parent"])
-        return {"id": folder.id, "name": folder.name}
+    class Meta:
+        model = Folder
+        fields = "__all__"
+        ordering = ["created"]
+        depth = 1
+
+    def get_children(self, obj):
+        children = []
+        for child in obj.children:
+            if isinstance(child, Kit):
+                children.append({**KitSerializer(child).data, "doc_type": "kit"})
+            if isinstance(child, Folder):
+                children.append({**self.to_internal_value(child), "doc_type": "folder"})
+
+        return children
+
+    def get_permissions(self, obj):
+        perm = get_document_permissions(obj, self.context["request"]).get()
+        return CustomPermissionsSerializer(
+            perm, context={"request": self.context["request"]}
+        ).data

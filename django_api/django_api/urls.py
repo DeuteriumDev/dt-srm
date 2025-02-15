@@ -1,4 +1,5 @@
 from kits import views as kit_views
+from documents import views as document_views
 from accounts import views as account_views
 from django.contrib import admin
 from django.urls import path, include
@@ -40,5 +41,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("oauth/", include(oauth2_urls)),
     path("api/v1/", include(router.urls)),
-    path("api/v1/documents/", kit_views.documents_list),
+    path("api/v1/documents/", document_views.documents_list),
 ]

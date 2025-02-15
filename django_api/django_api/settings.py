@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "django_filters",
     "django_celery_beat",
+    "filters",
+    "documents",
 ]
 
 MIDDLEWARE = [
@@ -144,7 +146,10 @@ REST_FRAMEWORK = {
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+    ],
 }
 
 AUTHENTICATION_BACKENDS = (

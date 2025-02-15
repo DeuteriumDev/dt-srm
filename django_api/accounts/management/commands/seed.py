@@ -37,6 +37,7 @@ class Command(BaseCommand):
             group,
             description="Invoices that have been submitted, but not reviewed, confirmed, or payed",
             favorite=True,
+            inherit_permissions=False,
         )
         sleep(0.1)
         self.create_folder(
@@ -44,6 +45,7 @@ class Command(BaseCommand):
             group,
             description="Invoices awaiting payment, or confirmation of payment",
             favorite=True,
+            inherit_permissions=False,
         )
         sleep(0.1)
         self.create_folder(
@@ -51,14 +53,19 @@ class Command(BaseCommand):
             group,
             description="Invoices that have been payed",
             favorite=True,
+            inherit_permissions=False,
         )
         self.create_folder(
-            "Published", group, description="Kits that are available for quoting"
+            "Published",
+            group,
+            description="Kits that are available for quoting",
+            inherit_permissions=False,
         )
         folder = self.create_folder(
             "Work in Progress",
             group,
             description="Kits that are still being worked on, and not available for quoting",
+            inherit_permissions=False,
         )
 
         answer = Answer.objects.create(title="answer 1")

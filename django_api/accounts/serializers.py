@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from accounts.models import Organization, CustomUser
+from accounts.models import CustomPermissions, Organization, CustomUser
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -45,3 +46,20 @@ class CustomUserSerializer(DynamicFieldsModelSerializer):
             "groups",
         ]
         depth = 1
+
+
+class CustomPermissionsSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = CustomPermissions
+        fields = "__all__"
+        depth = 1
+
+        validators = [
+            UniqueTogetherValidator(
+                queryset=CustomPermissions.objects.all(),
+                fields=[
+                    "object_id",
+                    "group",
+                ],
+            )
+        ]
