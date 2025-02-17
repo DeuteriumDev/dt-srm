@@ -1,25 +1,10 @@
-from documents.viewsets import AbstractDocumentViewSet, abstract_filter_mappings
-from kits.models import Kit, Question, Answer, Folder
+from documents.viewsets import AbstractDocumentViewSet
+from kits.models import Kit, Question, Answer
 from kits.serializers import (
     KitSerializer,
     QuestionSerializer,
     AnswerSerializer,
-    FolderSerializer,
 )
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-
-
-@extend_schema(
-    parameters=[OpenApiParameter(name="favorite__exact", required=False, type=str)],
-)
-class FolderViewSet(AbstractDocumentViewSet):
-    queryset = Folder.objects.all()
-    serializer_class = FolderSerializer
-
-    filter_mappings = {
-        **abstract_filter_mappings,
-        "favorite__exact": "favorite__iexact",
-    }
 
 
 class KitViewSet(AbstractDocumentViewSet):

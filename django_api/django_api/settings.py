@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "filters",
     "documents",
+    "reversion",
+    "polymorphic",
 ]
 
 MIDDLEWARE = [

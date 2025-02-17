@@ -1,12 +1,26 @@
 from django.http import HttpRequest
 from kits.models import Kit, Folder
-from documents.serializers import DocumentSerializer
+from documents.serializers import DocumentSerializer, FolderSerializer
 from rest_framework import decorators
 from rest_framework.response import Response
 from django.db.models.expressions import RawSQL
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django_api.pagination import CustomPageNumberPagination
 from documents.access_policies import DocumentAccessPolicy
+from documents.viewsets import AbstractDocumentViewSet, abstract_filter_mappings
+
+
+@extend_schema(
+    parameters=[OpenApiParameter(name="favorite__exact", required=False, type=str)],
+)
+class FolderViewSet(AbstractDocumentViewSet):
+    queryset = Folder.objects.all()
+    serializer_class = FolderSerializer
+
+    filter_mappings = {
+        **abstract_filter_mappings,
+        "favorite__exact": "favorite__iexact",
+    }
 
 
 fields = ("id", "name", "created", "updated", "doc_type", "parent")

@@ -1,32 +1,6 @@
-from typing import Dict, List
 from django.db import models
-from itertools import chain
-from operator import attrgetter
 from documents.models import AbstractDocumentModel
-
-
-class Folder(AbstractDocumentModel):
-    name = models.TextField(blank=False, null=False)
-    description = models.TextField(null=True, blank=True, default="")
-    parent = models.ForeignKey(
-        "self",
-        on_delete=models.SET_NULL,
-        null=True,
-        default=None,
-        blank=True,
-        related_name="children_folders",
-    )
-    favorite = models.BooleanField(default=False)
-
-    @property
-    def children(self) -> List[Dict]:
-        return sorted(
-            chain(self.children_folders.all(), self.children_kits.all()),
-            key=attrgetter("created"),
-        )
-
-    def __str__(self):
-        return f"Folder: {self.name}"
+from documents.models import Folder
 
 
 class Kit(AbstractDocumentModel):
