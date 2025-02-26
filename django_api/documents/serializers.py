@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from nodes.serializers import NodeVersioningSerializer
+from nodes.serializers import NodeVersioningSerializer, extend_tags_field
 from .models import Folder
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema_field
 from invoices.models import Invoice
 from invoices.serializers import InvoiceSerializer
 from kits.serializers import KitSerializer
@@ -23,15 +22,7 @@ class FolderSerializer(NodeVersioningSerializer):
         model = Folder
         fields = "__all__"
 
-    @extend_schema_field(
-        {
-            "type": "array",
-            "items": {
-                "type": "string",
-            },
-            "readOnly": True,
-        }
-    )
+    @extend_tags_field
     def get_tags(self, obj: Folder):
         return [f"items:{obj.children.count()}"]
 

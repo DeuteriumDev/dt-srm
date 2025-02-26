@@ -7,6 +7,18 @@ from drf_spectacular.types import OpenApiTypes
 from reversion.models import Version
 
 
+def extend_tags_field(*args):
+    return extend_schema_field(
+        {
+            "type": "array",
+            "items": {
+                "type": "string",
+            },
+            "readOnly": True,
+        }
+    )(*args)
+
+
 class NodeVersioningSerializer(serializers.ModelSerializer):
     updated = serializers.SerializerMethodField()
     updated_by = serializers.SerializerMethodField()
@@ -64,22 +76,6 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
             .revision.user,
         ).data
 
-    @extend_schema_field(
-        {
-            "type": "array",
-            "items": {
-                "type": "string",
-            },
-            "readOnly": True,
-        }
-    )
+    @extend_tags_field
     def get_tags(self, _obj):
         return []
-
-
-# class NodePolymorphicSerializer(PolymorphicSerializer):
-#     model_serializer_mapping = {
-#         Folder: FolderSerializer,
-#         Invoice: InvoiceSerializer,
-#         Kit: KitSerializer,
-#     }
