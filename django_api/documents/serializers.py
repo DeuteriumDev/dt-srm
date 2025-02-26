@@ -17,7 +17,6 @@ class ParentFolderSerializer(serializers.ModelSerializer):
 
 
 class FolderSerializer(NodeVersioningSerializer):
-    tags = serializers.SerializerMethodField()
     parent = ParentFolderSerializer()
 
     class Meta:

@@ -10,6 +10,7 @@ from reversion.models import Version
 class NodeVersioningSerializer(serializers.ModelSerializer):
     updated = serializers.SerializerMethodField()
     updated_by = serializers.SerializerMethodField()
+    tags = serializers.SerializerMethodField()
 
     child_versionable_models = ()
 
@@ -62,6 +63,18 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
             .first()
             .revision.user,
         ).data
+
+    @extend_schema_field(
+        {
+            "type": "array",
+            "items": {
+                "type": "string",
+            },
+            "readOnly": True,
+        }
+    )
+    def get_tags(self, _obj):
+        return []
 
 
 # class NodePolymorphicSerializer(PolymorphicSerializer):
