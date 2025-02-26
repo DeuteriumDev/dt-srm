@@ -7,1222 +7,3450 @@ paths:
   /api/v1/answers/:
     get:
       operationId: answers_list
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: query
-        name: description
-        schema:
-          type: string
-      - in: query
-        name: image
-        schema:
-          type: string
-      - in: query
-        name: index
-        schema:
-          type: integer
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - in: query
-        name: title
-        schema:
-          type: string
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: image
+          schema:
+            type: string
+        - in: query
+          name: index
+          schema:
+            type: integer
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - in: query
+          name: title
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - answers
+        - answers
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedAnswerList'
-          description: ''
+                $ref: "#/components/schemas/PaginatedAnswerList"
+          description: ""
     post:
       operationId: answers_create
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - answers
+        - answers
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AnswerRequest'
+              $ref: "#/components/schemas/AnswerRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AnswerRequest'
+              $ref: "#/components/schemas/AnswerRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AnswerRequest'
+              $ref: "#/components/schemas/AnswerRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Answer'
-          description: ''
+                $ref: "#/components/schemas/Answer"
+          description: ""
   /api/v1/answers/{id}/:
     get:
       operationId: answers_retrieve
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this answer.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this answer.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - answers
+        - answers
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Answer'
-          description: ''
+                $ref: "#/components/schemas/Answer"
+          description: ""
     put:
       operationId: answers_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this answer.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this answer.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - answers
+        - answers
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AnswerRequest'
+              $ref: "#/components/schemas/AnswerRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/AnswerRequest'
+              $ref: "#/components/schemas/AnswerRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/AnswerRequest'
+              $ref: "#/components/schemas/AnswerRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Answer'
-          description: ''
+                $ref: "#/components/schemas/Answer"
+          description: ""
     patch:
       operationId: answers_partial_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this answer.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this answer.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - answers
+        - answers
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedAnswerRequest'
+              $ref: "#/components/schemas/PatchedAnswerRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedAnswerRequest'
+              $ref: "#/components/schemas/PatchedAnswerRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedAnswerRequest'
+              $ref: "#/components/schemas/PatchedAnswerRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Answer'
-          description: ''
+                $ref: "#/components/schemas/Answer"
+          description: ""
     delete:
       operationId: answers_destroy
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this answer.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: A unique integer value identifying this answer.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - answers
+        - answers
       security:
-      - {}
+        - {}
       responses:
-        '204':
+        "204":
           description: No response body
   /api/v1/documents/:
     get:
-      operationId: DocumentsList
+      operationId: documents_list
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: query
-        name: created__gte
-        schema:
-          type: string
-      - in: query
-        name: created__lte
-        schema:
-          type: string
-      - in: query
-        name: doc_type__in
-        schema:
-          type: string
-      - in: query
-        name: id__exact
-        schema:
-          type: string
-      - in: query
-        name: name__contains
-        schema:
-          type: string
-      - in: query
-        name: name__exact
-        schema:
-          type: string
-      - in: query
-        name: ordering
-        schema:
-          type: string
-          enum:
-          - -created
-          - -doc_type
-          - -id
-          - -name
-          - -parent
-          - -updated
-          - created
-          - doc_type
-          - id
-          - name
-          - parent
-          - updated
-      - in: query
-        name: page
-        schema:
-          type: integer
-      - in: query
-        name: parent__exact
-        schema:
-          type: string
-      - in: query
-        name: parent__isnull
-        schema:
-          type: string
-      - in: query
-        name: updated__gte
-        schema:
-          type: string
-      - in: query
-        name: updated__lte
-        schema:
-          type: string
+        - in: query
+          name: created
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: inherit_permissions
+          schema:
+            type: boolean
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - in: query
+          name: parent
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: polymorphic_ctype
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - documents
+        - documents
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                type: object
-                required:
-                - count
-                - results
-                - breadcrumbs
-                properties:
-                  count:
-                    type: integer
-                    example: 123
-                  next:
-                    type: integer
-                    nullable: true
-                    example: 2
-                  previous:
-                    type: integer
-                    nullable: true
-                    example: 1
-                  breadcrumbs:
-                    type: array
-                    items:
-                      id:
-                        type: string
-                        format: uuid
-                        readOnly: true
-                      name:
-                        type: string
-                        readOnly: true
-                  results:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          format: uuid
-                          readOnly: true
-                        name:
-                          type: string
-                          readOnly: true
-                        created:
-                          type: string
-                          format: date-time
-                          readOnly: true
-                        updated:
-                          type: string
-                          format: date-time
-                          readOnly: true
-                        doc_type:
-                          type: string
-                          readOnly: true
-                        tags:
-                          type: array
-                          readOnly: true
-                          items:
-                            type: string
-                            readOnly: true
-                        parent:
-                          type: object
-                          nullable: true
-                          properties:
-                            id:
-                              type: string
-                              format: uuid
-                              readOnly: true
-                            name:
-                              type: string
-                              readOnly: true
-                      required:
-                      - created
-                      - id
-                      - name
-                      - updated
-                      - doc_type
-                      - tags
-                      - parent
-          description: ''
+                $ref: "#/components/schemas/PaginatedDocumentPolymorphicList"
+          description: ""
   /api/v1/folders/:
     get:
       operationId: folders_list
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: query
-        name: created
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: description
-        schema:
-          type: string
-      - in: query
-        name: favorite
-        schema:
-          type: boolean
-      - in: query
-        name: id
-        schema:
-          type: string
-          format: uuid
-      - in: query
-        name: inherit_permissions
-        schema:
-          type: boolean
-      - in: query
-        name: name
-        schema:
-          type: string
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - in: query
-        name: parent
-        schema:
-          type: string
-          format: uuid
-      - name: size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - in: query
-        name: updated
-        schema:
-          type: string
-          format: date-time
+        - in: query
+          name: created
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: favorite
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: inherit_permissions
+          schema:
+            type: boolean
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - in: query
+          name: parent
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: polymorphic_ctype
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - folders
+        - folders
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedFolderList'
-          description: ''
+                $ref: "#/components/schemas/PaginatedFolderNodeList"
+          description: ""
     post:
       operationId: folders_create
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: favorite
+          schema:
+            type: string
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - folders
+        - folders
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FolderRequest'
+              $ref: "#/components/schemas/FolderNodeRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/FolderRequest'
+              $ref: "#/components/schemas/FolderNodeRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FolderRequest'
+              $ref: "#/components/schemas/FolderNodeRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Folder'
-          description: ''
+                $ref: "#/components/schemas/FolderNode"
+          description: ""
   /api/v1/folders/{id}/:
     get:
       operationId: folders_retrieve
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this folder.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: favorite
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this folder node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - folders
+        - folders
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Folder'
-          description: ''
+                $ref: "#/components/schemas/FolderNode"
+          description: ""
     put:
       operationId: folders_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this folder.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: favorite
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this folder node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - folders
+        - folders
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FolderRequest'
+              $ref: "#/components/schemas/FolderNodeRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/FolderRequest'
+              $ref: "#/components/schemas/FolderNodeRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FolderRequest'
+              $ref: "#/components/schemas/FolderNodeRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Folder'
-          description: ''
+                $ref: "#/components/schemas/FolderNode"
+          description: ""
     patch:
       operationId: folders_partial_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this folder.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: favorite
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this folder node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - folders
+        - folders
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedFolderRequest'
+              $ref: "#/components/schemas/PatchedFolderNodeRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedFolderRequest'
+              $ref: "#/components/schemas/PatchedFolderNodeRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedFolderRequest'
+              $ref: "#/components/schemas/PatchedFolderNodeRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Folder'
-          description: ''
+                $ref: "#/components/schemas/FolderNode"
+          description: ""
     delete:
       operationId: folders_destroy
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this folder.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: favorite
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this folder node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - folders
+        - folders
       security:
-      - {}
+        - {}
       responses:
-        '204':
+        "204":
+          description: No response body
+  /api/v1/invoices/:
+    get:
+      operationId: invoices_list
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: inherit_permissions
+          schema:
+            type: boolean
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - in: query
+          name: parent
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: polymorphic_ctype
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - in: query
+          name: total
+          schema:
+            type: number
+            format: float
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
+      tags:
+        - invoices
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedInvoiceNodeList"
+          description: ""
+    post:
+      operationId: invoices_create
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
+      tags:
+        - invoices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceNodeRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/InvoiceNodeRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/InvoiceNodeRequest"
+        required: true
+      security:
+        - {}
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceNode"
+          description: ""
+  /api/v1/invoices/{id}/:
+    get:
+      operationId: invoices_retrieve
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this invoice node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
+      tags:
+        - invoices
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceNode"
+          description: ""
+    put:
+      operationId: invoices_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this invoice node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
+      tags:
+        - invoices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceNodeRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/InvoiceNodeRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/InvoiceNodeRequest"
+        required: true
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceNode"
+          description: ""
+    patch:
+      operationId: invoices_partial_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this invoice node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
+      tags:
+        - invoices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedInvoiceNodeRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedInvoiceNodeRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedInvoiceNodeRequest"
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceNode"
+          description: ""
+    delete:
+      operationId: invoices_destroy
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this invoice node.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
+      tags:
+        - invoices
+      security:
+        - {}
+      responses:
+        "204":
+          description: No response body
+  /api/v1/items/:
+    get:
+      operationId: items_list
+      parameters:
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+      tags:
+        - items
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedItemList"
+          description: ""
+    post:
+      operationId: items_create
+      tags:
+        - items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+        required: true
+      security:
+        - {}
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+          description: ""
+  /api/v1/items/{id}/:
+    get:
+      operationId: items_retrieve
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this item.
+          required: true
+      tags:
+        - items
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+          description: ""
+    put:
+      operationId: items_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this item.
+          required: true
+      tags:
+        - items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ItemRequest"
+        required: true
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+          description: ""
+    patch:
+      operationId: items_partial_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this item.
+          required: true
+      tags:
+        - items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedItemRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedItemRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedItemRequest"
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+          description: ""
+    delete:
+      operationId: items_destroy
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this item.
+          required: true
+      tags:
+        - items
+      security:
+        - {}
+      responses:
+        "204":
           description: No response body
   /api/v1/kits/:
     get:
       operationId: kits_list
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: query
-        name: created
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: id
-        schema:
-          type: string
-          format: uuid
-      - in: query
-        name: inherit_permissions
-        schema:
-          type: boolean
-      - in: query
-        name: name
-        schema:
-          type: string
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - in: query
-        name: parent
-        schema:
-          type: string
-          format: uuid
-      - name: size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - in: query
-        name: start
-        schema:
-          type: string
-          format: uuid
-      - in: query
-        name: updated
-        schema:
-          type: string
-          format: date-time
+        - in: query
+          name: created
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: inherit_permissions
+          schema:
+            type: boolean
+        - in: query
+          name: name
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - in: query
+          name: parent
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - in: query
+          name: start
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: updated
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - kits
+        - kits
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedKitList'
-          description: ''
+                $ref: "#/components/schemas/PaginatedKitList"
+          description: ""
     post:
       operationId: kits_create
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - kits
+        - kits
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/KitRequest'
+              $ref: "#/components/schemas/KitRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/KitRequest'
+              $ref: "#/components/schemas/KitRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/KitRequest'
+              $ref: "#/components/schemas/KitRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Kit'
-          description: ''
+                $ref: "#/components/schemas/Kit"
+          description: ""
   /api/v1/kits/{id}/:
     get:
       operationId: kits_retrieve
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this kit.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this kit.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - kits
+        - kits
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Kit'
-          description: ''
+                $ref: "#/components/schemas/Kit"
+          description: ""
     put:
       operationId: kits_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this kit.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this kit.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - kits
+        - kits
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/KitRequest'
+              $ref: "#/components/schemas/KitRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/KitRequest'
+              $ref: "#/components/schemas/KitRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/KitRequest'
+              $ref: "#/components/schemas/KitRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Kit'
-          description: ''
+                $ref: "#/components/schemas/Kit"
+          description: ""
     patch:
       operationId: kits_partial_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this kit.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this kit.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - kits
+        - kits
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedKitRequest'
+              $ref: "#/components/schemas/PatchedKitRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedKitRequest'
+              $ref: "#/components/schemas/PatchedKitRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedKitRequest'
+              $ref: "#/components/schemas/PatchedKitRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Kit'
-          description: ''
+                $ref: "#/components/schemas/Kit"
+          description: ""
     delete:
       operationId: kits_destroy
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this kit.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this kit.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - kits
+        - kits
       security:
-      - {}
+        - {}
       responses:
-        '204':
+        "204":
+          description: No response body
+  /api/v1/lineitems/:
+    get:
+      operationId: lineitems_list
+      parameters:
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+      tags:
+        - lineitems
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedLineItemList"
+          description: ""
+    post:
+      operationId: lineitems_create
+      tags:
+        - lineitems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LineItemRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/LineItemRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/LineItemRequest"
+        required: true
+      security:
+        - {}
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LineItem"
+          description: ""
+  /api/v1/lineitems/{id}/:
+    get:
+      operationId: lineitems_retrieve
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this line item.
+          required: true
+      tags:
+        - lineitems
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LineItem"
+          description: ""
+    put:
+      operationId: lineitems_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this line item.
+          required: true
+      tags:
+        - lineitems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LineItemRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/LineItemRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/LineItemRequest"
+        required: true
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LineItem"
+          description: ""
+    patch:
+      operationId: lineitems_partial_update
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this line item.
+          required: true
+      tags:
+        - lineitems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchedLineItemRequest"
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/PatchedLineItemRequest"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PatchedLineItemRequest"
+      security:
+        - {}
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LineItem"
+          description: ""
+    delete:
+      operationId: lineitems_destroy
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this line item.
+          required: true
+      tags:
+        - lineitems
+      security:
+        - {}
+      responses:
+        "204":
           description: No response body
   /api/v1/organizations/:
     get:
       operationId: organizations_list
       parameters:
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
       tags:
-      - organizations
+        - organizations
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedOrganizationList'
-          description: ''
+                $ref: "#/components/schemas/PaginatedOrganizationList"
+          description: ""
     post:
       operationId: organizations_create
       tags:
-      - organizations
+        - organizations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrganizationRequest'
+              $ref: "#/components/schemas/OrganizationRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/OrganizationRequest'
+              $ref: "#/components/schemas/OrganizationRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/OrganizationRequest'
+              $ref: "#/components/schemas/OrganizationRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
-          description: ''
+                $ref: "#/components/schemas/Organization"
+          description: ""
   /api/v1/organizations/{id}/:
     get:
       operationId: organizations_retrieve
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this organization.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this organization.
+          required: true
       tags:
-      - organizations
+        - organizations
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
-          description: ''
+                $ref: "#/components/schemas/Organization"
+          description: ""
     put:
       operationId: organizations_update
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this organization.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this organization.
+          required: true
       tags:
-      - organizations
+        - organizations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OrganizationRequest'
+              $ref: "#/components/schemas/OrganizationRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/OrganizationRequest'
+              $ref: "#/components/schemas/OrganizationRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/OrganizationRequest'
+              $ref: "#/components/schemas/OrganizationRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
-          description: ''
+                $ref: "#/components/schemas/Organization"
+          description: ""
     patch:
       operationId: organizations_partial_update
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this organization.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this organization.
+          required: true
       tags:
-      - organizations
+        - organizations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedOrganizationRequest'
+              $ref: "#/components/schemas/PatchedOrganizationRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedOrganizationRequest'
+              $ref: "#/components/schemas/PatchedOrganizationRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedOrganizationRequest'
+              $ref: "#/components/schemas/PatchedOrganizationRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Organization'
-          description: ''
+                $ref: "#/components/schemas/Organization"
+          description: ""
     delete:
       operationId: organizations_destroy
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this organization.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this organization.
+          required: true
       tags:
-      - organizations
+        - organizations
       security:
-      - {}
+        - {}
       responses:
-        '204':
+        "204":
           description: No response body
   /api/v1/questions/:
     get:
       operationId: questions_list
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: query
-        name: answers
-        schema:
-          type: array
-          items:
+        - in: query
+          name: answers
+          schema:
+            type: array
+            items:
+              type: integer
+          explode: true
+          style: form
+        - in: query
+          name: created
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: image
+          schema:
+            type: string
+        - in: query
+          name: inherit_permissions
+          schema:
+            type: boolean
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: next
+          schema:
+            type: string
+            format: uuid
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
             type: integer
-        explode: true
-        style: form
-      - in: query
-        name: created
-        schema:
-          type: string
-          format: date-time
-      - in: query
-        name: description
-        schema:
-          type: string
-      - in: query
-        name: id
-        schema:
-          type: string
-          format: uuid
-      - in: query
-        name: image
-        schema:
-          type: string
-      - in: query
-        name: inherit_permissions
-        schema:
-          type: boolean
-      - in: query
-        name: next
-        schema:
-          type: string
-          format: uuid
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - in: query
-        name: title
-        schema:
-          type: string
-      - in: query
-        name: updated
-        schema:
-          type: string
-          format: date-time
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
+        - in: query
+          name: title
+          schema:
+            type: string
+        - in: query
+          name: updated
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - questions
+        - questions
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedQuestionList'
-          description: ''
+                $ref: "#/components/schemas/PaginatedQuestionList"
+          description: ""
     post:
       operationId: questions_create
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
+      parameters:
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - questions
+        - questions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuestionRequest'
+              $ref: "#/components/schemas/QuestionRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/QuestionRequest'
+              $ref: "#/components/schemas/QuestionRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/QuestionRequest'
+              $ref: "#/components/schemas/QuestionRequest"
       security:
-      - {}
+        - {}
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Question'
-          description: ''
+                $ref: "#/components/schemas/Question"
+          description: ""
   /api/v1/questions/{id}/:
     get:
       operationId: questions_retrieve
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this question.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this question.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - questions
+        - questions
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Question'
-          description: ''
+                $ref: "#/components/schemas/Question"
+          description: ""
     put:
       operationId: questions_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this question.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this question.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - questions
+        - questions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuestionRequest'
+              $ref: "#/components/schemas/QuestionRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/QuestionRequest'
+              $ref: "#/components/schemas/QuestionRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/QuestionRequest'
+              $ref: "#/components/schemas/QuestionRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Question'
-          description: ''
+                $ref: "#/components/schemas/Question"
+          description: ""
     patch:
       operationId: questions_partial_update
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this question.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this question.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - questions
+        - questions
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedQuestionRequest'
+              $ref: "#/components/schemas/PatchedQuestionRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedQuestionRequest'
+              $ref: "#/components/schemas/PatchedQuestionRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedQuestionRequest'
+              $ref: "#/components/schemas/PatchedQuestionRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Question'
-          description: ''
+                $ref: "#/components/schemas/Question"
+          description: ""
     delete:
       operationId: questions_destroy
+      description: |-
+        This viewset provides dynamically generated
+        filters by applying defined filters on generic
+        queryset.
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this question.
-        required: true
+        - in: query
+          name: created__gte
+          schema:
+            type: string
+        - in: query
+          name: created__lte
+          schema:
+            type: string
+        - in: query
+          name: description__contains
+          schema:
+            type: string
+        - in: query
+          name: description__exact
+          schema:
+            type: string
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this question.
+          required: true
+        - in: query
+          name: id__exact
+          schema:
+            type: string
+        - in: query
+          name: id__in
+          schema:
+            type: string
+        - in: query
+          name: name__contains
+          schema:
+            type: string
+        - in: query
+          name: name__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__exact
+          schema:
+            type: string
+        - in: query
+          name: parent__in
+          schema:
+            type: string
+        - in: query
+          name: parent__isnull
+          schema:
+            type: string
+        - in: query
+          name: updated__gte
+          schema:
+            type: string
+        - in: query
+          name: updated__lte
+          schema:
+            type: string
       tags:
-      - questions
+        - questions
       security:
-      - {}
+        - {}
       responses:
-        '204':
+        "204":
           description: No response body
   /api/v1/users/:
     get:
       operationId: users_list
       parameters:
-      - name: page
-        required: false
-        in: query
-        description: A page number within the paginated result set.
-        schema:
-          type: integer
-      - name: size
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
+        - name: ordering
+          required: false
+          in: query
+          description: Which field to use when ordering the results.
+          schema:
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: A page number within the paginated result set.
+          schema:
+            type: integer
+        - name: size
+          required: false
+          in: query
+          description: Number of results to return per page.
+          schema:
+            type: integer
       tags:
-      - users
+        - users
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedCustomUserList'
-          description: ''
+                $ref: "#/components/schemas/PaginatedCustomUserList"
+          description: ""
     post:
       operationId: users_create
       tags:
-      - users
+        - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CustomUserRequest'
+              $ref: "#/components/schemas/CustomUserRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/CustomUserRequest'
+              $ref: "#/components/schemas/CustomUserRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CustomUserRequest'
+              $ref: "#/components/schemas/CustomUserRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '201':
+        "201":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
+                $ref: "#/components/schemas/CustomUser"
+          description: ""
   /api/v1/users/{id}/:
     get:
       operationId: users_retrieve
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this user.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this user.
+          required: true
       tags:
-      - users
+        - users
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
+                $ref: "#/components/schemas/CustomUser"
+          description: ""
     put:
       operationId: users_update
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this user.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this user.
+          required: true
       tags:
-      - users
+        - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CustomUserRequest'
+              $ref: "#/components/schemas/CustomUserRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/CustomUserRequest'
+              $ref: "#/components/schemas/CustomUserRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CustomUserRequest'
+              $ref: "#/components/schemas/CustomUserRequest"
         required: true
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
+                $ref: "#/components/schemas/CustomUser"
+          description: ""
     patch:
       operationId: users_partial_update
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this user.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this user.
+          required: true
       tags:
-      - users
+        - users
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedCustomUserRequest'
+              $ref: "#/components/schemas/PatchedCustomUserRequest"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedCustomUserRequest'
+              $ref: "#/components/schemas/PatchedCustomUserRequest"
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedCustomUserRequest'
+              $ref: "#/components/schemas/PatchedCustomUserRequest"
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
+                $ref: "#/components/schemas/CustomUser"
+          description: ""
     delete:
       operationId: users_destroy
       parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this user.
-        required: true
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          description: A UUID string identifying this user.
+          required: true
       tags:
-      - users
+        - users
       security:
-      - {}
+        - {}
       responses:
-        '204':
+        "204":
           description: No response body
   /api/v1/users/me/:
     get:
       operationId: users_me_retrieve
       tags:
-      - users
+        - users
       security:
-      - {}
+        - {}
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomUser'
-          description: ''
+                $ref: "#/components/schemas/CustomUser"
+          description: ""
 components:
   schemas:
     Answer:
@@ -1245,8 +3473,8 @@ components:
           maximum: 2147483647
           minimum: 0
       required:
-      - id
-      - title
+        - id
+        - title
     AnswerRequest:
       type: object
       properties:
@@ -1266,7 +3494,7 @@ components:
           maximum: 2147483647
           minimum: 0
       required:
-      - title
+        - title
     CustomUser:
       type: object
       description: |-
@@ -1298,12 +3526,12 @@ components:
         groups:
           type: array
           items:
-            $ref: '#/components/schemas/Nested'
+            $ref: "#/components/schemas/Nested"
           readOnly: true
       required:
-      - email
-      - groups
-      - id
+        - email
+        - groups
+        - id
     CustomUserRequest:
       type: object
       description: |-
@@ -1330,25 +3558,39 @@ components:
           type: boolean
           title: Active
       required:
-      - email
-    Folder:
+        - email
+    DocumentPolymorphic:
+      oneOf:
+        - $ref: "#/components/schemas/FolderNodeTyped"
+        - $ref: "#/components/schemas/InvoiceNodeTyped"
+      discriminator:
+        propertyName: resourcetype
+        mapping:
+          FolderNode: "#/components/schemas/FolderNodeTyped"
+          InvoiceNode: "#/components/schemas/InvoiceNodeTyped"
+    FolderNode:
       type: object
-      description: |-
-        A serializer mixin that takes an additional `fields` argument that controls
-        which fields should be displayed.
       properties:
         id:
           type: string
           format: uuid
           readOnly: true
-        children_count:
-          type: string
-          readOnly: true
-        created:
+        updated:
           type: string
           format: date-time
           readOnly: true
-        updated:
+        updated_by:
+          allOf:
+            - $ref: "#/components/schemas/CustomUser"
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        parent:
+          $ref: "#/components/schemas/ParentNode"
+        created:
           type: string
           format: date-time
           readOnly: true
@@ -1361,23 +3603,24 @@ components:
           nullable: true
         favorite:
           type: boolean
-        parent:
-          allOf:
-          - $ref: '#/components/schemas/Nested'
+        polymorphic_ctype:
+          type: integer
           readOnly: true
+          nullable: true
       required:
-      - children_count
-      - created
-      - id
-      - name
-      - parent
-      - updated
-    FolderRequest:
+        - created
+        - id
+        - name
+        - parent
+        - polymorphic_ctype
+        - tags
+        - updated
+        - updated_by
+    FolderNodeRequest:
       type: object
-      description: |-
-        A serializer mixin that takes an additional `fields` argument that controls
-        which fields should be displayed.
       properties:
+        parent:
+          $ref: "#/components/schemas/ParentNodeRequest"
         inherit_permissions:
           type: boolean
         name:
@@ -1389,7 +3632,147 @@ components:
         favorite:
           type: boolean
       required:
-      - name
+        - name
+        - parent
+    FolderNodeTyped:
+      allOf:
+        - type: object
+          properties:
+            resourcetype:
+              type: string
+          required:
+            - resourcetype
+        - $ref: "#/components/schemas/FolderNode"
+    InvoiceNode:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          allOf:
+            - $ref: "#/components/schemas/CustomUser"
+          readOnly: true
+        line_items:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineItem"
+          readOnly: true
+        parent:
+          $ref: "#/components/schemas/ParentNode"
+        tags:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        inherit_permissions:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        total:
+          type: number
+          format: double
+          nullable: true
+        polymorphic_ctype:
+          type: integer
+          readOnly: true
+          nullable: true
+      required:
+        - created
+        - id
+        - line_items
+        - name
+        - parent
+        - polymorphic_ctype
+        - tags
+        - updated
+        - updated_by
+    InvoiceNodeRequest:
+      type: object
+      properties:
+        parent:
+          $ref: "#/components/schemas/ParentNodeRequest"
+        inherit_permissions:
+          type: boolean
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          nullable: true
+        total:
+          type: number
+          format: double
+          nullable: true
+      required:
+        - name
+        - parent
+    InvoiceNodeTyped:
+      allOf:
+        - type: object
+          properties:
+            resourcetype:
+              type: string
+          required:
+            - resourcetype
+        - $ref: "#/components/schemas/InvoiceNode"
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          allOf:
+            - $ref: "#/components/schemas/CustomUser"
+          readOnly: true
+        name:
+          type: string
+          nullable: true
+        value:
+          type: number
+          format: double
+          nullable: true
+        line_item:
+          type: string
+          format: uuid
+      required:
+        - id
+        - line_item
+        - updated
+        - updated_by
+    ItemRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        value:
+          type: number
+          format: double
+          nullable: true
+        line_item:
+          type: string
+          format: uuid
+      required:
+        - line_item
     Kit:
       type: object
       properties:
@@ -1411,19 +3794,19 @@ components:
           type: string
         start:
           allOf:
-          - $ref: '#/components/schemas/Nested'
+            - $ref: "#/components/schemas/Nested"
           readOnly: true
         parent:
           allOf:
-          - $ref: '#/components/schemas/Nested'
+            - $ref: "#/components/schemas/Nested"
           readOnly: true
       required:
-      - created
-      - id
-      - name
-      - parent
-      - start
-      - updated
+        - created
+        - id
+        - name
+        - parent
+        - start
+        - updated
     KitRequest:
       type: object
       properties:
@@ -1433,7 +3816,54 @@ components:
           type: string
           minLength: 1
       required:
-      - name
+        - name
+    LineItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_by:
+          allOf:
+            - $ref: "#/components/schemas/CustomUser"
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+          readOnly: true
+        position:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        invoice:
+          type: string
+          format: uuid
+      required:
+        - id
+        - invoice
+        - items
+        - updated
+        - updated_by
+    LineItemRequest:
+      type: object
+      properties:
+        position:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        invoice:
+          type: string
+          format: uuid
+      required:
+        - invoice
     Nested:
       type: object
       properties:
@@ -1441,48 +3871,33 @@ components:
           type: string
           format: uuid
           readOnly: true
-        created:
-          type: string
-          format: date-time
-          readOnly: true
-        updated:
-          type: string
-          format: date-time
-          readOnly: true
-        inherit_permissions:
-          type: boolean
         name:
           type: string
-        description:
-          type: string
-          nullable: true
-        favorite:
+        hidden:
           type: boolean
         parent:
-          allOf:
-          - $ref: '#/components/schemas/Nested'
-          readOnly: true
+          type: string
+          format: uuid
+          nullable: true
       required:
-      - created
-      - id
-      - name
-      - parent
-      - updated
+        - id
+        - name
     NestedRequest:
       type: object
       properties:
         inherit_permissions:
           type: boolean
-        name:
+        title:
           type: string
           minLength: 1
         description:
           type: string
           nullable: true
-        favorite:
-          type: boolean
-      required:
-      - name
+        image:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
     Organization:
       type: object
       description: |-
@@ -1490,7 +3905,8 @@ components:
         controls which fields should be displayed.
       properties:
         id:
-          type: integer
+          type: string
+          format: uuid
           readOnly: true
         name:
           type: string
@@ -1500,12 +3916,12 @@ components:
           nullable: true
         root:
           allOf:
-          - $ref: '#/components/schemas/Nested'
+            - $ref: "#/components/schemas/Nested"
           readOnly: true
       required:
-      - id
-      - name
-      - root
+        - id
+        - name
+        - root
     OrganizationRequest:
       type: object
       description: |-
@@ -1520,12 +3936,12 @@ components:
           format: binary
           nullable: true
       required:
-      - name
+        - name
     PaginatedAnswerList:
       type: object
       required:
-      - count
-      - results
+        - count
+        - results
       properties:
         count:
           type: integer
@@ -1541,12 +3957,12 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Answer'
+            $ref: "#/components/schemas/Answer"
     PaginatedCustomUserList:
       type: object
       required:
-      - count
-      - results
+        - count
+        - results
       properties:
         count:
           type: integer
@@ -1562,12 +3978,12 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/CustomUser'
-    PaginatedFolderList:
+            $ref: "#/components/schemas/CustomUser"
+    PaginatedDocumentPolymorphicList:
       type: object
       required:
-      - count
-      - results
+        - count
+        - results
       properties:
         count:
           type: integer
@@ -1583,12 +3999,75 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Folder'
+            $ref: "#/components/schemas/DocumentPolymorphic"
+    PaginatedFolderNodeList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: integer
+          nullable: true
+          example: 2
+        previous:
+          type: integer
+          nullable: true
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/FolderNode"
+    PaginatedInvoiceNodeList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: integer
+          nullable: true
+          example: 2
+        previous:
+          type: integer
+          nullable: true
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceNode"
+    PaginatedItemList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: integer
+          nullable: true
+          example: 2
+        previous:
+          type: integer
+          nullable: true
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
     PaginatedKitList:
       type: object
       required:
-      - count
-      - results
+        - count
+        - results
       properties:
         count:
           type: integer
@@ -1604,12 +4083,33 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Kit'
+            $ref: "#/components/schemas/Kit"
+    PaginatedLineItemList:
+      type: object
+      required:
+        - count
+        - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: integer
+          nullable: true
+          example: 2
+        previous:
+          type: integer
+          nullable: true
+          example: 1
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/LineItem"
     PaginatedOrganizationList:
       type: object
       required:
-      - count
-      - results
+        - count
+        - results
       properties:
         count:
           type: integer
@@ -1625,12 +4125,12 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Organization'
+            $ref: "#/components/schemas/Organization"
     PaginatedQuestionList:
       type: object
       required:
-      - count
-      - results
+        - count
+        - results
       properties:
         count:
           type: integer
@@ -1646,7 +4146,27 @@ components:
         results:
           type: array
           items:
-            $ref: '#/components/schemas/Question'
+            $ref: "#/components/schemas/Question"
+    ParentNode:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+      required:
+        - id
+        - name
+    ParentNodeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required:
+        - name
     PatchedAnswerRequest:
       type: object
       properties:
@@ -1690,12 +4210,11 @@ components:
         is_active:
           type: boolean
           title: Active
-    PatchedFolderRequest:
+    PatchedFolderNodeRequest:
       type: object
-      description: |-
-        A serializer mixin that takes an additional `fields` argument that controls
-        which fields should be displayed.
       properties:
+        parent:
+          $ref: "#/components/schemas/ParentNodeRequest"
         inherit_permissions:
           type: boolean
         name:
@@ -1706,6 +4225,36 @@ components:
           nullable: true
         favorite:
           type: boolean
+    PatchedInvoiceNodeRequest:
+      type: object
+      properties:
+        parent:
+          $ref: "#/components/schemas/ParentNodeRequest"
+        inherit_permissions:
+          type: boolean
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          nullable: true
+        total:
+          type: number
+          format: double
+          nullable: true
+    PatchedItemRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        value:
+          type: number
+          format: double
+          nullable: true
+        line_item:
+          type: string
+          format: uuid
     PatchedKitRequest:
       type: object
       properties:
@@ -1714,6 +4263,17 @@ components:
         name:
           type: string
           minLength: 1
+    PatchedLineItemRequest:
+      type: object
+      properties:
+        position:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        invoice:
+          type: string
+          format: uuid
     PatchedOrganizationRequest:
       type: object
       description: |-
@@ -1772,19 +4332,19 @@ components:
           maxLength: 200
         next:
           allOf:
-          - $ref: '#/components/schemas/Nested'
+            - $ref: "#/components/schemas/Nested"
           readOnly: true
         answers:
           type: array
           items:
-            $ref: '#/components/schemas/Nested'
+            $ref: "#/components/schemas/Nested"
           readOnly: true
       required:
-      - answers
-      - created
-      - id
-      - next
-      - updated
+        - answers
+        - created
+        - id
+        - next
+        - updated
     QuestionRequest:
       type: object
       properties:

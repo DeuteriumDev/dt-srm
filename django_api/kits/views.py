@@ -1,4 +1,4 @@
-from documents.viewsets import AbstractDocumentViewSet
+from nodes.viewsets import AbstractNodeViewSet
 from kits.models import Kit, Question, Answer
 from kits.serializers import (
     KitSerializer,
@@ -7,16 +7,16 @@ from kits.serializers import (
 )
 
 
-class KitViewSet(AbstractDocumentViewSet):
+class KitViewSet(AbstractNodeViewSet):
     queryset = Kit.objects.all()
     serializer_class = KitSerializer
 
 
-class QuestionViewSet(AbstractDocumentViewSet):
+class QuestionViewSet(AbstractNodeViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
 
-class AnswerViewSet(AbstractDocumentViewSet):
+class AnswerViewSet(AbstractNodeViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer

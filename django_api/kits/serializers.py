@@ -1,9 +1,18 @@
-from pprint import pprint
-from rest_framework import serializers
 from kits.models import Kit, Question, Answer
+from nodes.serializers import NodeVersioningSerializer
+from rest_framework import serializers
+from documents.models import Folder
 
 
-class KitSerializer(serializers.ModelSerializer):
+class ParentFolderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Folder
+        fields = ("id", "name")
+
+
+class KitSerializer(NodeVersioningSerializer):
+    parent = ParentFolderSerializer()
+
     class Meta:
         model = Kit
         fields = "__all__"
@@ -11,7 +20,7 @@ class KitSerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class QuestionSerializer(serializers.ModelSerializer):
+class QuestionSerializer(NodeVersioningSerializer):
     class Meta:
         model = Question
         fields = "__all__"
@@ -19,7 +28,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class AnswerSerializer(serializers.ModelSerializer):
+class AnswerSerializer(NodeVersioningSerializer):
     class Meta:
         model = Answer
         fields = "__all__"

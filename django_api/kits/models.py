@@ -1,9 +1,8 @@
 from django.db import models
-from documents.models import AbstractDocumentModel
-from documents.models import Folder
+from nodes.models import NodeModel
 
 
-class Kit(AbstractDocumentModel):
+class Kit(NodeModel):
     name = models.TextField(blank=False, null=False)
     start = models.ForeignKey(
         to="Question",
@@ -12,25 +11,12 @@ class Kit(AbstractDocumentModel):
         blank=True,
         related_name="kit",
     )
-    parent = models.ForeignKey(
-        Folder,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="children_kits",
-    )
-
-    @property
-    def children(self):
-        if self.start is not None:
-            return [self.start]
-        return []
 
     def __str__(self):
         return f"Kit: {self.name}"
 
 
-class Question(AbstractDocumentModel):
+class Question(NodeModel):
     title = models.TextField(default="")
     description = models.TextField(null=True, blank=True, default="")
     image = models.URLField(null=True, blank=True)
@@ -61,7 +47,7 @@ class Question(AbstractDocumentModel):
         return f"Question: {self.title}"
 
 
-class Answer(models.Model):
+class Answer(NodeModel):
     title = models.TextField(blank=False, null=False)
     description = models.TextField(default="")
     image = models.URLField(null=True, blank=True)

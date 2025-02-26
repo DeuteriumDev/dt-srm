@@ -1,7 +1,9 @@
 from time import sleep
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.contenttypes.models import ContentType
-from kits.models import Folder, Kit, Question, Answer
+from kits.models import Kit, Question, Answer
+from documents.models import Folder
+from invoices.models import Invoice
 from accounts.models import CustomGroup, CustomUser, CustomPermissions, Organization
 
 
@@ -19,6 +21,7 @@ class Command(BaseCommand):
         return folder
 
     def handle(self, *args, **kwargs):
+
         user = CustomUser.objects.create(
             email="pbateman@test.ca",
             first_name="Patrick",
@@ -83,5 +86,7 @@ class Command(BaseCommand):
         org = Organization.objects.create(name="test org 1")
         org.root = group
         org.save()
+
+        Invoice.objects.create(name="test invoice", parent=folder)
 
         self.stdout.write(self.style.SUCCESS("Successfully seeded db"))

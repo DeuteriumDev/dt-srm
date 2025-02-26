@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "documents",
     "reversion",
     "polymorphic",
+    "nodes",
+    "invoices",
 ]
 
 MIDDLEWARE = [

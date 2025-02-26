@@ -587,6 +587,55 @@ oauthlib = ">=3.2.2"
 requests = ">=2.13.0"
 
 [[package]]
+name = "django-polymorphic"
+version = "4.0.0a0"
+description = "Seamless polymorphic inheritance for Django models"
+optional = false
+python-versions = "*"
+files = []
+develop = false
+
+[package.dependencies]
+Django = ">=3.2"
+
+[package.source]
+type = "git"
+url = "https://github.com/jazzband/django-polymorphic.git"
+reference = "v4.0.0a"
+resolved_reference = "1039f882b99f97bf657bd958c949ee6a3b00377a"
+
+[[package]]
+name = "django-rest-polymorphic"
+version = "0.1.10"
+description = "Polymorphic serializers for Django REST Framework."
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-rest-polymorphic-0.1.10.tar.gz", hash = "sha256:2960f58ed9a8bb0d42bc72c8ffaadfbd7f37d2573d42a1cd9a6460f3d572b519"},
+    {file = "django_rest_polymorphic-0.1.10-py2.py3-none-any.whl", hash = "sha256:f3980e3e2af73357e7913f9b1410ef856866bcfcc46903b70fe9621118bb538c"},
+]
+
+[package.dependencies]
+django = "*"
+django-polymorphic = "*"
+djangorestframework = "*"
+six = "*"
+
+[[package]]
+name = "django-reversion"
+version = "5.1.0"
+description = "An extension to the Django web framework that provides version control for model instances."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django_reversion-5.1.0-py3-none-any.whl", hash = "sha256:084d4f117d9e2b4e8dfdfaad83ebb34410a03eed6071c96089e6811fdea82ad3"},
+    {file = "django_reversion-5.1.0.tar.gz", hash = "sha256:3309821e5b6fceedcce6b6975f1a9c7fab6ae7c7d0e1276a90e345946fa0dcb8"},
+]
+
+[package.dependencies]
+django = ">=4.2"
+
+[[package]]
 name = "django-timezone-field"
 version = "7.1"
 description = "A Django app providing DB, form, and REST framework fields for zoneinfo and pytz timezone objects."
@@ -661,6 +710,21 @@ uritemplate = ">=2.0.0"
 [package.extras]
 offline = ["drf-spectacular-sidecar"]
 sidecar = ["drf-spectacular-sidecar"]
+
+[[package]]
+name = "drf-url-filters"
+version = "0.5.1"
+description = "A django app to apply filters on drf querysets using query params with validations using voluptuous."
+optional = false
+python-versions = "*"
+files = [
+    {file = "drf-url-filters-0.5.1.tar.gz", hash = "sha256:fdae4c970fd8ec7b19be825e238490d57b6155c76731732ed5edb250b044f973"},
+]
+
+[package.dependencies]
+Django = ">=1.8.11"
+djangorestframework = ">=3.3.3"
+voluptuous = ">=0.8.10"
 
 [[package]]
 name = "idna"
@@ -1388,6 +1452,17 @@ files = [
 ]
 
 [[package]]
+name = "voluptuous"
+version = "0.15.2"
+description = "Python data validation library"
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "voluptuous-0.15.2-py3-none-any.whl", hash = "sha256:016348bc7788a9af9520b1764ebd4de0df41fe2138ebe9e06fa036bf86a65566"},
+    {file = "voluptuous-0.15.2.tar.gz", hash = "sha256:6ffcab32c4d3230b4d2af3a577c87e1908a714a11f6f95570456b1849b0279aa"},
+]
+
+[[package]]
 name = "wcwidth"
 version = "0.2.13"
 description = "Measures the displayed width of unicode strings in a terminal"
@@ -1401,4 +1476,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "92e55c7157f9f61fc84d3dc9450d783e70bdf3ca21d00a17d40ef0f23253e136"
+content-hash = "d2b971afdefd911346b3e382666b7e3cbf61348ef9e4c4371b679f4395553f66"

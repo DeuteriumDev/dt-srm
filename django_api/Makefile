@@ -14,7 +14,9 @@ install:
 migrations:
 	@$(DJANGO) makemigrations accounts
 	@$(DJANGO) makemigrations kits
+	@$(DJANGO) makemigrations documents
 	@$(DJANGO) migrate
+	@$(DJANGO) createinitialrevisions
 .PHONY: migrations
 
 # - see [.env](./.env) for admin pass
@@ -30,6 +32,7 @@ dev:
 
 schema:
 	@$(DJANGO) spectacular --color --file schema.yml
+	@node ../remix_frontend/node_modules/prettier/bin/prettier.cjs schema.yml --write
 .PHONy: schema
 
 shell:

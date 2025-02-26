@@ -1,51 +1,45 @@
 from rest_framework import serializers
+from nodes.serializers import NodeVersioningSerializer
 from .models import Folder
 from rest_framework import serializers
-from accounts.serializers import CustomPermissionsSerializer
-from drf_dynamic_fields import DynamicFieldsMixin
-from documents.access_policies import get_document_permissions
 from drf_spectacular.utils import extend_schema_field
-from drf_spectacular.types import OpenApiTypes
+from invoices.models import Invoice
+from invoices.serializers import InvoiceSerializer
+from kits.serializers import KitSerializer
+from kits.models import Kit
+from rest_polymorphic.serializers import PolymorphicSerializer
 
 
-class FolderSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    children_count = serializers.SerializerMethodField()
-    permissions = serializers.SerializerMethodField()
+class ParentFolderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Folder
+        fields = ("id", "name")
+
+
+class FolderSerializer(NodeVersioningSerializer):
+    tags = serializers.SerializerMethodField()
+    parent = ParentFolderSerializer()
 
     class Meta:
         model = Folder
         fields = "__all__"
-        ordering = ["created"]
-        depth = 1
 
-    @extend_schema_field(OpenApiTypes.INT)
-    def get_children_count(self, obj):
-        return len(obj.children)
-
-    @extend_schema_field(CustomPermissionsSerializer())
-    def get_permissions(self, obj):
-        perm = get_document_permissions(obj, self.context["request"]).get()
-        return CustomPermissionsSerializer(
-            perm, context={"request": self.context["request"]}
-        ).data
-
-
-class DocumentSerializer(serializers.Serializer):
-    id = serializers.UUIDField()
-    name = serializers.CharField()
-    updated = serializers.DateTimeField()
-    created = serializers.DateTimeField()
-    doc_type = serializers.CharField()
-    tags = serializers.ListField(child=serializers.CharField())
-    parent = serializers.SerializerMethodField()
-
-    def get_parent(self, obj):
-        if obj["parent"] is None:
-            return None
-        folder = Folder.objects.get(pk=obj["parent"])
-        return FolderSerializer(
-            folder, context={"request": self.context["request"]}
-        ).data
+    @extend_schema_field(
+        {
+            "type": "array",
+            "items": {
+                "type": "string",
+            },
+            "readOnly": True,
+        }
+    )
+    def get_tags(self, obj: Folder):
+        return [f"items:{obj.children.count()}"]
 
 
-# class
+class NodePolymorphicSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        Folder: FolderSerializer,
+        Invoice: InvoiceSerializer,
+        Kit: KitSerializer,
+    }

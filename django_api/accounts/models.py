@@ -1,15 +1,16 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.contrib.auth.base_user import BaseUserManager
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+import uuid
+from accounts.managers import CustomUserManager
 
 
 class CustomGroup(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.TextField("name", blank=False, null=False)
     parent = models.ForeignKey(
         "self",
@@ -30,6 +31,7 @@ class CustomGroup(models.Model):
 
 
 class Organization(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.TextField("name", blank=False, null=False)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
     root = models.ForeignKey(
@@ -38,36 +40,6 @@ class Organization(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
-
-class CustomUserManager(BaseUserManager):
-    use_in_migrations = True
-
-    def _create_user(self, email, password, **extra_fields):
-        """
-        Creates and saves a User with the given email and password.
-        """
-        if not email:
-            raise ValueError("The given email must be set")
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_user(self, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_superuser", False)
-        extra_fields.setdefault("is_staff", False)
-        return self._create_user(email, password, **extra_fields)
-
-    def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-
-        return self._create_user(email, password, **extra_fields)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -116,6 +88,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 class CustomPermissions(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     # map multiple content types onto [content_object]
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
     object_id = models.UUIDField()

@@ -22,6 +22,10 @@ drf-spectacular = "^0.28.0"
 psycopg2-binary = "^2.9.10"
 celery = "^5.4.0"
 django-celery-beat = "^2.7.0"
+drf-url-filters = "^0.5.1"
+django-rest-polymorphic = "^0.1.10"
+django-reversion = "^5.1.0"
+django-polymorphic = {git = "https://github.com/jazzband/django-polymorphic.git", rev = "v4.0.0a"}
 
 
 [tool.poetry.group.dev.dependencies]
