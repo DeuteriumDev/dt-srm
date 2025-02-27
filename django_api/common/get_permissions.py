@@ -27,7 +27,7 @@ def merge_permissions(permissions: models.QuerySet) -> Dict[str, bool]:
     )
 
 
-def get_permission(request, view):
+def get_permission(request: HttpRequest, view):
     perms = get_document_permissions(view.get_object(), request)
     if perms is None:
         return CustomPermissionsSerializer(None).data

@@ -3,7 +3,7 @@ from rest_access_policy import AccessPolicy
 from common.get_permissions import get_user_permissions, get_permission
 
 
-class DocumentAccessPolicy(AccessPolicy):
+class RelationalAccessPolicy(AccessPolicy):
     statements = [
         {
             "action": "*",
@@ -11,31 +11,31 @@ class DocumentAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": "create",
-            "principal": "authenticated",
+            "action": ["create"],
+            "principal": ["authenticated"],
             "effect": "allow",
             "condition": "has_create_access",
         },
         {
-            "action": "list",
-            "principal": "authenticated",
+            "action": ["list"],
+            "principal": ["*"],
             "effect": "allow",
         },
         {
-            "action": "detail",
-            "principal": "authenticated",
+            "action": ["retrieve"],
+            "principal": ["*"],
             "effect": "allow",
             "condition": "has_read_access",
         },
         {
-            "action": "update",
-            "principal": "authenticated",
+            "action": ["update"],
+            "principal": ["authenticated"],
             "effect": "allow",
             "condition": "has_update_access",
         },
         {
-            "action": "destroy",
-            "principal": "authenticated",
+            "action": ["destroy"],
+            "principal": ["authenticated"],
             "effect": "allow",
             "condition": "has_delete_access",
         },

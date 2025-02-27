@@ -2,7 +2,7 @@ from rest_access_policy import AccessViewSetMixin
 from rest_framework import viewsets, mixins
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from filters.mixins import FiltersMixin
-from documents import access_policies
+from .access_policies import RelationalAccessPolicy
 from common.strtobool import strtobool
 
 
@@ -36,8 +36,17 @@ params = [
 @extend_schema(
     parameters=params,
 )
-class AbstractNodeViewSet(FiltersMixin, AccessViewSetMixin, viewsets.ModelViewSet):
-    access_policy = access_policies.DocumentAccessPolicy
+class AbstractNodeViewSet(
+    FiltersMixin,
+    AccessViewSetMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    access_policy = RelationalAccessPolicy
     filterset_fields = "__all__"
     ordering_fields = "__all__"
 
@@ -63,7 +72,7 @@ class AbstractNodeReadonlyViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
-    access_policy = access_policies.DocumentAccessPolicy
+    access_policy = RelationalAccessPolicy
     filterset_fields = "__all__"
     ordering_fields = "__all__"
 
