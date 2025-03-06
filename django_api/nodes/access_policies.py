@@ -71,13 +71,13 @@ class RelationalAccessPolicy(AccessPolicy):
         return queryset.filter(id__in=[c.id for c in child_docs])
 
     def has_create_access(self, request, view, _action) -> bool:
-        return get_permission(request, view)["can_create"]
+        return get_permission(request, view.get_object())["can_create"]
 
     def has_read_access(self, request, view, _action) -> bool:
-        return get_permission(request, view)["can_read"]
+        return get_permission(request, view.get_object())["can_read"]
 
     def has_update_access(self, request, view, _action) -> bool:
-        return get_permission(request, view)["can_update"]
+        return get_permission(request, view.get_object())["can_update"]
 
     def has_delete_access(self, request, view, _action) -> bool:
-        return get_permission(request, view)["can_delete"]
+        return get_permission(request, view.get_object())["can_delete"]

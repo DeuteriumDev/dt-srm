@@ -2,11 +2,9 @@ from django.http import HttpRequest
 from django.db import models
 from typing import Dict
 from accounts.models import CustomPermissions
-from functools import reduce
-from accounts.serializers import CustomPermissionsSerializer
 
 
-def merge_permissions(permissions: models.QuerySet) -> Dict[str, bool]:
+def merge_permissions(permissions: list[CustomPermissions]) -> Dict[str, bool]:
     """Merges *parallel* permissions, not child to parent permissions.
     Ie: multiple permissions on the same document
 
@@ -16,21 +14,24 @@ def merge_permissions(permissions: models.QuerySet) -> Dict[str, bool]:
     Returns:
         Dict[str, bool]:
     """
-    return reduce(
-        lambda p1, p2: {
-            "can_create": p1.can_create or p2.can_create,
-            "can_read": p1.can_read or p2.can_read,
-            "can_update": p1.can_update or p2.can_update,
-            "can_delete": p1.can_delete or p2.can_delete,
-        },
-        [p for p in permissions],
-    )
+    result = {
+        "can_create": False,
+        "can_read": False,
+        "can_update": False,
+        "can_delete": False,
+    }
+    for p in permissions:
+        result["can_create"] = result["can_create"] or p.can_create
+        result["can_read"] = result["can_read"] or p.can_read
+        result["can_update"] = result["can_update"] or p.can_update
+        result["can_delete"] = result["can_delete"] or p.can_delete
+    return result
 
 
-def get_permission(request: HttpRequest, view):
-    perms = get_document_permissions(view.get_object(), request)
+def get_permission(request: HttpRequest, obj: models.Model):
+    perms = get_document_permissions(request, obj)
     if perms is None:
-        return CustomPermissionsSerializer(None).data
+        return merge_permissions([])  # will return all-false permissions
     return merge_permissions(perms)
 
 
@@ -41,8 +42,8 @@ def get_user_permissions(
 
 
 def get_document_permissions(
-    model: models.Model,
     request: HttpRequest,
+    model: models.Model,
 ) -> models.manager.BaseManager[CustomPermissions] | None:
     user_permissions = get_user_permissions(request)
     direct_permissions = user_permissions.filter(object_id=model.id)
@@ -50,5 +51,5 @@ def get_document_permissions(
     if direct_permissions.count() > 0:
         return direct_permissions
     if model.parent is not None and model.inherit_permissions:
-        return get_document_permissions(model.parent, request)
+        return get_document_permissions(request, model.parent)
     return None

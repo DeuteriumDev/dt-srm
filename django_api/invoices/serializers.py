@@ -1,14 +1,6 @@
-from rest_framework import serializers
-from documents.models import Folder
-from nodes.serializers import NodeVersioningSerializer
+from nodes.serializers import NodeVersioningSerializer, ParentFolderSerializer
 from .models import Invoice, LineItem, Item
-from rest_framework import serializers
-
-
-class ParentFolderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Folder
-        fields = ("id", "name")
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class ItemSerializer(NodeVersioningSerializer):

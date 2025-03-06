@@ -13,10 +13,11 @@ install:
 
 migrations:
 	@$(DJANGO) makemigrations accounts
+	@$(DJANGO) makemigrations nodes
+	@$(DJANGO) makemigrations invoices
 	@$(DJANGO) makemigrations kits
 	@$(DJANGO) makemigrations documents
 	@$(DJANGO) migrate
-	@$(DJANGO) createinitialrevisions
 .PHONY: migrations
 
 # - see [.env](./.env) for admin pass
@@ -24,6 +25,7 @@ seed: migrations
 	@$(DJANGO) createsuperuser --no-input --email admin@admin.ca
 	@$(DJANGO) createapplication --client-id $(CLIENT_ID) --client-secret $(CLIENT_SECRET) --algorithm HS256 --name remix_frontend confidential password
 	@$(DJANGO) seed
+	@$(DJANGO) createinitialrevisions
 .PHONY: seed
 
 dev:
@@ -52,3 +54,8 @@ scheduler:
 worker:
 	@poetry run celery -A django_api worker -l INFO
 .PHONY: worker
+
+
+revisions: 
+	@$(DJANGO) createinitialrevisions
+.PHONY: revisions

@@ -5,24 +5,19 @@ from datetime import datetime
 from drf_spectacular.utils import extend_schema_field
 from drf_spectacular.types import OpenApiTypes
 from reversion.models import Version
+from .fields import TagsField
 
 
-def extend_tags_field(*args):
-    return extend_schema_field(
-        {
-            "type": "array",
-            "items": {
-                "type": "string",
-            },
-            "readOnly": True,
-        }
-    )(*args)
+class ParentFolderSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+    name = serializers.CharField()
+    parent = serializers.UUIDField()
 
 
 class NodeVersioningSerializer(serializers.ModelSerializer):
     updated = serializers.SerializerMethodField()
     updated_by = serializers.SerializerMethodField()
-    tags = serializers.SerializerMethodField()
+    tags = TagsField()
 
     child_versionable_models = ()
 
@@ -76,6 +71,5 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
             .revision.user,
         ).data
 
-    @extend_tags_field
     def get_tags(self, _obj):
         return []

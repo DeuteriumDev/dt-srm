@@ -3,11 +3,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from nodes.viewsets import (
     AbstractNodeViewSet,
 )
-
 from .models import Folder
-from .serializers import (
-    FolderSerializer,
-)
+from .serializers import FolderSerializer
 
 
 @extend_schema(parameters=[OpenApiParameter(name="favorite", required=False, type=str)])

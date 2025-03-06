@@ -1,13 +1,6 @@
 from kits.models import Kit, Question, Answer
-from nodes.serializers import NodeVersioningSerializer
-from rest_framework import serializers
-from documents.models import Folder
-
-
-class ParentFolderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Folder
-        fields = ("id", "name")
+from nodes.serializers import NodeVersioningSerializer, ParentFolderSerializer
+from rest_framework.validators import UniqueTogetherValidator
 
 
 class KitSerializer(NodeVersioningSerializer):
