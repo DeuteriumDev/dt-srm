@@ -11,11 +11,13 @@ import {
   Folder,
   ClipboardPen,
   CircleOff,
+  Plus,
+  Receipt,
 } from 'lucide-react';
 import { useState } from 'react';
-import { data, Link, useFetcher } from 'react-router';
+import { data, Link, Outlet, useFetcher } from 'react-router';
 
-import { type Route } from '../_auth.documents_/+types/route';
+import { type Route } from '../_auth.documents/+types/route';
 import columns from './columns';
 
 import { Badge } from '~/components/badge';
@@ -27,6 +29,12 @@ import {
   CardTitle,
   CardContent,
 } from '~/components/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '~/components/dropdown-menu';
 import { Input } from '~/components/input';
 import {
   Table,
@@ -39,6 +47,7 @@ import {
 import apiRest from '~/libs/api.server';
 import { RequestHelper } from '~/libs/request';
 import sessionManager from '~/libs/session.server';
+import { type IconNode, type Document, type PageLayout } from '~/libs/types';
 import { cn } from '~/libs/utils';
 
 export function meta(_args: Route.MetaArgs) {
@@ -48,7 +57,7 @@ export function meta(_args: Route.MetaArgs) {
   ];
 }
 
-type SearchParams = apiRest.DocumentsListData['query'] & { layout: string };
+type SearchParams = apiRest.DocumentsListData['query'] & { layout: PageLayout };
 
 export async function loader(args: Route.LoaderArgs) {
   const cookie = await sessionManager.getCookie(args.request);
@@ -59,14 +68,13 @@ export async function loader(args: Route.LoaderArgs) {
   const documentsList = await apiRest.documentsList({
     query: searchParams,
     headers: {
-      Authorization: `Bearer ${cookie.get('access_token')}`,
+      Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
     },
   });
   // return {Date} to easy switch between data sources without any janky
   // state management
   const lasUpdated = new Date().toISOString();
 
-  console.log({ documentsList, searchParams, lasUpdated });
   return data({
     documentsList,
     searchParams,
@@ -74,13 +82,16 @@ export async function loader(args: Route.LoaderArgs) {
   });
 }
 
-const CLIENT_QUERY_PARAM = 'layout';
+const CLIENT_ONLY_QUERY_PARAM = 'layout';
 
-export default function Documents({ loaderData }: Route.ComponentProps) {
+export default function Documents(props: Route.ComponentProps) {
+  const {
+    loaderData,
+    loaderData: { searchParams },
+  } = props;
   const fetcher = useFetcher<typeof loader>();
   console.log({
-    loaderData,
-    fetcher,
+    props,
   });
   const [search, setSearch] = useState('');
 
@@ -96,7 +107,7 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
     columns,
     getCoreRowModel: getCoreRowModel(),
     meta: {
-      searchParams: loaderData.searchParams,
+      searchParams,
       pagination: {
         next: loaderData.documentsList.data?.next,
         count: loaderData.documentsList.data?.count,
@@ -106,41 +117,38 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
   });
 
   const _renderHiddenInputs = () =>
-    Object.keys(_.omit(loaderData.searchParams, CLIENT_QUERY_PARAM)).map(
-      (k) => (
-        <input
-          key={k}
-          name={k}
-          type="hidden"
-          value={String(
-            loaderData.searchParams[
-              k as keyof Route.ComponentProps['loaderData']['searchParams']
-            ],
-          )}
-        />
-      ),
-    );
+    Object.keys(_.omit(searchParams, CLIENT_ONLY_QUERY_PARAM)).map((k) => (
+      <input
+        key={k}
+        name={k}
+        type="hidden"
+        value={String(
+          searchParams[
+            k as keyof Route.ComponentProps['loaderData']['searchParams']
+          ],
+        )}
+      />
+    ));
 
-  let layout = 'table';
-  if (!_.isEmpty(loaderData.searchParams)) {
-    layout = loaderData.searchParams.layout || 'table';
-  }
+  const layout: PageLayout = searchParams?.layout || 'table';
+
   const layouts = [
     { name: 'table', Icon: Table2 },
     { name: 'grid', Icon: LayoutGrid },
   ];
-  const documentIcons = {
-    folder: Folder,
-    kit: ClipboardPen,
+  const documentIcons: Record<Document['resourcetype'], IconNode> = {
+    Folder: Folder,
+    Invoice: Receipt,
+    Kit: ClipboardPen,
   };
 
   const disableClear =
-    _.isEmpty(loaderData.searchParams) ||
-    _.isEqual(Object.keys(loaderData.searchParams), [CLIENT_QUERY_PARAM]);
+    _.isEmpty(searchParams) ||
+    _.isEqual(Object.keys(searchParams), [CLIENT_ONLY_QUERY_PARAM]);
 
   return (
     <div>
-      <Card className="m-4 p-4">
+      <Card className={cn('m-8 p-8', layout === 'grid' && 'border-none')}>
         <div className="flex place-content-between py-4">
           <fetcher.Form method="GET">
             <Input
@@ -149,7 +157,7 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
               name="name__contains"
               onChange={(event) => {
                 setSearch(event.target.value);
-                fetcher.submit(event.currentTarget.form).catch(console.log);
+                fetcher.submit(event.currentTarget.form).catch(console.error);
               }}
               className="max-w-sm"
             />
@@ -162,14 +170,14 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
               asChild
             >
               <Link
-                to={`/documents?${RequestHelper.parseSearchParams(_.pick({ ...loaderData.searchParams }, CLIENT_QUERY_PARAM))}`}
+                to={`/documents?${RequestHelper.parseSearchParams(_.pick({ ...loaderData.searchParams }, CLIENT_ONLY_QUERY_PARAM))}`}
                 className={cn(disableClear && 'contents')}
               >
                 <X />
                 Clear Filters
               </Link>
             </Button>
-            <div className="ml-2 flex">
+            <div className="mx-2 flex">
               {layouts.map((l, index) => (
                 <Button
                   asChild
@@ -192,6 +200,23 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
                 </Button>
               ))}
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button>
+                  New
+                  <Plus />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link
+                    to={`/documents/folder/new?parent_id=${loaderData.searchParams.parent__exact || 'null'}`}
+                  >
+                    Folder
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <Table className={cn(!(layout === 'table') && 'hidden')}>
@@ -248,10 +273,7 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
           >
             {table.getRowModel().rows.map((row) => {
               const document = row.original;
-              const Icon =
-                documentIcons[
-                  document.doc_type as keyof typeof documentIcons
-                ] || CircleOff;
+              const Icon = documentIcons[document.resourcetype] || CircleOff;
               return (
                 <Card key={row.id}>
                   <CardHeader className="pt-6">
@@ -311,6 +333,7 @@ export default function Documents({ loaderData }: Route.ComponentProps) {
           </Button>
         </div>
       </Card>
+      <Outlet />
     </div>
   );
 }

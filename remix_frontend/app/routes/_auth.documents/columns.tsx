@@ -25,6 +25,7 @@ import {
 } from '~/components/dropdown-menu';
 import type apiRest from '~/libs/api.server';
 import { RequestHelper } from '~/libs/request';
+import { type IconNode, type Document } from '~/libs/types';
 
 declare module '@tanstack/table-core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,15 +61,12 @@ function tableHeader<Data>({ table, column }: HeaderContext<Data, unknown>) {
   );
 }
 
-type ArrayElement<ArrayType extends readonly unknown[]> =
-  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
-
-const columnsIcons = {
-  folder: Folder,
-  kit: FileBadge,
+const columnsIcons: Record<Document['resourcetype'], IconNode> = {
+  Folder: Folder,
+  Invoice: FileBadge,
+  Kit: FileBadge,
 };
 
-type Document = ArrayElement<apiRest.DocumentsListResponses['200']['results']>;
 const columns: ColumnDef<Document>[] = [
   {
     accessorKey: 'name',
@@ -76,11 +74,9 @@ const columns: ColumnDef<Document>[] = [
     cell: ({ row, table }) => {
       const searchParams = table.options.meta?.searchParams;
       const document = row.original;
-      const Icon =
-        columnsIcons[document.doc_type as keyof typeof columnsIcons] ||
-        FileQuestion;
+      const Icon = columnsIcons[document.resourcetype] || FileQuestion;
 
-      if (document.doc_type === 'folder') {
+      if (document.resourcetype === 'Folder') {
         return (
           <Link
             className="cur flex space-x-1 font-medium underline"
@@ -159,8 +155,13 @@ const columns: ColumnDef<Document>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const document = row.original;
+      const searchParams = table.options.meta?.searchParams;
+
+      // DDD ensures that this will always be "representative" of the model
+      const docType = _.words(document.resourcetype)[0].toLowerCase();
+      const slug = _.kebabCase(document.resourcetype);
 
       return (
         <DropdownMenu>
@@ -179,13 +180,15 @@ const columns: ColumnDef<Document>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="capitalize" asChild>
-              <Link to={`/documents/${document.doc_type}/${document.id}`}>
-                {`Edit ${document.doc_type}`}
+              <Link
+                to={`/documents/${slug}/${document.id}?${RequestHelper.parseSearchParams({ ...searchParams })}`}
+              >
+                {`Edit ${docType}`}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="capitalize">{`Copy ${document.doc_type}`}</DropdownMenuItem>
-            <DropdownMenuItem className="capitalize">{`Move ${document.doc_type}`}</DropdownMenuItem>
-            <DropdownMenuItem className="capitalize">{`Delete ${document.doc_type}`}</DropdownMenuItem>
+            <DropdownMenuItem className="capitalize">{`Copy ${docType}`}</DropdownMenuItem>
+            <DropdownMenuItem className="capitalize">{`Move ${docType}`}</DropdownMenuItem>
+            <DropdownMenuItem className="capitalize">{`Delete ${docType}`}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
