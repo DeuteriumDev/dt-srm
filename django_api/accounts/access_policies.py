@@ -19,11 +19,6 @@ class AccountsAccessPolicy(AccessPolicy):
             "effect": "allow",
         },
         {
-            "action": "me",
-            "principal": ["authenticated"],
-            "effect": "allow",
-        },
-        {
             "action": ["create"],
             "principal": ["authenticated"],
             "effect": "allow",
@@ -101,6 +96,11 @@ class AccountsUsersAccessPolicy(AccessPolicy):
             "principal": ["authenticated"],
             "effect": "allow",
             "condition": "has_delete_access",
+        },
+        {
+            "action": "me",
+            "principal": ["authenticated"],
+            "effect": "allow",
         },
     ]
 
