@@ -12,6 +12,10 @@ from accounts.managers import CustomUserManager
 class CustomGroup(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.TextField("name", blank=False, null=False)
+    created = models.DateTimeField(null=False, auto_now_add=True)
+    updated = models.DateTimeField(null=False, auto_now=True)
+    description = models.TextField(null=True, blank=True, default="")
+
     parent = models.ForeignKey(
         "self",
         on_delete=models.SET_NULL,
@@ -50,12 +54,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField("date joined", default=timezone.now)
     is_active = models.BooleanField("active", default=True)
     avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
-    is_staff = models.BooleanField("is staff", default=True)
+    is_staff = models.BooleanField("is staff", default=False)
     groups = models.ManyToManyField(
         CustomGroup,
         blank=False,
         related_name="members",
     )
+    is_admin = models.BooleanField("is admin", default=False)
 
     objects = CustomUserManager()
 

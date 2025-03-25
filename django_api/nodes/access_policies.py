@@ -28,7 +28,7 @@ class RelationalAccessPolicy(AccessPolicy):
             "condition": "has_read_access",
         },
         {
-            "action": ["update"],
+            "action": ["update", "partial_update"],
             "principal": ["authenticated"],
             "effect": "allow",
             "condition": "has_update_access",
@@ -47,7 +47,7 @@ class RelationalAccessPolicy(AccessPolicy):
         request: HttpRequest,
         queryset,
     ):
-        user_permissions = get_user_permissions(request)
+        user_permissions = get_user_permissions(request).filter(can_read=True)
         child_docs = set()
 
         def set_children(children):
@@ -71,7 +71,11 @@ class RelationalAccessPolicy(AccessPolicy):
         return queryset.filter(id__in=[c.id for c in child_docs])
 
     def has_create_access(self, request, view, _action) -> bool:
-        return get_permission(request, view.get_object())["can_create"]
+        obj = request.data
+        if obj["parent"] is None:
+            return request.user.is_admin
+        perm = get_permission(request, view.queryset.get(id=obj["parent"]))
+        return perm["can_create"]
 
     def has_read_access(self, request, view, _action) -> bool:
         return get_permission(request, view.get_object())["can_read"]

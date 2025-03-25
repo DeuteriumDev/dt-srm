@@ -32,6 +32,8 @@ params = [
     for n in abstract_filter_mappings.keys()
 ]
 
+arg_splitter = lambda val: val.split(",")
+
 
 @extend_schema(
     parameters=params,
@@ -52,7 +54,6 @@ class AbstractNodeViewSet(
 
     filter_mappings = abstract_filter_mappings
 
-    arg_splitter = lambda val: val.split(",")
     filter_value_transformations = {
         "id__in": arg_splitter,
         "parent__in": arg_splitter,

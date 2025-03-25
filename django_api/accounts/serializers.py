@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from accounts.models import CustomPermissions, Organization, CustomUser
+from .models import CustomPermissions, Organization, CustomUser, CustomGroup
 from rest_framework.validators import UniqueTogetherValidator
 
 
@@ -63,3 +63,9 @@ class CustomPermissionsSerializer(DynamicFieldsModelSerializer):
                 ],
             )
         ]
+
+
+class CustomGroupSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = CustomGroup
+        fields = "__all__"

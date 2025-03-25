@@ -22,15 +22,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
+        group = CustomGroup.objects.create(name="test group 1")
         user = CustomUser.objects.create(
             email="pbateman@test.ca",
             first_name="Patrick",
             last_name="Bateman",
+            default_group=group,
         )
         user.set_password("test")
         user.save()
 
-        group = CustomGroup.objects.create(name="test group 1")
         group.members.add(user)
         group.save()
 
