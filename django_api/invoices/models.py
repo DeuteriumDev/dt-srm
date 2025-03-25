@@ -15,7 +15,7 @@ class Invoice(NodeModel):
 @reversion.register()
 class LineItem(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    position = models.IntegerField(null=True, blank=True)
+    index = models.PositiveIntegerField(null=False, blank=False, default=0)
     invoice = models.ForeignKey(
         Invoice,
         blank=False,
@@ -37,3 +37,4 @@ class Item(models.Model):
         on_delete=models.CASCADE,
         related_name="items",
     )
+    index = models.PositiveIntegerField(null=False, blank=False, default=0)

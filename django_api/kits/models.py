@@ -1,30 +1,22 @@
 from django.db import models
 from nodes.models import NodeModel
+import reversion
 
 
+@reversion.register()
 class Kit(NodeModel):
     name = models.TextField(blank=False, null=False)
-    start = models.ForeignKey(
-        to="Question",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="kit",
-    )
+    description = models.TextField(null=True, blank=True, default="")
 
     def __str__(self):
         return f"Kit: {self.name}"
 
 
-class Question(NodeModel):
+@reversion.register()
+class Question(models.Model):
     title = models.TextField(default="")
     description = models.TextField(null=True, blank=True, default="")
     image = models.URLField(null=True, blank=True)
-    answers = models.ManyToManyField(
-        blank=True,
-        to="Answer",
-        related_name="question",
-    )
     next = models.ForeignKey(
         "self",
         null=True,
@@ -32,32 +24,30 @@ class Question(NodeModel):
         on_delete=models.CASCADE,
         related_name="previous",
     )
-
-    @property
-    def children(self):
-        return self.answers
-
-    @property
-    def parent(self):
-        if self.kit is not None:
-            return self.kit
-        return self.previous
+    kit = models.OneToOneField(
+        Kit,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
+        related_name="start",
+    )
 
     def __str__(self):
         return f"Question: {self.title}"
 
 
-class Answer(NodeModel):
+@reversion.register()
+class Answer(models.Model):
     title = models.TextField(blank=False, null=False)
     description = models.TextField(default="")
     image = models.URLField(null=True, blank=True)
-    index = models.PositiveIntegerField(default=0)
+    index = models.PositiveIntegerField(null=False, blank=False, default=0)
 
-    @property
-    def parent(self):
-        return self.question
-
-    children = None
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name="answers",
+    )
 
     def __str__(self):
         return f"Answer: {self.title}"

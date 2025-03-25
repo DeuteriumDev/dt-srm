@@ -5,18 +5,22 @@ from datetime import datetime
 from drf_spectacular.utils import extend_schema_field
 from drf_spectacular.types import OpenApiTypes
 from reversion.models import Version
+from django.contrib.contenttypes.models import ContentType
+from accounts.models import CustomPermissions
 from .fields import TagsField
+from .models import NodeModel
 
 
 class ParentFolderSerializer(serializers.Serializer):
     id = serializers.UUIDField()
-    name = serializers.CharField()
-    parent = serializers.UUIDField()
+    name = serializers.CharField(read_only=True)
+    parent = serializers.UUIDField(read_only=True)
 
 
 class NodeVersioningSerializer(serializers.ModelSerializer):
     updated = serializers.SerializerMethodField()
     updated_by = serializers.SerializerMethodField()
+    breadcrumbs = serializers.SerializerMethodField()
     tags = TagsField()
 
     child_versionable_models = ()
@@ -28,6 +32,18 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
 
         super().__init__(*args, **kwargs)
 
+    def get_parent_ids(self, obj):
+        parent_ids = []
+        current = obj
+        while (
+            hasattr(current, "parent")
+            and current.parent is not None
+            and current.inherit_permissions
+        ):
+            parent_ids.append(current.parent.id)
+            current = current.parent
+        return parent_ids
+
     """vv Model serializer overrides vv"""
 
     def create(self, validated_data):
@@ -37,6 +53,11 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
                 f"Created {self.Meta.model.__name__}: {datetime.now().isoformat()}"
             )
             result = super().create(validated_data)
+            CustomPermissions.objects.create(
+                content_type=ContentType.objects.get_for_model(result),
+                object_id=result.id,
+                group=self.context["request"].user.default_group,
+            ).save()
             return result
 
     def update(self, instance, validated_data):
@@ -69,6 +90,19 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
             .order_by("-revision__date_created")
             .first()
             .revision.user,
+        ).data
+
+    @extend_schema_field(ParentFolderSerializer(many=True), component_name="Breadcrumb")
+    def get_breadcrumbs(self, obj):
+        folders = NodeModel.objects.filter(pk__in=self.get_parent_ids(obj)).order_by(
+            "-created"
+        )
+        return ParentFolderSerializer(
+            folders,
+            many=True,
+            context={
+                "request": self.context["request"],
+            },
         ).data
 
     def get_tags(self, _obj):

@@ -1,6 +1,6 @@
 from accounts.serializers import CustomPermissionsSerializer
 from accounts.models import CustomPermissions
-from nodes.serializers import NodeVersioningSerializer, ParentFolderSerializer
+from nodes.serializers import NodeVersioningSerializer
 from .models import Folder
 from invoices.models import Invoice
 from invoices.serializers import InvoiceSerializer
@@ -12,7 +12,6 @@ from drf_spectacular.utils import extend_schema_field
 
 
 class FolderSerializer(NodeVersioningSerializer):
-    breadcrumbs = serializers.SerializerMethodField()
     permissions = serializers.SerializerMethodField()
 
     class Meta:
@@ -20,28 +19,10 @@ class FolderSerializer(NodeVersioningSerializer):
         fields = "__all__"
 
     def get_tags(self, obj):
-        return [f"items:{obj.children.count()}"]
-
-    def get_parent_ids(self, obj):
-        parent_ids = []
-        current = obj
-        while current.parent is not None and current.inherit_permissions:
-            parent_ids.append(current.parent.id)
-            current = current.parent
-        return parent_ids
-
-    @extend_schema_field(ParentFolderSerializer(many=True), component_name="Breadcrumb")
-    def get_breadcrumbs(self, obj):
-        folders = Folder.objects.filter(pk__in=self.get_parent_ids(obj)).order_by(
-            "-created"
-        )
-        return ParentFolderSerializer(
-            folders,
-            many=True,
-            context={
-                "request": self.context["request"],
-            },
-        ).data
+        tags = [f"items:{obj.children.count()}"]
+        if obj.favorite is True:
+            tags.append("favorite")
+        return tags
 
     @extend_schema_field(CustomPermissionsSerializer(many=True))
     def get_permissions(self, obj):

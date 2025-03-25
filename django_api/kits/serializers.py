@@ -1,16 +1,19 @@
 from kits.models import Kit, Question, Answer
-from nodes.serializers import NodeVersioningSerializer, ParentFolderSerializer
+from nodes.serializers import NodeVersioningSerializer
 from rest_framework.validators import UniqueTogetherValidator
 
 
-class KitSerializer(NodeVersioningSerializer):
-    parent = ParentFolderSerializer()
-
+class AnswerSerializer(NodeVersioningSerializer):
     class Meta:
-        model = Kit
+        model = Answer
         fields = "__all__"
         ordering = ["created"]
-        depth = 2
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Answer.objects.all(),
+                fields=["question", "index"],
+            )
+        ]
 
 
 class QuestionSerializer(NodeVersioningSerializer):
@@ -18,11 +21,12 @@ class QuestionSerializer(NodeVersioningSerializer):
         model = Question
         fields = "__all__"
         ordering = ["created"]
-        depth = 1
+        # depth = 1
 
 
-class AnswerSerializer(NodeVersioningSerializer):
+class KitSerializer(NodeVersioningSerializer):
+
     class Meta:
-        model = Answer
+        model = Kit
         fields = "__all__"
         ordering = ["created"]
