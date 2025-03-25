@@ -46,7 +46,15 @@ router.register(r"items", invoice_views.ItemViewSet, basename="item")
 # accounts
 router.register(r"users", account_views.CustomUserViewSet, basename="user")
 router.register(
-    r"organizations", account_views.OrganizationViewSet, basename="organization"
+    r"organizations",
+    account_views.OrganizationViewSet,
+    basename="organization",
+)
+router.register(r"groups", account_views.CustomGroupViewSet, basename="group")
+router.register(
+    r"permissions",
+    account_views.CustomPermissionsViewSet,
+    basename="permission",
 )
 
 urlpatterns = [
