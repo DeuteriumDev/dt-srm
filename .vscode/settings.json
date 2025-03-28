@@ -3,10 +3,13 @@
   "prettier.enable": true,
   "python.analysis.autoImportCompletions": true,
   "cSpell.words": [
+    "codegen",
     "corsheaders",
     "createapplication",
     "createsuperuser",
+    "ctype",
     "makemigrations",
+    "resourcetype",
     "sonner",
     "viewsets"
   ],
