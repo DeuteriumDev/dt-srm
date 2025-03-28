@@ -1,4 +1,3 @@
-from pprint import pprint
 from django.http import HttpRequest
 from rest_access_policy import AccessPolicy
 from django.contrib.contenttypes.models import ContentType
@@ -115,3 +114,51 @@ class AccountsUsersAccessPolicy(AccessPolicy):
         ]
 
         return queryset.filter(groups__id__in=user_group_ids)
+
+
+class CustomPermissionsRelationPolicy(AccessPolicy):
+    statements = [
+        {
+            "action": "*",
+            "principal": "admin",
+            "effect": "allow",
+        },
+        {
+            "action": ["list"],
+            "principal": ["*"],
+            "effect": "allow",
+        },
+        {
+            "action": ["retrieve"],
+            "principal": ["*"],
+            "effect": "allow",
+            "condition": "has_read_access",
+        },
+        {
+            "action": ["update", "partial_update", "destroy", "create"],
+            "principal": ["authenticated"],
+            "effect": "allow",
+            "condition": "has_update_access",
+        },
+    ]
+
+    @classmethod
+    def scope_queryset(_cls, request: HttpRequest, queryset, model):
+        return queryset.filter(
+            object_id__in=[
+                p.object_id for p in get_user_permissions(request).filter(can_read=True)
+            ],
+            group__in=request.user.groups.all(),
+        )
+
+    def has_read_access(self, request, view, action) -> bool:
+        return (
+            view.get_object().group in request.user.groups.all()
+            and view.get_object().can_read
+        )
+
+    def has_update_access(self, request, view, action) -> bool:
+        return (
+            view.get_object().group in request.user.groups.all()
+            and view.get_object().can_update
+        )

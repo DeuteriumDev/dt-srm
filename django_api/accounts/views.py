@@ -1,4 +1,3 @@
-from nodes.access_policies import RelationalAccessPolicy
 from .models import CustomGroup, CustomPermissions, Organization, CustomUser
 from .serializers import (
     CustomGroupSerializer,
@@ -12,7 +11,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from filters.mixins import FiltersMixin
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from .access_policies import AccountsAccessPolicy, AccountsUsersAccessPolicy
+from .access_policies import (
+    AccountsAccessPolicy,
+    AccountsUsersAccessPolicy,
+    CustomPermissionsRelationPolicy,
+)
 
 
 filter_mappings_array = [
@@ -86,6 +89,12 @@ class CustomUserViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
         return Response(self.get_serializer(request.user, many=False).data)
 
 
-class CustomPermissionsViewSet(viewsets.ModelViewSet):
+class CustomPermissionsViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
     queryset = CustomPermissions.objects.all()
     serializer_class = CustomPermissionsSerializer
+    access_policy = CustomPermissionsRelationPolicy
+
+    def get_queryset(self):
+        return self.access_policy.scope_queryset(
+            self.request, self.queryset, CustomPermissions
+        )

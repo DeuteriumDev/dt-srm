@@ -1,39 +1,19 @@
+from os import write
 from rest_framework import serializers
+
 from .models import CustomPermissions, Organization, CustomUser, CustomGroup
 from rest_framework.validators import UniqueTogetherValidator
+from django.contrib.contenttypes.models import ContentType
 
 
-class DynamicFieldsModelSerializer(serializers.ModelSerializer):
-    """
-    A ModelSerializer that takes an additional `fields` argument that
-    controls which fields should be displayed.
-    """
-
-    def __init__(self, *args, **kwargs):
-        # Don't pass the 'fields' arg up to the superclass
-        fields = None
-        if kwargs.get("fields") is not None:
-            fields = kwargs.pop("fields", None)
-
-        # Instantiate the superclass normally
-        super().__init__(*args, **kwargs)
-
-        if fields is not None:
-            # Drop any fields that are not specified in the `fields` argument.
-            allowed = set(fields)
-            existing = set(self.fields)
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
-
-
-class OrganizationSerializer(DynamicFieldsModelSerializer):
+class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = "__all__"
         depth = 1
 
 
-class CustomUserSerializer(DynamicFieldsModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
@@ -48,24 +28,80 @@ class CustomUserSerializer(DynamicFieldsModelSerializer):
         depth = 1
 
 
-class CustomPermissionsSerializer(DynamicFieldsModelSerializer):
+class CustomGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomGroup
+        fields = "__all__"
+
+
+class CustomPermissionsSerializer(serializers.ModelSerializer):
+    ctype = serializers.ChoiceField(
+        choices=ContentType.objects.all().values_list("id", "model"),
+        required=True,
+        source="content_type.id",
+    )
+    cname = serializers.ChoiceField(
+        source="content_type.model",
+        choices=ContentType.objects.all().values_list("model", "model"),
+        read_only=True,
+    )
+    group_id = serializers.UUIDField(
+        required=True,
+        write_only=True,
+    )
+
+    group = CustomGroupSerializer(read_only=True)
+
     class Meta:
         model = CustomPermissions
-        fields = "__all__"
-        depth = 1
+        fields = (
+            "id",
+            "object_id",
+            "can_create",
+            "can_read",
+            "can_update",
+            "can_delete",
+            "created",
+            "updated",
+            "ctype",
+            "cname",
+            "group_id",
+            "group",
+        )
 
         validators = [
             UniqueTogetherValidator(
                 queryset=CustomPermissions.objects.all(),
                 fields=[
                     "object_id",
-                    "group",
+                    "group_id",
                 ],
             )
         ]
 
+    def create(self, validated_data):
+        return CustomPermissions.objects.create(
+            object_id=validated_data["object_id"],
+            group=CustomGroup.objects.get(pk=validated_data["group_id"]),
+            can_create=validated_data["can_create"],
+            can_read=validated_data["can_read"],
+            can_update=validated_data["can_update"],
+            can_delete=validated_data["can_delete"],
+            content_type=ContentType.objects.get(
+                pk=validated_data["content_type"]["id"]
+            ),
+        )
 
-class CustomGroupSerializer(DynamicFieldsModelSerializer):
-    class Meta:
-        model = CustomGroup
-        fields = "__all__"
+    def update(self, instance, validated_data):
+        instance.object_id = validated_data.get("object_id", instance.object_id)
+        instance.can_create = validated_data.get("can_create", instance.can_create)
+        instance.can_read = validated_data.get("can_read", instance.can_read)
+        instance.can_update = validated_data.get("can_update", instance.can_update)
+        instance.can_delete = validated_data.get("can_delete", instance.can_delete)
+        if validated_data.get("ctype"):
+            instance.content_type = ContentType.objects.get(pk=validated_data["ctype"])
+        if validated_data.get("group_id"):
+            instance.group = CustomGroup.objects.get(pk=validated_data["group_id"])
+        instance.save()
+
+        return instance
