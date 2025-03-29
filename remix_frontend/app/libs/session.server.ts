@@ -88,6 +88,11 @@ export class SessionManager {
   cookieSession: SessionStorage<SessionData, SessionFlashData>;
   OAuthError: typeof OAuthError;
 
+  SESSION_access_token: keyof SessionData = 'access_token';
+  SESSION_email: keyof SessionData = 'email';
+  SESSION_expires_at: keyof SessionData = 'expires_at';
+  SESSION_refresh_token: keyof SessionData = 'refresh_token';
+
   constructor() {
     this.cookieSession = createCookieSessionStorage<
       SessionData,
@@ -130,19 +135,15 @@ export class SessionManager {
   private shouldRefreshCookie(
     cookie: Session<SessionData, SessionFlashData>,
   ): boolean {
-    const sessionTimeout = new Date(Date.parse(cookie.get('expires_at') || ''));
+    const sessionTimeout = new Date(
+      Date.parse(cookie.get(this.SESSION_expires_at) || ''),
+    );
 
     const sessionOffsetTimeout = new Date(sessionTimeout);
     sessionOffsetTimeout.setSeconds(
       sessionOffsetTimeout.getSeconds() - SESSION_TIMEOUT_OFFSET,
     );
     const now = new Date();
-    console.log({
-      shouldRefresh: sessionTimeout >= now && sessionOffsetTimeout <= now,
-      sessionTimeout,
-      sessionOffsetTimeout,
-      now,
-    });
     return sessionTimeout >= now && now >= sessionOffsetTimeout;
   }
 
@@ -155,7 +156,9 @@ export class SessionManager {
   private shouldResetCookie(
     cookie: Session<SessionData, SessionFlashData>,
   ): boolean {
-    const sessionTimeout = new Date(Date.parse(cookie.get('expires_at') || ''));
+    const sessionTimeout = new Date(
+      Date.parse(cookie.get(this.SESSION_expires_at) || ''),
+    );
     const now = new Date();
     return sessionTimeout <= now;
   }
@@ -191,7 +194,7 @@ export class SessionManager {
     request: Request,
   ): Promise<[SessionHeaderFunction, Session<SessionData, SessionFlashData>]> {
     let cookie = await this.getSession(request);
-    if (!cookie.has('access_token')) {
+    if (!cookie.has(this.SESSION_access_token)) {
       throw redirect(`/login?redirect=/dashboard`);
     } else if (this.shouldRefreshCookie(cookie)) {
       cookie = await this.refresh(request);
@@ -216,7 +219,7 @@ export class SessionManager {
    */
   public async getCookie(request: Request) {
     const cookie = await this.getSession(request);
-    if (!cookie.has('access_token'))
+    if (!cookie.has(this.SESSION_access_token))
       throw redirect(`/login?redirect=/dashboard`);
     return cookie;
   }
@@ -229,7 +232,6 @@ export class SessionManager {
    * @throws {OAuthError}
    */
   private async refresh(request: Request) {
-    console.log('refresh');
     assert(process.env.OAUTH_URL, '[OAUTH_URL] env var required');
     assert(process.env.OAUTH_TOKEN_PATH, '[OAUTH_TOKEN_PATH] env var required');
     assert(process.env.CLIENT_ID, '[CLIENT_ID] env var required');
@@ -237,7 +239,7 @@ export class SessionManager {
 
     try {
       const oldSession = await this.getSession(request);
-      const refreshToken = oldSession.get('refresh_token') || '';
+      const refreshToken = oldSession.get(this.SESSION_refresh_token) || '';
 
       const req = {
         method: 'post',
@@ -245,7 +247,7 @@ export class SessionManager {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          grant_type: 'refresh_token',
+          grant_type: this.SESSION_refresh_token,
           client_id: process.env.CLIENT_ID,
           client_secret: process.env.CLIENT_SECRET,
           refresh_token: refreshToken,
@@ -262,9 +264,9 @@ export class SessionManager {
       const now = new Date();
       now.setSeconds(now.getSeconds() + data.expires_in);
 
-      oldSession.set('access_token', data.access_token);
-      oldSession.set('refresh_token', data.refresh_token);
-      oldSession.set('expires_at', now.toISOString());
+      oldSession.set(this.SESSION_access_token, data.access_token);
+      oldSession.set(this.SESSION_refresh_token, data.refresh_token);
+      oldSession.set(this.SESSION_expires_at, now.toISOString());
 
       return oldSession;
     } catch (error) {
@@ -312,9 +314,9 @@ export class SessionManager {
       const now = new Date();
       now.setSeconds(now.getSeconds() + data.expires_in);
       cookie.set('email', username);
-      cookie.set('access_token', data.access_token);
-      cookie.set('expires_at', now.toISOString());
-      cookie.set('refresh_token', data.refresh_token);
+      cookie.set(this.SESSION_access_token, data.access_token);
+      cookie.set(this.SESSION_expires_at, now.toISOString());
+      cookie.set(this.SESSION_refresh_token, data.refresh_token);
       cookie.set('scope', data.scope);
       cookie.set('token_type', data.token_type);
 
@@ -344,7 +346,7 @@ export class SessionManager {
     assert(process.env.CLIENT_ID, '[CLIENT_ID] env var required');
     assert(process.env.CLIENT_SECRET, '[CLIENT_SECRET] env var required');
     const cookie = await this.getCookie(request);
-    const access_token = cookie.get('access_token');
+    const access_token = cookie.get(this.SESSION_access_token);
 
     try {
       if (!access_token) throw new Error('Session without access token');
@@ -364,7 +366,7 @@ export class SessionManager {
         },
       );
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
     } finally {
       throw redirect('/login', {
         headers: {
@@ -409,7 +411,7 @@ export class SessionManager {
 // singleton
 let sessionManager: SessionManager | null = null;
 if (!sessionManager) {
-  console.log('new session');
+  // console.log('new session');
   sessionManager = new SessionManager();
 }
 
