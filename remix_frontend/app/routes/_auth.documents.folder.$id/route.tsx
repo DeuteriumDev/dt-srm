@@ -1,8 +1,13 @@
 import _ from 'lodash';
 import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
-import { data, Link, useFetcher, useNavigate } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
+
 import { type Route } from '../_auth.documents.folder.$id/+types/route';
+import actionServer from './action.server';
+import useFolderForm from './folder-form';
+import loaderServer from './loader.server';
+import { type Crumb } from './types';
 
 import { Alert, AlertDescription, AlertTitle } from '~/components/alert';
 import {
@@ -14,15 +19,12 @@ import {
   BreadcrumbSeparator,
 } from '~/components/breadcrumb';
 import { Button } from '~/components/button';
-import { Checkbox } from '~/components/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/dropdown-menu';
-import { Input } from '~/components/input';
-import { Label } from '~/components/label';
 import { Separator } from '~/components/separator';
 import {
   Sheet,
@@ -31,11 +33,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '~/components/sheet';
-import { Textarea } from '~/components/textarea';
-import apiRest from '~/libs/api.server';
+import type apiRest from '~/libs/api.server';
 import { RequestHelper } from '~/libs/request';
-import sessionManager from '~/libs/session.server';
-import { type ArrayElement } from '~/libs/types';
+
+export { actionServer as action, loaderServer as loader };
 
 export function meta(args: Route.MetaArgs) {
   return [
@@ -44,88 +45,18 @@ export function meta(args: Route.MetaArgs) {
   ];
 }
 
-type Crumb = ArrayElement<apiRest.Folder['breadcrumbs']>;
-
-type SearchParams = apiRest.DocumentsListData['query'] & {
-  layout?: string;
-  parent_id?: string;
-};
-
-const FORM_SEARCH_PARAM = 'parent_id';
-
-export async function loader(args: Route.LoaderArgs) {
-  const searchParams = new RequestHelper(
-    args.request,
-  ).getSearchParams<SearchParams>();
-  const cookie = await sessionManager.getCookie(args.request);
-  if (args.params.id === 'new') {
-    let breadcrumbs: Crumb[] = [];
-    if (
-      searchParams[FORM_SEARCH_PARAM] &&
-      searchParams[FORM_SEARCH_PARAM] !== 'null'
-    ) {
-      const foldersRetrieve = await apiRest.foldersRetrieve({
-        path: {
-          id: searchParams.parent_id as string,
-        },
-        headers: {
-          Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
-        },
-      });
-      const parentFolder = foldersRetrieve.data;
-      breadcrumbs = _.concat(parentFolder?.breadcrumbs, [
-        parentFolder as unknown as Crumb,
-      ]) as Crumb[];
-    }
-    return data({
-      foldersRetrieve: {
-        data: {
-          id: undefined,
-          name: 'new folder',
-          parent: {
-            id: searchParams.parent_id,
-          },
-          description: '',
-          favorite: false,
-          breadcrumbs,
-        },
-      },
-      searchParams,
-    });
-  } else {
-    const foldersRetrieve = await apiRest.foldersRetrieve({
-      path: {
-        id: args.params.id,
-      },
-      headers: {
-        Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
-      },
-    });
-
-    return data({
-      foldersRetrieve,
-      searchParams,
-    });
-  }
-}
-
-export async function action(_args: Route.ActionArgs) {}
+const MAX_BREAD_CRUMBS = 1;
 
 export default function Folder(props: Route.ComponentProps) {
   const {
     loaderData,
     loaderData: { searchParams },
   } = props;
-  const fetcher = useFetcher<typeof loader>();
-  const combobox = useFetcher<typeof loader>();
-  const [open, setOpen] = useState(true);
+  const targetFolder = loaderData?.foldersRetrieve?.data;
   const nav = useNavigate();
-  console.log({
-    props,
-    loaderData,
-    combobox,
-    fetcher,
-  });
+  const param = useParams();
+
+  const [open, setOpen] = useState(true);
 
   const _buildSearchParams = (crumb: Crumb): string => {
     const sp = {
@@ -137,22 +68,45 @@ export default function Folder(props: Route.ComponentProps) {
     return RequestHelper.parseSearchParams(sp);
   };
 
-  const targetFolder = loaderData?.foldersRetrieve?.data;
-
   const _handleClose = () => {
     setOpen(false);
   };
+
+  const { formController: folderForm, folderAction } = useFolderForm(
+    targetFolder as apiRest.Folder,
+    _handleClose,
+  );
+
+  const _handleSubmit = (
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    return folderForm.handleSubmit();
+  };
+
+  // const groups =
+  //   new Date(folderAction.data?.lastUpdated || 0) >
+  //   new Date(loaderData.lastUpdated)
+  //     ? folderAction.data?.groupsList.data?.results
+  //     : loaderData.groupsList.data?.results;
+
+  console.log({
+    props,
+    loaderData,
+    folderAction,
+    folderForm,
+    // groups,
+    param,
+  });
 
   return (
     <Sheet open={open} onOpenChange={_handleClose}>
       <SheetContent
         onCloseAutoFocus={() =>
           // nav after animation finishes
-          nav(
-            `/documents?${RequestHelper.parseSearchParams({ ..._.omit(searchParams, FORM_SEARCH_PARAM) })}`,
-          )
+          nav(`/documents?${RequestHelper.parseSearchParams(searchParams)}`)
         }
-        onPointerDownOutside={_handleClose}
         onEscapeKeyDown={_handleClose}
         className="flex h-full w-[540px] flex-col sm:w-[540px] sm:max-w-none"
       >
@@ -167,7 +121,7 @@ export default function Folder(props: Route.ComponentProps) {
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              {(targetFolder?.breadcrumbs || []).length > 1 ? (
+              {(targetFolder?.breadcrumbs || []).length > MAX_BREAD_CRUMBS ? (
                 <>
                   <BreadcrumbSeparator />
                   <DropdownMenu>
@@ -205,130 +159,54 @@ export default function Folder(props: Route.ComponentProps) {
           </Breadcrumb>
         </SheetHeader>
         <Separator />
-        <fetcher.Form
-          action="POST"
-          className="flex-grow space-y-4 overflow-y-auto py-4"
+        <form
+          className="space-y-4 overflow-y-auto py-4"
+          onSubmit={_handleSubmit}
         >
-          {_.has(loaderData, 'foldersRetrieve.error') && (
+          {_.has(folderForm, 'data.error') && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                {_.get(loaderData, 'foldersRetrieve.error.detail')}
-              </AlertDescription>
+              <AlertDescription>Server error</AlertDescription>
             </Alert>
           )}
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input name="name" id="name" defaultValue={targetFolder?.name} />
-          </div>
-          <div>
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              defaultValue={targetFolder?.description || ''}
-            />
-          </div>
-          <div className="items-top flex space-x-2 pl-1">
-            <Checkbox
-              id="favorite"
-              name="favorite"
-              defaultChecked={targetFolder?.favorite}
-            />
-            <div className="grid gap-1.5 leading-none">
-              <label
-                htmlFor="terms1"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Favorite
-              </label>
-            </div>
-          </div>
-          <input
-            name="parent"
-            type="hidden"
-            value={targetFolder?.parent?.id || undefined}
+          <folderForm.AppField
+            name="name"
+            children={(field) => <field.InputField label="Name" />}
           />
-          <input
-            name="id"
-            type="hidden"
-            value={targetFolder?.id || undefined}
+          <folderForm.AppField
+            name="description"
+            children={(field) => <field.TextAreaField label="Description" />}
           />
-          {/* <combobox.Form action="GET">
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-[200px] justify-between"
-                >
-                  {(parent && targetFolder?.parent.name) ||
-                    'Select Parent folder ...'}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput
-                    placeholder="Search folders..."
-                    value={search}
-                    onValueChange={(value) => {
-                      combobox
-                        .submit({
-                          name__contains: value,
-                        })
-                        .catch(console.error);
-                      setSearch(value);
-                    }}
-                  />
-                  <CommandList>
-                    <CommandEmpty>No folders found.</CommandEmpty>
-                    <CommandGroup>
-                      {_.map(
-                        _.compact(
-                          _.concat(
-                            [
-                              targetFolder?.parent,
-                            ] as unknown as apiRest.Folder[],
-                            parentFolderOptions,
-                          ),
-                        ),
-                        (f) => (
-                          <CommandItem
-                            key={f.id}
-                            value={f.id}
-                            onSelect={(currentValue) => {
-                              setParent(
-                                currentValue === parent ? '' : currentValue,
-                              );
-                              setOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                'mr-2 h-4 w-4',
-                                parent === f.id ? 'opacity-100' : 'opacity-0',
-                              )}
-                            />
-                            {f.name}
-                          </CommandItem>
-                        ),
-                      )}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </combobox.Form> */}
-        </fetcher.Form>
+          <folderForm.AppField
+            name="favorite"
+            children={(field) => (
+              <field.CheckboxField
+                label="Favorite"
+                help="Favorite folders appear on the dashboard"
+              />
+            )}
+          />
+          {/* <folderForm.AppField
+            name="inherit_permissions"
+            children={(field) => (
+              <field.CheckboxField
+                label="Inherit Permissions from parent"
+                help="Inherit permissions from parent folder. If disabled, requires at least 1 group to be selected."
+              />
+            )}
+          /> */}
+        </form>
         <Separator />
         <SheetFooter className="mt-auto flex justify-end py-4">
           <Button onClick={_handleClose}>Cancel</Button>
-          <Button disabled={_.isEmpty(targetFolder)} onClick={console.log}>
-            Save changes
-          </Button>
+          <folderForm.Subscribe selector={(state) => state.isSubmitting}>
+            {(isSubmitting) => (
+              <Button disabled={isSubmitting} onClick={_handleSubmit}>
+                Save changes
+              </Button>
+            )}
+          </folderForm.Subscribe>
         </SheetFooter>
       </SheetContent>
     </Sheet>
