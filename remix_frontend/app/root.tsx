@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from 'react-router';
 import '@fontsource/fira-sans';
 
@@ -38,6 +39,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const nav = useNavigation();
+  console.log(nav.state);
   return <Outlet />;
 }
 

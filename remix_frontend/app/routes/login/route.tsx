@@ -1,8 +1,10 @@
 import _ from 'lodash';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useFetcher, data } from 'react-router';
 import { z, ZodError } from 'zod';
 
 import { type Route } from '../login/+types/route';
+import { Alert, AlertTitle, AlertDescription } from '~/components/alert';
 import { Button } from '~/components/button';
 import {
   Dialog,
@@ -15,7 +17,6 @@ import { Input } from '~/components/input';
 import { Label } from '~/components/label';
 import { RequestHelper } from '~/libs/request';
 import sessionManager from '~/libs/session.server';
-import { Loader2 } from 'lucide-react';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -71,7 +72,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function Login() {
   const fetcher = useFetcher();
 
-  const _displayError = (error: 'username' | 'password' | 'form') => {
+  const _displayError = (error: 'username' | 'password') => {
     return (
       _.get(fetcher.data, error) && (
         <div className="col-span-4">
@@ -83,6 +84,8 @@ export default function Login() {
     );
   };
 
+  const loading = fetcher.state !== 'idle';
+
   return (
     <Dialog open>
       <DialogContent hideCloseButton>
@@ -92,7 +95,13 @@ export default function Login() {
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 content-center items-center gap-4">
-              {_displayError('form')}
+              {fetcher.data?.form && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{fetcher.data?.form}</AlertDescription>
+                </Alert>
+              )}
             </div>
           </div>
           <div className="grid gap-4 py-4">
@@ -106,7 +115,7 @@ export default function Login() {
                 type="text"
                 className="col-span-3"
                 placeholder="m@example.com"
-                disabled={['loading', 'submitting'].includes(fetcher.state)}
+                disabled={loading}
               />
             </div>
             {_displayError('username')}
@@ -119,22 +128,20 @@ export default function Login() {
                 type="password"
                 name="password"
                 className="col-span-3"
-                disabled={['loading', 'submitting'].includes(fetcher.state)}
+                disabled={loading}
               />
               {_displayError('password')}
             </div>
           </div>
           <DialogFooter>
-            <Button
-              type="submit"
-              disabled={['loading', 'submitting'].includes(fetcher.state)}
-            >
-              {['loading', 'submitting'].includes(fetcher.state) && (
-                <Loader2 className="animate-spin" />
+            <Button type="submit" disabled={loading}>
+              {loading && (
+                <>
+                  <Loader2 className="animate-spin" />
+                  Please wait
+                </>
               )}
-              {['loading', 'submitting'].includes(fetcher.state) &&
-                'Please wait'}
-              {!['loading', 'submitting'].includes(fetcher.state) && 'Login'}
+              {!loading && 'Login'}
             </Button>
           </DialogFooter>
         </fetcher.Form>
