@@ -27,8 +27,7 @@ class FolderSerializer(NodeVersioningSerializer):
     @extend_schema_field(CustomPermissionsSerializer(many=True))
     def get_permissions(self, obj):
         permissions = CustomPermissions.objects.filter(
-            object_id__in=self.get_parent_ids(obj),
-            can_read=True,
+            object_id__in=self.get_parent_ids(obj) + [obj.id],
             group_id__in=self.context["request"].user.groups.all(),
         )
         return CustomPermissionsSerializer(
