@@ -1,6 +1,4 @@
-from os import write
 from rest_framework import serializers
-
 from .models import CustomPermissions, Organization, CustomUser, CustomGroup
 from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.contenttypes.models import ContentType
@@ -25,7 +23,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "is_active",
             "groups",
         ]
-        depth = 1
 
 
 class CustomGroupSerializer(serializers.ModelSerializer):
@@ -34,17 +31,18 @@ class CustomGroupSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ContentObjectSerializer(serializers.Serializer):
+    id = serializers.UUIDField(read_only=True)
+    name = serializers.CharField(read_only=True)
+
+
 class CustomPermissionsSerializer(serializers.ModelSerializer):
     ctype = serializers.ChoiceField(
         choices=ContentType.objects.all().values_list("id", "model"),
         required=True,
         source="content_type.id",
     )
-    cname = serializers.ChoiceField(
-        source="content_type.model",
-        choices=ContentType.objects.all().values_list("model", "model"),
-        read_only=True,
-    )
+    content_object = ContentObjectSerializer(read_only=True)
     group_id = serializers.UUIDField(
         required=True,
         write_only=True,
@@ -64,7 +62,7 @@ class CustomPermissionsSerializer(serializers.ModelSerializer):
             "created",
             "updated",
             "ctype",
-            "cname",
+            "content_object",
             "group_id",
             "group",
         )

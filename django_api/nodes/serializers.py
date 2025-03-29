@@ -32,7 +32,7 @@ class NodeVersioningSerializer(serializers.ModelSerializer):
 
         super().__init__(*args, **kwargs)
 
-    def get_parent_ids(self, obj):
+    def get_parent_ids(self, obj) -> list[str]:
         parent_ids = []
         current = obj
         while (

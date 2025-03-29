@@ -3,6 +3,8 @@ from rest_access_policy import AccessPolicy
 from django.contrib.contenttypes.models import ContentType
 
 from common.get_permissions import get_permission, get_user_permissions
+from accounts.models import CustomGroup
+from nodes.models import NodeModel
 
 
 class AccountsAccessPolicy(AccessPolicy):
@@ -135,7 +137,13 @@ class CustomPermissionsRelationPolicy(AccessPolicy):
             "condition": "has_read_access",
         },
         {
-            "action": ["update", "partial_update", "destroy", "create"],
+            "action": ["create"],
+            "principal": ["*"],
+            "effect": "allow",
+            "condition": "has_create_access",
+        },
+        {
+            "action": ["update", "partial_update", "destroy"],
             "principal": ["authenticated"],
             "effect": "allow",
             "condition": "has_update_access",
@@ -149,6 +157,16 @@ class CustomPermissionsRelationPolicy(AccessPolicy):
                 p.object_id for p in get_user_permissions(request).filter(can_read=True)
             ],
             group__in=request.user.groups.all(),
+        )
+
+    def has_create_access(self, request, view, action) -> bool:
+        obj = request.data
+        target_node = NodeModel.objects.get(pk=obj["object_id"])
+        target_group = CustomGroup.objects.get(pk=obj["group_id"])
+        tt = [p for p in target_node.custom_permissions.all()]
+        return (
+            target_group in request.user.groups.all()
+            and get_permission(request, target_node)["can_update"]
         )
 
     def has_read_access(self, request, view, action) -> bool:

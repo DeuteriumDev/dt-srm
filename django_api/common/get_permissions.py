@@ -1,10 +1,19 @@
 from django.http import HttpRequest
 from django.db import models
-from typing import Dict
+from typing import Dict, TypedDict
 from accounts.models import CustomPermissions
 
 
-def merge_permissions(permissions: list[CustomPermissions]) -> Dict[str, bool]:
+class Permission(TypedDict):
+    can_create: bool
+    can_read: bool
+    can_update: bool
+    can_delete: bool
+
+
+def merge_permissions(
+    permissions: list[Permission] | list[CustomPermissions],
+) -> Permission:
     """Merges *parallel* permissions, not child to parent permissions.
     Ie: multiple permissions on the same document
 
@@ -12,7 +21,7 @@ def merge_permissions(permissions: list[CustomPermissions]) -> Dict[str, bool]:
         permissions (models.QuerySet): QS of permissions, usually just 1
 
     Returns:
-        Dict[str, bool]:
+        [Permission]
     """
     result = {
         "can_create": False,
@@ -28,7 +37,7 @@ def merge_permissions(permissions: list[CustomPermissions]) -> Dict[str, bool]:
     return result
 
 
-def get_permission(request: HttpRequest, obj: models.Model):
+def get_permission(request: HttpRequest, obj: models.Model) -> Permission:
     perms = get_document_permissions(request, obj)
     if perms is None:
         return merge_permissions([])  # will return all-false permissions

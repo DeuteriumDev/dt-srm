@@ -56,7 +56,11 @@ class RelationalAccessPolicy(AccessPolicy):
             including children
             """
             for c in children:
-                child_docs.add(c)
+                if c is not None:
+                    if hasattr(c, "inherit_permissions") and c.inherit_permissions:
+                        child_docs.add(c)
+                    elif not hasattr(c, "inherit_permissions"):
+                        child_docs.add(c)
                 if c is not None and c.children is not None:
                     # instead of repeating the checks inside the `if`
                     # statements we nest the if statements
@@ -67,7 +71,6 @@ class RelationalAccessPolicy(AccessPolicy):
                         set_children(list(c.children.all()))
 
         set_children([p.content_object for p in user_permissions])
-
         return queryset.filter(id__in=[c.id for c in child_docs])
 
     def has_create_access(self, request, view, _action) -> bool:
