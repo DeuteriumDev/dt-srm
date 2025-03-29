@@ -8,7 +8,6 @@ import {
   CardDescription,
   CardFooter,
   CardTitle,
-  CardContent,
 } from '~/components/card';
 import api from '~/libs/api.server';
 import sessionManager from '~/libs/session.server';
@@ -24,10 +23,10 @@ export async function loader(args: Route.LoaderArgs) {
   const cookie = await sessionManager.getCookie(args.request);
   const folders = await api.foldersList({
     query: {
-      favorite: true,
+      favorite: 'true',
     },
     headers: {
-      Authorization: `Bearer ${cookie.get('access_token')}`,
+      Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
     },
   });
 
@@ -40,7 +39,7 @@ export async function loader(args: Route.LoaderArgs) {
 export default function Dashboard(props: Route.ComponentProps) {
   const { loaderData } = props;
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <div className="flex flex-1 flex-col gap-4 p-8 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         {loaderData.foldersList?.results.map((folder) => (
           <Card key={folder.id}>
@@ -58,16 +57,13 @@ export default function Dashboard(props: Route.ComponentProps) {
                 <CardDescription>{folder.description}</CardDescription>
               )}
             </CardHeader>
-            <CardContent>
-              <p className="text-lg">Items: {folder.children_count}</p>
-            </CardContent>
-            {/* <CardFooter>
-              <div className="text-sm italic">
-                {`Updated: ${new Intl.DateTimeFormat(navigator.language).format(
-                  new Date(folder.updated),
-                )}`}
-              </div>
-            </CardFooter> */}
+            <CardFooter>
+              {folder.tags.map((t) => (
+                <p key={`${folder.id}-${t}`} className="text-lg">
+                  {t}
+                </p>
+              ))}
+            </CardFooter>
           </Card>
         ))}
       </div>

@@ -25,7 +25,7 @@ import {
 } from '~/components/dropdown-menu';
 import type apiRest from '~/libs/api.server';
 import { RequestHelper } from '~/libs/request';
-import { type IconNode, type Document } from '~/libs/types';
+import { type IconNode, type Document, type ArrayElement } from '~/libs/types';
 
 declare module '@tanstack/table-core' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -125,9 +125,15 @@ const columns: ColumnDef<Document>[] = [
       row.getValue<Document['parent']>('parent') ? (
         <Link
           className="underline"
-          to={`/documents?parent__exact=${row.getValue<Document['parent']>('parent')?.id}`}
+          to={`/documents?parent__exact=${row.getValue<Document['parent']>('parent')}`}
         >
-          {row.getValue<Document['parent']>('parent')?.name}
+          {
+            (
+              _.find<Document['breadcrumbs']>(row.original.breadcrumbs, {
+                id: row.getValue<Document['parent']>('parent') as any,
+              }) as ArrayElement<Document['breadcrumbs']>
+            )?.name
+          }
         </Link>
       ) : null,
   },

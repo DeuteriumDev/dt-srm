@@ -15,11 +15,12 @@ import {
   Receipt,
 } from 'lucide-react';
 import { useState } from 'react';
-import { data, Link, Outlet, useFetcher } from 'react-router';
+import { Link, Outlet, useFetcher } from 'react-router';
 
 import { type Route } from '../_auth.documents/+types/route';
 import columns from './columns';
 
+import loader from './loader.server';
 import { Badge } from '~/components/badge';
 import { Button } from '~/components/button';
 import {
@@ -44,42 +45,17 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/table';
-import apiRest from '~/libs/api.server';
 import { RequestHelper } from '~/libs/request';
-import sessionManager from '~/libs/session.server';
 import { type IconNode, type Document, type PageLayout } from '~/libs/types';
 import { cn } from '~/libs/utils';
+
+export { loader };
 
 export function meta(_args: Route.MetaArgs) {
   return [
     { title: 'Documents' },
     { name: 'description', content: 'Graph Table: Documents page' },
   ];
-}
-
-type SearchParams = apiRest.DocumentsListData['query'] & { layout: PageLayout };
-
-export async function loader(args: Route.LoaderArgs) {
-  const cookie = await sessionManager.getCookie(args.request);
-  const searchParams = new RequestHelper(
-    args.request,
-  ).getSearchParams<SearchParams>();
-
-  const documentsList = await apiRest.documentsList({
-    query: searchParams,
-    headers: {
-      Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
-    },
-  });
-  // return {Date} to easy switch between data sources without any janky
-  // state management
-  const lasUpdated = new Date().toISOString();
-
-  return data({
-    documentsList,
-    searchParams,
-    lasUpdated,
-  });
 }
 
 const CLIENT_ONLY_QUERY_PARAM = 'layout';
@@ -97,8 +73,8 @@ export default function Documents(props: Route.ComponentProps) {
 
   // render whichever data is "freshest" or empty list
   const data =
-    (fetcher.data?.lasUpdated &&
-    new Date(fetcher.data?.lasUpdated) > new Date(loaderData.lasUpdated)
+    (fetcher.data?.lastUpdated &&
+    new Date(fetcher.data?.lastUpdated) > new Date(loaderData.lastUpdated)
       ? fetcher.data.documentsList.data?.results
       : loaderData.documentsList.data?.results) || [];
 
@@ -157,7 +133,7 @@ export default function Documents(props: Route.ComponentProps) {
               name="name__contains"
               onChange={(event) => {
                 setSearch(event.target.value);
-                fetcher.submit(event.currentTarget.form).catch(console.error);
+                fetcher.submit(event.currentTarget.form).catch(console.warn);
               }}
               className="max-w-sm"
             />
@@ -210,7 +186,7 @@ export default function Documents(props: Route.ComponentProps) {
               <DropdownMenuContent>
                 <DropdownMenuItem asChild>
                   <Link
-                    to={`/documents/folder/new?parent_id=${loaderData.searchParams.parent__exact || 'null'}`}
+                    to={`/documents/folder/new?${RequestHelper.parseSearchParams(loaderData.searchParams)}`}
                   >
                     Folder
                   </Link>
