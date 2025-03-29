@@ -10,5 +10,6 @@ export default defineConfig({
       enums: false,
       name: '@hey-api/typescript',
     },
+    'zod',
   ],
 });
