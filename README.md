@@ -44,11 +44,11 @@ For any model changes, the schema and its associated api will (most likely) need
 
 > django_api
 
-`make api-schema`
+`make schema`
 
 > remix_frontend
 
-`make api-lib`
+`make codegen`
 
 Make sure to commit any changes as the lib / schema isn't generated during builds.
 
