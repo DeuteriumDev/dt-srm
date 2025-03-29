@@ -7,30 +7,19 @@ import {
   FileText,
   Component,
   ChevronsUpDown,
-  BadgeCheck,
-  CreditCard,
-  Bell,
   LogOut,
 } from 'lucide-react';
 import { data, Link, Outlet } from 'react-router';
 import { type Route } from '../_auth/+types/route';
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/avatar';
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from '~/components/breadcrumb';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '~/components/dropdown-menu';
-import { Separator } from '~/components/separator';
 import {
   SidebarInset,
   SidebarMenuButton,
@@ -48,7 +37,6 @@ import {
 import api from '~/libs/api.server';
 import { RequestHelper } from '~/libs/request';
 import sessionManager from '~/libs/session.server';
-import apiRest from '~/libs/api.server';
 
 export async function loader(args: Route.LoaderArgs) {
   const [getHeaders, cookie] = await sessionManager.getOrRefreshCookie(
@@ -57,7 +45,7 @@ export async function loader(args: Route.LoaderArgs) {
   try {
     const me = await api.usersMeRetrieve({
       headers: {
-        Authorization: `Bearer ${cookie.get('access_token')}`,
+        Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
       },
       throwOnError: true,
     });
@@ -76,7 +64,6 @@ export async function loader(args: Route.LoaderArgs) {
 }
 
 export default function Layout({ loaderData }: Route.ComponentProps) {
-  const paths = loaderData?.path.split('/');
   const usersMeRetrieve = loaderData?.usersMeRetrieve;
 
   const fallbackName = `${(usersMeRetrieve?.first_name || 'A').charAt(0)}${(usersMeRetrieve?.first_name || 'A').charAt(0)}`;
@@ -175,21 +162,6 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
                       </div>
                     </div>
                   </DropdownMenuLabel>
-                  {/* <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem className={menuItemStyling}>
-                      <BadgeCheck />
-                      Account
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className={menuItemStyling}>
-                      <CreditCard />
-                      Billing
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className={menuItemStyling}>
-                      <Bell />
-                      Notifications
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className={menuItemStyling} asChild>
                     <Link to="/logout">
@@ -208,27 +180,6 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            {/* <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                {paths?.map((subPath, index) => (
-                  <div key={subPath}>
-                    <BreadcrumbItem className="hidden capitalize md:block">
-                      <BreadcrumbLink asChild>
-                        <Link
-                          to={[...paths.slice(0, index), subPath].join('/')}
-                        >
-                          {subPath}
-                        </Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    {index + 1 !== paths.length && (
-                      <BreadcrumbSeparator className="hidden md:block" />
-                    )}
-                  </div>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb> */}
           </div>
         </header>
         <Outlet />
