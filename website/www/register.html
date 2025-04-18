@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact Us - DT / SRM</title>
+    <title>Sign Up - DT-SRM</title>
     <link rel="stylesheet" href="styles.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap"
@@ -14,37 +14,35 @@
     <header>
       <nav class="navbar">
         <div class="container">
-          <a href="/" class="logo">DT / SRM</a>
+          <a href="/" class="logo">DT-SRM</a>
           <ul class="nav-links">
             <li><a href="/">Home</a></li>
-            <li><a href="/features">Features</a></li>
-            <li><a href="/pricing">Pricing</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="/about">About</a></li>
+            <li><a href="/features.html">Features</a></li>
+            <li><a href="/pricing.html">Pricing</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+            <li><a href="/about.html">About</a></li>
             <li><a href="/register" class="btn-secondary">Register</a></li>
           </ul>
         </div>
       </nav>
       <div class="container hero">
-        <h1>Contact Us</h1>
-        <p>
-          We’d love to hear from you! Reach out to us with any questions or
-          feedback.
-        </p>
+        <h1>Register</h1>
+        <p>We're still building it,</p>
+        <p>register now and we'll let you know when it's ready!</p>
       </div>
     </header>
 
     <main>
-      <section class="contact">
-        <div class="container">
-          <h2>Get in Touch</h2>
-          <form action="/submit-contact" method="POST" class="contact-form">
-            <label for="name">Name</label>
+      <section class="signup">
+        <div class="container card">
+          <h2>Register</h2>
+          <form action="/submit-signup" method="POST" class="signup-form">
+            <label for="name">Full Name</label>
             <input
               type="text"
               id="name"
               name="name"
-              placeholder="Your Name"
+              placeholder="Your Full Name"
               required
             />
 
@@ -56,17 +54,7 @@
               placeholder="Your Email"
               required
             />
-
-            <label for="message">Message</label>
-            <textarea
-              id="message"
-              name="message"
-              rows="5"
-              placeholder="Your Message"
-              required
-            ></textarea>
-
-            <button type="submit" class="btn-primary">Send Message</button>
+            <button type="submit" class="btn-primary">Register</button>
           </form>
         </div>
       </section>
@@ -74,7 +62,7 @@
 
     <footer>
       <div class="container">
-        <p>&copy; 2025 DT / SRM. All rights reserved.</p>
+        <p>&copy; 2025 DT-SRM. All rights reserved.</p>
       </div>
     </footer>
   </body>
