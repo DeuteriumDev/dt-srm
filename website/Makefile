@@ -9,7 +9,11 @@ dev:
 	@yarn run serve -p $(PORT) www
 .PHONY: dev
 
+format:
+	@yarn run prettier ./www --write
+.PHONY: format
 
-build:
-	@cd www && zip -r ../website.zip *
-.PHONY: build
+deploy:
+	@yarn wrangler pages deploy
+.PHONY: deploy
+
