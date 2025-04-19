@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-type BaseSearchParams = Record<
+export type BaseSearchParams = Record<
   string,
   | string
   | undefined

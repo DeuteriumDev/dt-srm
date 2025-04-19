@@ -225,6 +225,23 @@ export class SessionManager {
   }
 
   /**
+   * Parses a Cookie header from a HTTP request and returns the api headers.
+   * If there is no session associated with the cookie, this will return a
+   * new Session with no data.
+   * @param {Request} request
+   * @returns {Session<SessionData, SessionFlashData>}
+   * @throws {RequestRedirect}
+   */
+  public async getAuthHeaders(request: Request) {
+    const cookie = await this.getSession(request);
+    if (!cookie.has(this.SESSION_access_token))
+      throw redirect(`/login?redirect=/dashboard`);
+    return {
+      Authorization: `Bearer ${cookie.get(this.SESSION_access_token)}`,
+    };
+  }
+
+  /**
    * Refresh current session, but doesn't commit new values
    *
    * @param {RefreshArgs} args -  args object containing the Remix request object
