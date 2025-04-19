@@ -14,7 +14,7 @@ import {
 import { data, Link, Outlet } from 'react-router';
 import { type Route } from '../_auth/+types/route';
 
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/avatar';
+import { AvatarUser } from '~/components/avatar';
 
 import {
   DropdownMenu,
@@ -144,15 +144,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
                     size="lg"
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   >
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={usersMeRetrieve?.avatar || undefined}
-                        alt={usersMeRetrieve?.email}
-                      />
-                      <AvatarFallback className="rounded-lg">
-                        {fallbackName}
-                      </AvatarFallback>
-                    </Avatar>
+                    <AvatarUser user={usersMeRetrieve || {}} />
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
                         {usersMeRetrieve?.email}
@@ -169,15 +161,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarImage
-                          src={usersMeRetrieve?.avatar || undefined}
-                          alt={usersMeRetrieve?.email}
-                        />
-                        <AvatarFallback className="rounded-lg">
-                          {fallbackName}
-                        </AvatarFallback>
-                      </Avatar>
+                      <AvatarUser user={usersMeRetrieve || {}} />
                       <div className="grid flex-1 text-left text-sm leading-tight">
                         <span className="truncate font-semibold">
                           {`${usersMeRetrieve?.first_name} ${usersMeRetrieve?.last_name}`}

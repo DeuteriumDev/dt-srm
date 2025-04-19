@@ -16,6 +16,7 @@ import { Link } from 'react-router';
 
 import { type Route } from '../_auth.users/+types/route';
 
+import { AvatarUser } from '~/components/avatar';
 import { Button } from '~/components/button';
 import {
   DropdownMenu,
@@ -64,12 +65,13 @@ const columns: ColumnDef<apiRest.CustomUser>[] = [
     accessorKey: 'email',
     header: tableHeader,
     cell: ({ row }) => {
-      const docType = getDocType(row);
-      const Icon = iconMap[docType as keyof typeof iconMap];
+      const fallbackName = `${(row.original?.first_name || 'A').charAt(0)}${(row.original?.last_name || 'A').charAt(0)}`;
+
       return (
-        <span className="flex items-center">
-          <Icon className="h-5" />
-          <span className="pl-1">{row.getValue('email')}</span>
+        <span className="flex items-center space-x-1">
+          <AvatarUser user={row.original} />
+
+          <span className="truncate">{row.original?.email}</span>
         </span>
       );
     },

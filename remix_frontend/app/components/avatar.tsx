@@ -47,4 +47,26 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-export { Avatar, AvatarImage, AvatarFallback };
+const AvatarUser = React.forwardRef<
+  React.ComponentRef<typeof AvatarPrimitive.Root>,
+  {
+    className?: string;
+    user: {
+      email?: string;
+      avatar?: string | null;
+      first_name?: string;
+      last_name?: string;
+    };
+  }
+>(({ className, user }, ref) => {
+  const fallbackName = `${(user.first_name || 'A').charAt(0)}${(user.last_name || 'A').charAt(0)}`;
+  return (
+    <Avatar className={cn('h-8 w-8 rounded-lg', className)} ref={ref}>
+      <AvatarImage src={user.avatar || undefined} alt={user.email} />
+      <AvatarFallback className="rounded-lg">{fallbackName}</AvatarFallback>
+    </Avatar>
+  );
+});
+AvatarUser.displayName = 'AvatarUser';
+
+export { Avatar, AvatarImage, AvatarFallback, AvatarUser };
