@@ -42,7 +42,7 @@ export default function Dashboard(props: Route.ComponentProps) {
     <div className="flex flex-1 flex-col gap-4 p-8 pt-0">
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         {loaderData.foldersList?.results.map((folder) => (
-          <Card key={folder.id}>
+          <Card key={folder.id} className="flex flex-col justify-between">
             <CardHeader className="pt-6">
               <CardTitle className="flex items-center gap-2">
                 <Folder />
@@ -58,11 +58,13 @@ export default function Dashboard(props: Route.ComponentProps) {
               )}
             </CardHeader>
             <CardFooter>
-              {folder.tags.map((t) => (
-                <p key={`${folder.id}-${t}`} className="text-lg">
-                  {t}
-                </p>
-              ))}
+              <div className="flex flex-col capitalize">
+                {folder.tags.map((t) => (
+                  <div key={`${folder.id}-${t}`} className="text-lg">
+                    {t.split(':').join(': ')}
+                  </div>
+                ))}
+              </div>
             </CardFooter>
           </Card>
         ))}
