@@ -8,6 +8,8 @@ import {
   Component,
   ChevronsUpDown,
   LogOut,
+  Users,
+  User,
 } from 'lucide-react';
 import { data, Link, Outlet } from 'react-router';
 import { type Route } from '../_auth/+types/route';
@@ -66,7 +68,7 @@ export async function loader(args: Route.LoaderArgs) {
 export default function Layout({ loaderData }: Route.ComponentProps) {
   const usersMeRetrieve = loaderData?.usersMeRetrieve;
 
-  const fallbackName = `${(usersMeRetrieve?.first_name || 'A').charAt(0)}${(usersMeRetrieve?.first_name || 'A').charAt(0)}`;
+  const fallbackName = `${(usersMeRetrieve?.first_name || 'A').charAt(0)}${(usersMeRetrieve?.last_name || 'A').charAt(0)}`;
 
   const menuItemStyling =
     'relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0';
@@ -105,6 +107,30 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
               >
                 <FileText />
                 <span className="">Documents</span>
+              </Link>
+            </SidebarMenuButton>
+            <SidebarMenuButton
+              asChild
+              isActive={loaderData?.path.startsWith('/groups')}
+            >
+              <Link
+                to={`/groups?${RequestHelper.parseSearchParams({ parent__isnull: true, page: 1, ordering: 'name' })}`}
+                className="flex items-center gap-2 font-semibold"
+              >
+                <Users />
+                <span className="">Groups</span>
+              </Link>
+            </SidebarMenuButton>
+            <SidebarMenuButton
+              asChild
+              isActive={loaderData?.path.startsWith('/users')}
+            >
+              <Link
+                to={`/users`}
+                className="flex items-center gap-2 font-semibold"
+              >
+                <User />
+                <span className="">Users</span>
               </Link>
             </SidebarMenuButton>
           </SidebarGroup>
