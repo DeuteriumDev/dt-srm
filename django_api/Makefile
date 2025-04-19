@@ -6,12 +6,18 @@ export $(shell sed 's/=.*//' .env)
 
 DJANGO=poetry run python manage.py
 
+help: ## Show this help
+	@echo "\nSpecify a command. The choices are:\n"
+	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[0;36m%-12s\033[m %s\n", $$1, $$2}'
+	@echo ""
+.PHONY: help
+
 install:
 	@poetry install
 .PHONY: install
 
 
-migrations:
+migrations: ## run all migrations
 	@$(DJANGO) makemigrations accounts
 	@$(DJANGO) makemigrations nodes
 	@$(DJANGO) makemigrations invoices
@@ -20,19 +26,21 @@ migrations:
 	@$(DJANGO) migrate
 .PHONY: migrations
 
-# - see [.env](./.env) for admin pass
-seed: migrations
+init: ## add admin user and add remix application JWT keys, see [.env](./.env) for admin pass
 	@$(DJANGO) createsuperuser --no-input --email admin@admin.ca
 	@$(DJANGO) createapplication --client-id $(CLIENT_ID) --client-secret $(CLIENT_SECRET) --algorithm HS256 --name remix_frontend confidential password
+.PHONY: init
+
+seed: init migrations ## add test user and supporting data
 	@$(DJANGO) seed
 	@$(DJANGO) createinitialrevisions
 .PHONY: seed
 
-dev:
+dev: ## run the development server
 	@$(DJANGO) runserver
 .PHONY: dev
 
-schema:
+schema: ## generate the OpenAPI schema
 	@$(DJANGO) spectacular --color --file schema.yml
 	@node ../remix_frontend/node_modules/prettier/bin/prettier.cjs schema.yml --write
 .PHONy: schema
@@ -41,17 +49,17 @@ shell:
 	@$(DJANGO) shell
 .PHONY: shell
 
-services:
+services: ## run the supporting docker containers
 	@docker compose -f ./docker-compose.yml --env-file .env up
 .PHONY: services
 
 
-scheduler:
+scheduler: ## needs services running
 	@poetry run celery -A django_api beat -l INFO  --scheduler django_celery_beat.schedulers:DatabaseScheduler
 .PHONY: scheduler
 
 
-worker:
+worker: ## needs services running
 	@poetry run celery -A django_api worker -l INFO
 .PHONY: worker
 

@@ -5,6 +5,7 @@ from kits.models import Kit, Question, Answer
 from documents.models import Folder
 from invoices.models import Invoice, LineItem, Item
 from accounts.models import CustomGroup, CustomUser, CustomPermissions, Organization
+from django.db import transaction
 
 
 class Command(BaseCommand):
@@ -20,6 +21,7 @@ class Command(BaseCommand):
         ).save()
         return folder
 
+    @transaction.atomic()
     def handle(self, *args, **kwargs):
 
         group = CustomGroup.objects.create(name="test group 1")
@@ -27,10 +29,15 @@ class Command(BaseCommand):
             email="pbateman@test.ca",
             first_name="Patrick",
             last_name="Bateman",
-            default_group=group,
         )
         user.set_password("test")
         user.save()
+
+        CustomPermissions.objects.create(
+            content_type=ContentType.objects.get_for_model(CustomGroup),
+            object_id=group.id,
+            group=group,
+        ).save()
 
         group.members.add(user)
         group.save()
