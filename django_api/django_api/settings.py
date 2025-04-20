@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.core.management.commands.runserver import Command as runserver
+
+runserver.default_port = "8000"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-x*z$@+__8yqky%tx$!o3&3v!noe^av6cuxl-*-9fwazypfzo&1"
+SECRET_KEY = os.getenv(
+    "SECRET_KEY", "django-insecure-x*z$@+__8yqky%tx$!o3&3v!noe^av6cuxl-*-9fwazypfzo&1"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_ENV", "DEVELOPMENT") != "PRODUCTION"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://localhost").split(",")
 
 
 # Application definition
@@ -83,7 +89,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "django_api.wsgi.application"
+WSGI_APPLICATION = os.getenv("WSGI_APPLICATION", "django_api.wsgi.application")
 
 
 # Database
