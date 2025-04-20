@@ -1,3 +1,6 @@
+from math import e
+from common.strtobool import strtobool
+from common.filter_mappings import get_filter_mappings, arg_splitter
 from .models import CustomGroup, CustomPermissions, Organization, CustomUser
 from .serializers import (
     CustomGroupSerializer,
@@ -10,7 +13,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from filters.mixins import FiltersMixin
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from .access_policies import (
     AccountsAccessPolicy,
     AccountsUsersAccessPolicy,
@@ -18,36 +21,31 @@ from .access_policies import (
 )
 
 
-filter_mappings_array = [
-    "id__exact",
-    "id__in",
-    "name__exact",
-    "description__exact",
-    "parent__exact",
-    "parent__in",
-    "created__gte",
-    "created__lte",
-    "updated__gte",
-    "updated__lte",
-    "parent__isnull",
-]
-abstract_filter_mappings = {
-    "name__contains": "name__icontains",
-    "description__contains": "description__icontains",
-}
-for f in filter_mappings_array:
-    abstract_filter_mappings[f] = f
-
-
-params = [
-    OpenApiParameter(name=n, required=False, type=str)
-    for n in abstract_filter_mappings.keys()
-]
-arg_splitter = lambda val: val.split(",")
+group_filters = get_filter_mappings(
+    [
+        "id__exact",
+        "id__in",
+        "name__exact",
+        "description__exact",
+        "parent__exact",
+        "parent__in",
+        "created__gte",
+        "created__lte",
+        "updated__gte",
+        "updated__lte",
+        "parent__isnull",
+    ],
+    {
+        "name__contains": "name__icontains",
+        "description__contains": "description__icontains",
+    },
+)
 
 
 @extend_schema(
-    parameters=params,
+    parameters=[
+        OpenApiParameter(name=n, required=False, type=str) for n in group_filters.keys()
+    ],
 )
 class CustomGroupViewSet(AccessViewSetMixin, FiltersMixin, viewsets.ModelViewSet):
     queryset = CustomGroup.objects.all()
@@ -56,16 +54,31 @@ class CustomGroupViewSet(AccessViewSetMixin, FiltersMixin, viewsets.ModelViewSet
 
     filterset_fields = ["id", "name", "parent", "hidden", "created", "updated"]
     ordering_fields = ["name", "created", "updated"]
-    filter_mappings = abstract_filter_mappings
-    arg_splitter = lambda val: val.split(",")
+    filter_mappings = group_filters
     filter_value_transformations = {
         "id__in": arg_splitter,
+        "groups__id__in": arg_splitter,
+        "parent__isnull": strtobool,
     }
 
     def get_queryset(self):
         return self.access_policy.scope_queryset(
             self.request, self.queryset, CustomGroup
         )
+
+    @extend_schema(
+        request={"users": {"type": "array", "items": {"type": "uuid"}}},
+        responses={
+            200: {"type": "array", "items": {"type": "uuid"}},
+        },
+        operation_id="update_members",
+    )
+    @action(detail=True, methods=["put"])
+    def update_users(self, request, pk=None):
+        group = self.get_object()
+        user_ids = request.data.get("users", [])
+        group.members.set(user_ids)
+        return Response(user_ids)
 
 
 class OrganizationViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
@@ -74,14 +87,55 @@ class OrganizationViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
     access_policy = AccountsAccessPolicy
 
 
-class CustomUserViewSet(AccessViewSetMixin, viewsets.ModelViewSet):
+user_filters = get_filter_mappings(
+    [
+        "id__exact",
+        "id__in",
+        "first_name__exact",
+        "last_name__exact",
+        "date_joined",
+        "is_active",
+        "groups__id__exact",
+        "groups__id__in",
+    ],
+    {
+        "first_name__contains": "first_name__icontains",
+        "last_name__contains": "last_name__icontains",
+        "email__contains": "email__icontains",
+    },
+)
+
+
+@extend_schema(
+    parameters=[
+        OpenApiParameter(name=n, required=False, type=str) for n in user_filters.keys()
+    ],
+)
+class CustomUserViewSet(AccessViewSetMixin, FiltersMixin, viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     access_policy = AccountsUsersAccessPolicy
+    filterset_fields = [
+        "id",
+        "first_name",
+        "last_name",
+        "date_joined",
+        "is_active",
+        "email",
+    ]
+    ordering_fields = ["first_name", "last_name", "date_joined", "is_active", "email"]
+    filter_mappings = user_filters
+    filter_value_transformations = {
+        "id__in": arg_splitter,
+        "groups__id__in": arg_splitter,
+        "is_active": strtobool,
+    }
 
     def get_queryset(self):
         return self.access_policy.scope_queryset(
-            self.request, self.queryset, CustomUser
+            self.request,
+            self.queryset,
+            CustomGroup,
         )
 
     @action(detail=False)

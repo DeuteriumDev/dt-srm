@@ -1,7 +1,15 @@
 from rest_framework import serializers
+
 from .models import CustomPermissions, Organization, CustomUser, CustomGroup
 from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.contenttypes.models import ContentType
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
+
+
+class CustomUserGroupSerializer(serializers.Serializer):
+    id = serializers.UUIDField(read_only=True)
+    name = serializers.CharField(read_only=True)
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -12,6 +20,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    groups = CustomUserGroupSerializer(many=True, read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
+
     class Meta:
         model = CustomUser
         fields = [
@@ -22,13 +33,41 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "last_name",
             "is_active",
             "groups",
+            "date_joined",
         ]
 
 
+class CustomMembersSerializer(serializers.Serializer):
+    id = serializers.UUIDField(read_only=True)
+    email = serializers.CharField(read_only=True)
+    avatar = serializers.ImageField(read_only=True)
+    first_name = serializers.CharField(read_only=True)
+    last_name = serializers.CharField(read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
+
+
 class CustomGroupSerializer(serializers.ModelSerializer):
+    member_count = serializers.SerializerMethodField()
+    members = CustomMembersSerializer(many=True, read_only=True)
+
     class Meta:
         model = CustomGroup
         fields = "__all__"
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def get_member_count(self, obj):
+        return obj.members.count()
+
+    def create(self, validated_data):
+        group = super().create(validated_data)
+        CustomPermissions.objects.create(
+            object_id=group.id,
+            group=group,
+            content_type=ContentType.objects.get_for_model(CustomGroup),
+        )
+        group.members.add(self.context["request"].user)
+        group.save()
+        return group
 
 
 class ContentObjectSerializer(serializers.Serializer):
@@ -37,6 +76,7 @@ class ContentObjectSerializer(serializers.Serializer):
 
 
 class CustomPermissionsSerializer(serializers.ModelSerializer):
+    # [see README.md #Common-Problems](./README.md#common-problems)
     ctype = serializers.ChoiceField(
         choices=ContentType.objects.all().values_list("id", "model"),
         required=True,
@@ -49,6 +89,8 @@ class CustomPermissionsSerializer(serializers.ModelSerializer):
     )
 
     group = CustomGroupSerializer(read_only=True)
+    created = serializers.DateTimeField(read_only=True)
+    updated = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = CustomPermissions
