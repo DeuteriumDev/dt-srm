@@ -146,6 +146,13 @@ export const columns: ColumnDef<apiRest.CustomGroup>[] = [
                 {`Edit ${docType}`}
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuItem className="capitalize" asChild>
+              <Link
+                to={`/${docType}s/members/${item.id}/?${RequestHelper.parseSearchParams({ ...searchParams })}`}
+              >
+                Manage members
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem className="capitalize">{`Delete ${docType}`}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
