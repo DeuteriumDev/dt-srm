@@ -50,7 +50,7 @@ export const handleLoader = async (
         name: 'new folder',
         parent:
           getFormParentId(searchParams) === 'parent__isnull'
-            ? 'null'
+            ? null
             : (searchParams[
                 getFormParentId(searchParams)
               ] as SearchParams['parent__exact']),

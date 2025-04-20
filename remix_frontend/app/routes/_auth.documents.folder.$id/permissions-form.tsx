@@ -23,7 +23,7 @@ import {
   TableCell,
 } from '~/components/table';
 import { cn } from '~/libs/utils';
-import folderForm from './folder-form';
+import folderForm from './use-folder-form';
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 

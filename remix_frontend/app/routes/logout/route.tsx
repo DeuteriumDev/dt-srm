@@ -8,9 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/dialog';
+import { RequestHelper } from '~/libs/request';
 import sessionManager from '~/libs/session.server';
 
 export async function action(args: Route.ActionArgs) {
+  new RequestHelper(args.request).validateMethods(['POST']);
   await sessionManager.logout(args.request);
 }
 

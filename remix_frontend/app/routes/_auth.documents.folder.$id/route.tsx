@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 
 import { type Route } from '../_auth.documents.folder.$id/+types/route';
 import actionServer from './action.server';
-import useFolderForm from './folder-form';
+import useFolderForm from './use-folder-form';
 import loaderServer from './loader.server';
 import { type Crumb } from './types';
 
@@ -45,7 +45,7 @@ export function meta(args: Route.MetaArgs) {
   ];
 }
 
-const MAX_BREAD_CRUMBS = 1;
+const MAX_BREAD_CRUMBS = 2;
 
 export default function Folder(props: Route.ComponentProps) {
   const {
@@ -72,7 +72,7 @@ export default function Folder(props: Route.ComponentProps) {
     setOpen(false);
   };
 
-  const { formController: folderForm, folderAction } = useFolderForm(
+  const { formController: folderForm } = useFolderForm(
     targetFolder as apiRest.Folder,
     _handleClose,
   );
@@ -82,7 +82,9 @@ export default function Folder(props: Route.ComponentProps) {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    return folderForm.handleSubmit();
+    const result = folderForm.handleSubmit();
+    console.log('submit folder', result, folderForm);
+    return result;
   };
 
   // const groups =
@@ -91,14 +93,12 @@ export default function Folder(props: Route.ComponentProps) {
   //     ? folderAction.data?.groupsList.data?.results
   //     : loaderData.groupsList.data?.results;
 
-  console.log({
-    props,
-    loaderData,
-    folderAction,
-    folderForm,
-    // groups,
-    param,
-  });
+  // console.log({
+  //   props,
+  //   loaderData,
+  //   folderForm,
+  //   param,
+  // });
 
   return (
     <Sheet open={open} onOpenChange={_handleClose}>
@@ -200,9 +200,15 @@ export default function Folder(props: Route.ComponentProps) {
         <Separator />
         <SheetFooter className="mt-auto flex justify-end py-4">
           <Button onClick={_handleClose}>Cancel</Button>
-          <folderForm.Subscribe selector={(state) => state.isSubmitting}>
-            {(isSubmitting) => (
-              <Button disabled={isSubmitting} onClick={_handleSubmit}>
+          <folderForm.Subscribe
+            selector={(state) =>
+              state.isSubmitting ||
+              state.isValidating ||
+              !_.isEmpty(state.errors)
+            }
+          >
+            {(disabled) => (
+              <Button disabled={disabled} onClick={_handleSubmit}>
                 Save changes
               </Button>
             )}

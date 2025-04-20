@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { data } from 'react-router';
 import { ZodError } from 'zod';
 
-import { type Route } from './+types/route';
+import { type Route } from '../_auth.groups.$id/+types/route';
 
 import apiRestServer, { ApiError } from '~/libs/api.server';
 import sessionManager from '~/libs/session.server';
@@ -19,25 +19,22 @@ export const handlePost = async (
   let status: number = 200;
   try {
     const form = await args.request.formData();
-    const folderData = {
+    const groupData = {
       name: form.get('name'),
       parent: form.get('parent') === 'null' ? null : form.get('parent'),
       description: form.get('description'),
-      favorite: form.get('favorite')?.toString().toLocaleLowerCase() === 'true',
-      inherit_permissions:
-        form.get('inherit_permissions')?.toString().toLocaleLowerCase() ===
-        'true',
+      hidden: form.get('hidden')?.toString().toLocaleLowerCase() === 'true',
     };
-    const parseResult = validation.zFolderRequest.parse(folderData);
+    const parseResult = validation.zCustomGroupRequest.parse(groupData);
     if (args.params.id === 'new') {
-      await apiRest.foldersCreate({
+      await apiRest.groupsCreate({
         headers: {
           Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
         },
         body: _.omit(parseResult, 'id'),
       });
     } else {
-      await apiRest.foldersPartialUpdate({
+      await apiRest.groupsPartialUpdate({
         headers: {
           Authorization: `Bearer ${cookie.get(sessionManager.SESSION_access_token)}`,
         },
@@ -60,9 +57,14 @@ export const handlePost = async (
       result = errorData;
       status = 400;
     } else if (error instanceof ApiError) {
-      const data = await error.options.json();
-      result = { error: data.detail };
-      status = error.options.status;
+      try {
+        const data = await error.options.json();
+        result = { error: data.detail };
+        status = error.options.status;
+      } catch {
+        result = { error: 'server error' };
+        status = 500;
+      }
     } else {
       result = { error: 'server error' };
       status = 500;

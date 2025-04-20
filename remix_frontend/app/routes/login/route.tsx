@@ -26,6 +26,8 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
+  new RequestHelper(request).validateMethods(['POST']);
+
   const body = await request.formData();
   try {
     const result = z
