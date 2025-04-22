@@ -61,7 +61,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         related_name="members",
     )
     is_admin = models.BooleanField("is admin", default=False)
-
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
@@ -71,6 +70,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = "user"
         verbose_name_plural = "users"
         ordering = ["email"]
+
+    def get_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        full_name = "%s %s" % (self.first_name, self.last_name)
+        return full_name.strip()
 
     def get_full_name(self):
         """

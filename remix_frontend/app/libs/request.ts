@@ -1,4 +1,4 @@
-import _, { isArray, isBoolean, isObject } from 'lodash';
+import _ from 'lodash';
 import { data } from 'react-router';
 
 export type BaseSearchParams = Record<
@@ -21,20 +21,36 @@ export class RequestHelper {
     this.url = new URL(req.url);
   }
 
-  public getSearchParams<Params extends BaseSearchParams>(): Params {
-    const params: BaseSearchParams = {};
-    this.url.searchParams.forEach((value, key) => {
+  private static toNamespacedParams<Params extends BaseSearchParams>(
+    paramObject: Record<string, string>,
+  ): Params {
+    const final = {};
+    Object.keys(paramObject).forEach((key) => {
       if (key.indexOf(NS_DIVIDER) > -1) {
         const [ns, nestedKey] = key.split(NS_DIVIDER);
-        if (_.isEmpty(params[ns])) {
-          params[ns] = {};
+        if (_.isEmpty(_.get(final, ns))) {
+          _.set(final, ns, {});
         }
-        (params[ns] as Record<string, string>)[nestedKey] = value;
+        _.set(final, `${ns}.${nestedKey}`, paramObject[key]);
       } else {
-        params[key] = value;
+        _.set(final, key, paramObject[key]);
       }
     });
-    return params as Params;
+    return final as Params;
+  }
+
+  public getSearchParams<Params extends BaseSearchParams>(): Params {
+    return RequestHelper.toNamespacedParams<Params>(
+      Object.fromEntries(this.url.searchParams.entries()),
+    );
+  }
+
+  static URLSearchParamsTo<Params extends BaseSearchParams>(
+    urlSearchParams: URLSearchParams,
+  ): Params {
+    return RequestHelper.toNamespacedParams<Params>(
+      Object.fromEntries(urlSearchParams.entries()),
+    );
   }
 
   /**

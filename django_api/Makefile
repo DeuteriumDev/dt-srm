@@ -31,7 +31,7 @@ init: ## add admin user and add remix application JWT keys, see [.env](./.env) f
 	@$(DJANGO) createapplication --client-id $(CLIENT_ID) --client-secret $(CLIENT_SECRET) --algorithm HS256 --name remix_frontend confidential password
 .PHONY: init
 
-seed: init migrations ## add test user and supporting data
+seed: migrations init ## add test user and supporting data
 	@$(DJANGO) seed
 	@$(DJANGO) createinitialrevisions
 .PHONY: seed
@@ -67,3 +67,8 @@ worker: ## needs services running
 revisions: 
 	@$(DJANGO) createinitialrevisions
 .PHONY: revisions
+
+DB_CONNECTION="postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)"
+reset: ## Reset connected db
+	@echo "drop schema public cascade; create schema public;" | psql $(DB_CONNECTION)
+.PHONY: reset

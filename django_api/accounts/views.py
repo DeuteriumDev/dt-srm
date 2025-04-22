@@ -67,16 +67,29 @@ class CustomGroupViewSet(AccessViewSetMixin, FiltersMixin, viewsets.ModelViewSet
         )
 
     @extend_schema(
-        request={"users": {"type": "array", "items": {"type": "uuid"}}},
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uuid",
+                        },
+                    }
+                },
+            }
+        },
         responses={
-            200: {"type": "array", "items": {"type": "uuid"}},
+            200: {"type": "array", "items": {"type": "string"}},
         },
         operation_id="update_members",
     )
     @action(detail=True, methods=["put"])
-    def update_users(self, request, pk=None):
+    def members(self, request, pk=None):
         group = self.get_object()
-        user_ids = request.data.get("users", [])
+        user_ids = request.data.get("members", [])
         group.members.set(user_ids)
         return Response(user_ids)
 
@@ -138,7 +151,7 @@ class CustomUserViewSet(AccessViewSetMixin, FiltersMixin, viewsets.ModelViewSet)
             CustomGroup,
         )
 
-    @action(detail=False)
+    @action(detail=False, methods=["GET"])
     def me(self, request):
         return Response(self.get_serializer(request.user, many=False).data)
 
