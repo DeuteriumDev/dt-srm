@@ -72,3 +72,7 @@ DB_CONNECTION="postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOS
 reset: ## Reset connected db
 	@echo "drop schema public cascade; create schema public;" | psql $(DB_CONNECTION)
 .PHONY: reset
+
+tests:
+	@$(DJANGO) test -p "test*"
+.PHONY: tests
