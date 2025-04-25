@@ -14,7 +14,7 @@ class Permission(TypedDict):
 def merge_permissions(
     permissions: list[Permission] | list[CustomPermissions],
 ) -> Permission:
-    """Merges *parallel* permissions, not child to parent permissions.
+    """Merges *parallel* permissions, not child-to-parent permissions.
     Ie: multiple permissions on the same document
 
     Args:
@@ -37,13 +37,6 @@ def merge_permissions(
     return result
 
 
-def get_permission(request: HttpRequest, obj: models.Model) -> Permission:
-    perms = get_document_permissions(request, obj)
-    if perms is None:
-        return merge_permissions([])  # will return all-false permissions
-    return merge_permissions(perms)
-
-
 def get_user_permissions(
     request: HttpRequest,
 ) -> models.manager.BaseManager[CustomPermissions]:
@@ -59,6 +52,18 @@ def get_document_permissions(
 
     if direct_permissions.count() > 0:
         return direct_permissions
-    if model.parent is not None and model.inherit_permissions:
+    if (
+        hasattr(model, "parent")
+        and model.parent is not None
+        and hasattr(model, "inherit_permissions")
+        and model.inherit_permissions
+    ):
         return get_document_permissions(request, model.parent)
     return None
+
+
+def get_permission(request: HttpRequest, obj: models.Model) -> Permission:
+    perms = get_document_permissions(request, obj)
+    if perms is None:
+        return merge_permissions([])  # will return all-false permissions
+    return merge_permissions(perms)

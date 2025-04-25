@@ -14,3 +14,8 @@ class FlattenTests(TestCase):
             flatten([[1, 2], [3, 4]]),
             [1, 2, 3, 4],
         )
+
+        self.assertNotEqual(
+            flatten([[1, 2], [3, 4]]),
+            [1, 2, 3, 5],
+        )
