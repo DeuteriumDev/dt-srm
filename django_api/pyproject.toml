@@ -27,6 +27,7 @@ django-rest-polymorphic = "^0.1.10"
 django-reversion = "^5.1.0"
 django-polymorphic = {git = "https://github.com/jazzband/django-polymorphic.git", rev = "v4.0.0a"}
 gunicorn = "^23.0.0"
+django-unfold = "^0.55.3"
 
 
 [tool.poetry.group.dev.dependencies]

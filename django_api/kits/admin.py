@@ -1,6 +1,20 @@
 from django.contrib import admin
 from .models import Kit, Question, Answer
+from unfold.admin import ModelAdmin
 
-admin.site.register(Kit)
-admin.site.register(Question)
-admin.site.register(Answer)
+
+class KitAdmin(ModelAdmin):
+    pass
+
+
+class QuestionAdmin(ModelAdmin):
+    pass
+
+
+class AnswerAdmin(ModelAdmin):
+    pass
+
+
+admin.site.register(Kit, KitAdmin)
+admin.site.register(Question, QuestionAdmin)
+admin.site.register(Answer, AnswerAdmin)

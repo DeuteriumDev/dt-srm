@@ -1,4 +1,10 @@
 from django.contrib import admin
 from .models import Folder
+from unfold.admin import ModelAdmin
 
-admin.site.register(Folder)
+
+class FolderAdmin(ModelAdmin):
+    pass
+
+
+admin.site.register(Folder, FolderAdmin)
