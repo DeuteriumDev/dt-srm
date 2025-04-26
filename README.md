@@ -15,6 +15,7 @@ At both project roots copy the `.env.example` file and rename it to `.env`. You 
 > django_api
 
 In separate tabs run:
+
 - `make services` to start the docker-compose services (postgres & rabbitMQ)
 - `make seed` to add the superuser & add a basic user setup
 - `make dev` to start the local dev server
@@ -72,3 +73,9 @@ A user can belong to many groups and a group can have many permissions, but each
 Those documents don't need a direct permission, but will inherit whatever permissions are present on it's parent (recursively if multiple levels are present). A document can have many children, but only one parent.
 
 See the abstract model [DocumentModel](./django_api/kits/models.py) for implementation details.
+
+### Common Problems
+
+![db_migrations](./docs/db_migrations.png)
+
+> need to comment out the `ctype` field on the custom_permissions serializer, run the migration, and then uncomment the field and re-run the migration
