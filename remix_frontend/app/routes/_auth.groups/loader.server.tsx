@@ -21,7 +21,7 @@ export const handleGet = async (
   });
 
   const lastUpdated = new Date().toISOString();
-  return data({ groupsList, lastUpdated, searchParams }, { status: 200 });
+  return data({ data: groupsList.data, lastUpdated }, { status: 200 });
 };
 
 export default async function loader(args: Route.LoaderArgs) {
