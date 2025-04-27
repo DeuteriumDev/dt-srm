@@ -1,7 +1,4 @@
 import type apiRest from '~/libs/api.server';
-import { type ArrayElement } from '~/libs/types';
-
-export type Crumb = ArrayElement<apiRest.Folder['breadcrumbs']>;
 
 export type SearchParams = apiRest.DocumentsListData['query'] & {
   layout?: string;
@@ -10,8 +7,7 @@ export type SearchParams = apiRest.DocumentsListData['query'] & {
 };
 
 export type LoaderReturn = {
-  foldersRetrieve: Awaited<ReturnType<typeof apiRest.foldersRetrieve>>;
-  groupsList: Awaited<ReturnType<typeof apiRest.groupsList>>;
+  groupsRetrieve: Awaited<ReturnType<typeof apiRest.groupsRetrieve>>;
   searchParams: SearchParams;
   lastUpdated: string;
 };
